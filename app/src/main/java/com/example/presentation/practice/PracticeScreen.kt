@@ -277,8 +277,26 @@ fun CategoryCardItem(
                 )
             }
 
-            // Sub-levels for multi-tier technical stacks (e.g. Java: Beginner, Intermediate, Advanced)
-            if (category.id == "java" && onSubLevelClick != null) {
+            // Sub-levels for multi-tier technical stacks (e.g. Java, Spring Boot, Microservices, HLD, LLD, SQL, Angular: Beginner, Intermediate, Advanced)
+            if ((category.id == "java" || category.id == "spring_boot" || category.id == "microservices" || category.id == "hld" || category.id == "lld" || category.id == "sql" || category.id == "angular") && onSubLevelClick != null) {
+                val prefix = when (category.id) {
+                    "java" -> "java"
+                    "spring_boot" -> "spring"
+                    "microservices" -> "ms"
+                    "hld" -> "hld"
+                    "lld" -> "lld"
+                    "sql" -> "sql"
+                    else -> "ng"
+                }
+                val titlePrefix = when (category.id) {
+                    "java" -> "Java"
+                    "spring_boot" -> "Spring Boot"
+                    "microservices" -> "Microservices"
+                    "hld" -> "HLD"
+                    "lld" -> "LLD"
+                    "sql" -> "SQL"
+                    else -> "Angular"
+                }
                 Spacer(modifier = Modifier.height(12.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -286,17 +304,17 @@ fun CategoryCardItem(
                 ) {
                     LevelPracticeChip(
                         label = "Beginner (100)",
-                        onClick = { onSubLevelClick("java_beginner", "Java Beginner") },
+                        onClick = { onSubLevelClick("${prefix}_beginner", "$titlePrefix Beginner") },
                         modifier = Modifier.weight(1f)
                     )
                     LevelPracticeChip(
                         label = "Intermediate (100)",
-                        onClick = { onSubLevelClick("java_intermediate", "Java Intermediate") },
+                        onClick = { onSubLevelClick("${prefix}_intermediate", "$titlePrefix Intermediate") },
                         modifier = Modifier.weight(1f)
                     )
                     LevelPracticeChip(
                         label = "Advanced (100)",
-                        onClick = { onSubLevelClick("java_advanced", "Java Advanced") },
+                        onClick = { onSubLevelClick("${prefix}_advanced", "$titlePrefix Advanced") },
                         modifier = Modifier.weight(1f)
                     )
                 }

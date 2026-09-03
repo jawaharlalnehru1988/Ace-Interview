@@ -60,19 +60,28 @@ class McqPracticeViewModel(
             _sessionState.value = McqSessionState.Loading
             val questions = if (categoryId == "all" || categoryId.isBlank()) {
                 repository.getAllQuestions().first()
-            } else if (categoryId.startsWith("java_")) {
+            } else if (categoryId.startsWith("java_") || categoryId.startsWith("spring_") || categoryId.startsWith("ms_") || categoryId.startsWith("hld_") || categoryId.startsWith("lld_") || categoryId.startsWith("sql_") || categoryId.startsWith("ng_")) {
                 val targetDifficulty = when {
                     categoryId.contains("beginner", ignoreCase = true) -> "Beginner"
                     categoryId.contains("intermediate", ignoreCase = true) -> "Intermediate"
                     categoryId.contains("advanced", ignoreCase = true) -> "Advanced"
                     else -> null
                 }
-                val javaQuestions = repository.getQuestionsByCategory("java").first()
+                val domainCategory = when {
+                    categoryId.startsWith("java_") -> "java"
+                    categoryId.startsWith("spring_") -> "spring_boot"
+                    categoryId.startsWith("ms_") -> "microservices"
+                    categoryId.startsWith("hld_") -> "hld"
+                    categoryId.startsWith("lld_") -> "lld"
+                    categoryId.startsWith("sql_") -> "sql"
+                    else -> "angular"
+                }
+                val domainQuestions = repository.getQuestionsByCategory(domainCategory).first()
                 if (targetDifficulty != null) {
-                    val filtered = javaQuestions.filter { it.difficulty.equals(targetDifficulty, ignoreCase = true) }
-                    if (filtered.isNotEmpty()) filtered else javaQuestions
+                    val filtered = domainQuestions.filter { it.difficulty.equals(targetDifficulty, ignoreCase = true) }
+                    if (filtered.isNotEmpty()) filtered else domainQuestions
                 } else {
-                    javaQuestions
+                    domainQuestions
                 }
             } else {
                 val categoryQuestions = repository.getQuestionsByCategory(categoryId).first()

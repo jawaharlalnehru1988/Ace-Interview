@@ -120,32 +120,32 @@ class InterviewRepositoryImpl(
                     id = "spring_boot",
                     name = "Spring Boot",
                     description = "IoC container, dependency injection, autoconfiguration, JPA/Hibernate, and actuators.",
-                    questionCount = 140,
-                    difficulty = "Intermediate",
+                    questionCount = 300,
+                    difficulty = "Beginner to Advanced (100+100+100)",
                     badgeText = "Framework"
                 ),
                 TechnicalCategory(
                     id = "microservices",
                     name = "Microservices",
                     description = "Service discovery, API gateways, circuit breakers, event-driven design, and Saga patterns.",
-                    questionCount = 125,
-                    difficulty = "Advanced",
+                    questionCount = 300,
+                    difficulty = "Beginner to Advanced (100+100+100)",
                     badgeText = "Architecture"
                 ),
                 TechnicalCategory(
                     id = "hld",
                     name = "HLD",
                     description = "High Level Design, scalability, load balancing, caching, CDN, and high availability systems.",
-                    questionCount = 95,
-                    difficulty = "Senior",
+                    questionCount = 300,
+                    difficulty = "Beginner to Advanced (100+100+100)",
                     badgeText = "System Architecture"
                 ),
                 TechnicalCategory(
                     id = "lld",
                     name = "LLD",
                     description = "Low Level Design, SOLID principles, design patterns (Creational, Structural, Behavioral), and UML diagrams.",
-                    questionCount = 110,
-                    difficulty = "Intermediate",
+                    questionCount = 300,
+                    difficulty = "Beginner to Advanced (100+100+100)",
                     badgeText = "Software Design"
                 ),
                 TechnicalCategory(
@@ -166,18 +166,18 @@ class InterviewRepositoryImpl(
                 ),
                 TechnicalCategory(
                     id = "sql",
-                    name = "SQL",
-                    description = "Query optimization, indexing (B-Tree/Hash), ACID transactions, isolation levels, and complex window functions.",
-                    questionCount = 105,
-                    difficulty = "Intermediate",
+                    name = "SQL & Database Design",
+                    description = "Relational modeling, indexing (B-Tree/GIN/Hash), ACID transactions, isolation levels, query optimization, and window functions.",
+                    questionCount = 300,
+                    difficulty = "Beginner to Advanced (100+100+100)",
                     badgeText = "Database"
                 ),
                 TechnicalCategory(
                     id = "angular",
-                    name = "Angular",
-                    description = "Components, RxJS reactive patterns, dependency injection, change detection strategies, and routing.",
-                    questionCount = 85,
-                    difficulty = "Intermediate",
+                    name = "Angular & Frontend",
+                    description = "Components, Signals, RxJS reactive patterns, dependency injection, Zoneless change detection, and routing.",
+                    questionCount = 300,
+                    difficulty = "Beginner to Advanced (100+100+100)",
                     badgeText = "Frontend"
                 ),
                 TechnicalCategory(

@@ -1,9 +1,27 @@
 package com.example.data.local.database
 
 import com.example.data.local.entity.QuestionEntity
+import com.example.data.local.questions.AngularAdvancedQuestions
+import com.example.data.local.questions.AngularBeginnerQuestions
+import com.example.data.local.questions.AngularIntermediateQuestions
+import com.example.data.local.questions.HldAdvancedQuestions
+import com.example.data.local.questions.HldBeginnerQuestions
+import com.example.data.local.questions.HldIntermediateQuestions
 import com.example.data.local.questions.JavaAdvancedQuestions
 import com.example.data.local.questions.JavaBeginnerQuestions
 import com.example.data.local.questions.JavaIntermediateQuestions
+import com.example.data.local.questions.LldAdvancedQuestions
+import com.example.data.local.questions.LldBeginnerQuestions
+import com.example.data.local.questions.LldIntermediateQuestions
+import com.example.data.local.questions.MicroservicesAdvancedQuestions
+import com.example.data.local.questions.MicroservicesBeginnerQuestions
+import com.example.data.local.questions.MicroservicesIntermediateQuestions
+import com.example.data.local.questions.SpringBootAdvancedQuestions
+import com.example.data.local.questions.SpringBootBeginnerQuestions
+import com.example.data.local.questions.SpringBootIntermediateQuestions
+import com.example.data.local.questions.SqlAdvancedQuestions
+import com.example.data.local.questions.SqlBeginnerQuestions
+import com.example.data.local.questions.SqlIntermediateQuestions
 import org.json.JSONArray
 
 object SampleQuestionData {
@@ -17,15 +35,37 @@ object SampleQuestionData {
     /**
      * Complete Question Bank for Software Engineer Technical Interview Preparation.
      * Contains:
-     * - Java Beginner (100 MCQs)
-     * - Java Intermediate (100 MCQs)
-     * - Java Advanced (100 MCQs)
-     * - Core questions for Spring Boot, Microservices, System Design, SQL, and Security.
+     * - Java Beginner, Intermediate, Advanced (300 MCQs)
+     * - Spring Boot Beginner, Intermediate, Advanced (300 MCQs)
+     * - Microservices Beginner, Intermediate, Advanced (300 MCQs)
+     * - HLD Beginner, Intermediate, Advanced (300 MCQs)
+     * - LLD Beginner, Intermediate, Advanced (300 MCQs)
+     * - SQL & Database Design Beginner, Intermediate, Advanced (300 MCQs)
+     * - Angular & Frontend Beginner, Intermediate, Advanced (300 MCQs)
+     * - Core questions for Security and DevOps.
      */
     val sampleQuestions: List<QuestionEntity> by lazy {
         JavaBeginnerQuestions.getAll() +
         JavaIntermediateQuestions.getAll() +
         JavaAdvancedQuestions.getAll() +
+        SpringBootBeginnerQuestions.getAll() +
+        SpringBootIntermediateQuestions.getAll() +
+        SpringBootAdvancedQuestions.getAll() +
+        MicroservicesBeginnerQuestions.getAll() +
+        MicroservicesIntermediateQuestions.getAll() +
+        MicroservicesAdvancedQuestions.getAll() +
+        HldBeginnerQuestions.getAll() +
+        HldIntermediateQuestions.getAll() +
+        HldAdvancedQuestions.getAll() +
+        LldBeginnerQuestions.getAll() +
+        LldIntermediateQuestions.getAll() +
+        LldAdvancedQuestions.getAll() +
+        SqlBeginnerQuestions.getAll() +
+        SqlIntermediateQuestions.getAll() +
+        SqlAdvancedQuestions.getAll() +
+        AngularBeginnerQuestions.getAll() +
+        AngularIntermediateQuestions.getAll() +
+        AngularAdvancedQuestions.getAll() +
         otherDomainQuestions
     }
 
