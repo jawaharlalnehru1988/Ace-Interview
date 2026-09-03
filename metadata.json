@@ -1,0 +1,7 @@
+{
+  "name": "Ace Interview",
+  "description": "Technical interview preparation platform for software engineers covering system design, Java, Spring Boot, DSA, and mock interviews.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
