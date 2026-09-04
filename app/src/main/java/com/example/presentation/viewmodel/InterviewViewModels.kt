@@ -242,7 +242,8 @@ class ProfileViewModel(
 
 // Factory Helper
 class ViewModelFactory(
-    private val repository: InterviewRepository
+    private val repository: InterviewRepository,
+    private val application: android.app.Application? = null
 ) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -257,6 +258,11 @@ class ViewModelFactory(
                 DsaViewModel(repository) as T
             modelClass.isAssignableFrom(InterviewViewModel::class.java) ->
                 InterviewViewModel(repository) as T
+            modelClass.isAssignableFrom(com.example.presentation.interview.MockInterviewViewModel::class.java) ->
+                com.example.presentation.interview.MockInterviewViewModel(
+                    application ?: throw IllegalStateException("Application required for MockInterviewViewModel"),
+                    repository
+                ) as T
             modelClass.isAssignableFrom(ProfileViewModel::class.java) ->
                 ProfileViewModel(repository) as T
             else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")

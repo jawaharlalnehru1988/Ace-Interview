@@ -55,9 +55,9 @@ fun MainScreen(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route ?: ScreenDestination.HOME.route
 
-    val viewModelFactory = ViewModelFactory(container.interviewRepository)
+    val viewModelFactory = ViewModelFactory(container.interviewRepository, container.application)
 
-    val showBottomBar = currentRoute.startsWith("mcq_quiz/").not()
+    val showBottomBar = currentRoute.startsWith("mcq_quiz/").not() && currentRoute.startsWith("mock_interview/").not()
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -189,7 +189,45 @@ fun MainScreen(
 
             composable(ScreenDestination.INTERVIEW.route) {
                 val interviewViewModel: InterviewViewModel = viewModel(factory = viewModelFactory)
-                InterviewScreen(viewModel = interviewViewModel)
+                InterviewScreen(
+                    viewModel = interviewViewModel,
+                    onStartSession = { trackId, trackTitle ->
+                        val encodedTitle = try {
+                            java.net.URLEncoder.encode(trackTitle, "UTF-8")
+                        } catch (_: Exception) {
+                            trackTitle
+                        }
+                        navController.navigate("mock_interview/$trackId/$encodedTitle")
+                    }
+                )
+            }
+
+            composable(
+                route = "mock_interview/{trackId}/{trackTitle}",
+                arguments = listOf(
+                    navArgument("trackId") { type = NavType.StringType },
+                    navArgument("trackTitle") { type = NavType.StringType }
+                )
+            ) { backStackEntry ->
+                val trackId = backStackEntry.arguments?.getString("trackId") ?: "java_interview"
+                val rawTrackTitle = backStackEntry.arguments?.getString("trackTitle") ?: "Mock Interview"
+                val trackTitle = try {
+                    java.net.URLDecoder.decode(rawTrackTitle, "UTF-8")
+                } catch (_: Exception) {
+                    rawTrackTitle
+                }
+
+                val mockViewModel: com.example.presentation.interview.MockInterviewViewModel = viewModel(factory = viewModelFactory)
+                LaunchedEffect(trackId) {
+                    mockViewModel.loadSession(trackId, trackTitle)
+                }
+
+                com.example.presentation.interview.MockInterviewSessionScreen(
+                    viewModel = mockViewModel,
+                    onNavigateBack = {
+                        navController.popBackStack()
+                    }
+                )
             }
 
             composable(ScreenDestination.PROFILE.route) {

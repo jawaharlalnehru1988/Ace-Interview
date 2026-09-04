@@ -556,6 +556,33 @@ class InterviewRepositoryImpl(
                     description = "Design mission-critical systems like distributed message queues, video streaming pipelines, and rate limiting engines."
                 ),
                 InterviewTrack(
+                    id = "devops_interview",
+                    title = "DevOps Interview",
+                    roleLevel = "Senior / SRE",
+                    durationMinutes = 50,
+                    questionCount = 7,
+                    format = "Containerization, K8s & GitOps",
+                    description = "Evaluates Linux cgroups/namespaces, Docker layer caching, Kubernetes pod lifecycle, CrashLoopBackOff troubleshooting, and CI/CD pipelines."
+                ),
+                InterviewTrack(
+                    id = "sql_interview",
+                    title = "SQL & Database Interview",
+                    roleLevel = "Mid-to-Senior",
+                    durationMinutes = 45,
+                    questionCount = 4,
+                    format = "Indexing, ACID & Query Optimization",
+                    description = "Deep dive into B-Tree vs Hash indexing, Covering indexes, Clustered index lookups, MVCC, and SQL transaction isolation levels."
+                ),
+                InterviewTrack(
+                    id = "security_interview",
+                    title = "Security & AppSec Interview",
+                    roleLevel = "Senior AppSec",
+                    durationMinutes = 45,
+                    questionCount = 4,
+                    format = "OAuth 2.0, JWT & OWASP Defenses",
+                    description = "Covers OAuth 2.0 PKCE, JWT stateless token revocation, SQL Injection mechanics, and CSRF SameSite cookie mitigation."
+                ),
+                InterviewTrack(
                     id = "senior_engineer_interview",
                     title = "Senior Engineer Interview",
                     roleLevel = "Lead / Staff",
@@ -651,5 +678,60 @@ class InterviewRepositoryImpl(
             )
         )
         _lastAttemptedConceptId.value = categoryId
+    }
+
+    override fun getInterviewQuestionsForTrack(trackId: String): Flow<List<com.example.domain.model.InterviewQuestion>> = flow {
+        emit(com.example.data.local.interview.InterviewQuestionCatalog.getQuestionsForTrack(trackId))
+    }
+
+    override fun getConceptGroupsForTrack(trackId: String): Flow<List<com.example.domain.model.ConceptInterviewGroup>> = flow {
+        emit(com.example.data.local.interview.InterviewQuestionCatalog.getConceptGroupsForTrack(trackId))
+    }
+
+    override fun getAudioAnswersForTrack(trackId: String): Flow<Map<String, com.example.domain.model.QuestionAudioAnswer>> {
+        return database.interviewDao().getResponsesForTrack(trackId).map { list ->
+            list.filter { it.questionId.isNotBlank() && !it.audioFilePath.isNullOrBlank() }
+                .associate { entity ->
+                    entity.questionId to com.example.domain.model.QuestionAudioAnswer(
+                        questionId = entity.questionId,
+                        audioFilePath = entity.audioFilePath,
+                        audioDurationMs = entity.audioDurationMs,
+                        recordedAt = entity.recordedAt
+                    )
+                }
+        }
+    }
+
+    override suspend fun saveAudioAnswer(
+        questionId: String,
+        trackId: String,
+        conceptName: String,
+        questionText: String,
+        shortAnswer: String,
+        audioFilePath: String,
+        durationMs: Long
+    ) {
+        database.interviewDao().deleteResponsesForQuestion(questionId)
+        database.interviewDao().insertResponse(
+            com.example.data.local.entity.InterviewResponseEntity(
+                sessionId = 0L,
+                trackId = trackId,
+                questionId = questionId,
+                questionNumber = 0,
+                questionText = questionText,
+                responseText = "",
+                aiFeedback = "",
+                score = 0,
+                audioFilePath = audioFilePath,
+                audioDurationMs = durationMs,
+                conceptName = conceptName,
+                shortAnswer = shortAnswer,
+                recordedAt = System.currentTimeMillis()
+            )
+        )
+    }
+
+    override suspend fun deleteAudioAnswer(questionId: String) {
+        database.interviewDao().deleteResponsesForQuestion(questionId)
     }
 }

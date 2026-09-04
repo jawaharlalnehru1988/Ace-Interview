@@ -29,4 +29,19 @@ interface InterviewRepository {
     suspend fun recordQuizSession(categoryId: String, totalQuestions: Int, correctCount: Int, scorePercentage: Int)
     fun getLastAttemptedConceptId(): Flow<String?>
     fun setLastAttemptedConcept(conceptId: String)
+
+    // Interview Mock Sessions & Audio Answers
+    fun getInterviewQuestionsForTrack(trackId: String): Flow<List<com.example.domain.model.InterviewQuestion>>
+    fun getConceptGroupsForTrack(trackId: String): Flow<List<com.example.domain.model.ConceptInterviewGroup>>
+    fun getAudioAnswersForTrack(trackId: String): Flow<Map<String, com.example.domain.model.QuestionAudioAnswer>>
+    suspend fun saveAudioAnswer(
+        questionId: String,
+        trackId: String,
+        conceptName: String,
+        questionText: String,
+        shortAnswer: String,
+        audioFilePath: String,
+        durationMs: Long
+    )
+    suspend fun deleteAudioAnswer(questionId: String)
 }

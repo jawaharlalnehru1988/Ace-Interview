@@ -138,10 +138,17 @@ data class InterviewSessionEntity(
 @Entity(tableName = "interview_responses")
 data class InterviewResponseEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val sessionId: Long,
-    val questionNumber: Int,
-    val questionText: String,
-    val responseText: String,
-    val aiFeedback: String,
-    val score: Int
+    val sessionId: Long = 0L,
+    val trackId: String = "",
+    val questionId: String = "",
+    val questionNumber: Int = 0,
+    val questionText: String = "",
+    val responseText: String = "",
+    val aiFeedback: String = "",
+    val score: Int = 0,
+    val audioFilePath: String? = null,
+    val audioDurationMs: Long = 0L,
+    val conceptName: String = "",
+    val shortAnswer: String = "",
+    val recordedAt: Long = System.currentTimeMillis()
 )

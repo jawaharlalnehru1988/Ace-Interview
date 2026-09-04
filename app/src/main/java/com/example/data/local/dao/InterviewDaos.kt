@@ -134,6 +134,15 @@ interface InterviewDao {
     @Query("SELECT * FROM interview_responses WHERE sessionId = :sessionId ORDER BY questionNumber ASC")
     fun getResponsesForSession(sessionId: Long): Flow<List<InterviewResponseEntity>>
 
+    @Query("SELECT * FROM interview_responses WHERE trackId = :trackId ORDER BY recordedAt DESC")
+    fun getResponsesForTrack(trackId: String): Flow<List<InterviewResponseEntity>>
+
+    @Query("SELECT * FROM interview_responses WHERE questionId = :questionId ORDER BY recordedAt DESC LIMIT 1")
+    suspend fun getLatestResponseForQuestion(questionId: String): InterviewResponseEntity?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertResponse(response: InterviewResponseEntity): Long
+
+    @Query("DELETE FROM interview_responses WHERE questionId = :questionId")
+    suspend fun deleteResponsesForQuestion(questionId: String)
 }

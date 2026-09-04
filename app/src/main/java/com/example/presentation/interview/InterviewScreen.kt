@@ -60,6 +60,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun InterviewScreen(
     viewModel: InterviewViewModel,
+    onStartSession: (trackId: String, trackTitle: String) -> Unit = { _, _ -> },
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -78,11 +79,7 @@ fun InterviewScreen(
                     onFilterSelected = { viewModel.setFilter(it) },
                     onTrackClick = { track ->
                         viewModel.selectTrack(track.id)
-                        scope.launch {
-                            snackbarHostState.showSnackbar(
-                                "${track.title}: Interactive mock interview session will open in future iterations"
-                            )
-                        }
+                        onStartSession(track.id, track.title)
                     }
                 )
             }
