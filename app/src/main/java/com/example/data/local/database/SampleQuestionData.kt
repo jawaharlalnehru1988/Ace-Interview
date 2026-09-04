@@ -16,6 +16,9 @@ import com.example.data.local.questions.LldIntermediateQuestions
 import com.example.data.local.questions.MicroservicesAdvancedQuestions
 import com.example.data.local.questions.MicroservicesBeginnerQuestions
 import com.example.data.local.questions.MicroservicesIntermediateQuestions
+import com.example.data.local.questions.SecurityAdvancedQuestions
+import com.example.data.local.questions.SecurityBeginnerQuestions
+import com.example.data.local.questions.SecurityIntermediateQuestions
 import com.example.data.local.questions.SpringBootAdvancedQuestions
 import com.example.data.local.questions.SpringBootBeginnerQuestions
 import com.example.data.local.questions.SpringBootIntermediateQuestions
@@ -42,7 +45,8 @@ object SampleQuestionData {
      * - LLD Beginner, Intermediate, Advanced (300 MCQs)
      * - SQL & Database Design Beginner, Intermediate, Advanced (300 MCQs)
      * - Angular & Frontend Beginner, Intermediate, Advanced (300 MCQs)
-     * - Core questions for Security and DevOps.
+     * - Security & AppSec Beginner, Intermediate, Advanced (300 MCQs)
+     * - Core questions for DevOps.
      */
     val sampleQuestions: List<QuestionEntity> by lazy {
         JavaBeginnerQuestions.getAll() +
@@ -66,6 +70,9 @@ object SampleQuestionData {
         AngularBeginnerQuestions.getAll() +
         AngularIntermediateQuestions.getAll() +
         AngularAdvancedQuestions.getAll() +
+        SecurityBeginnerQuestions.getAll() +
+        SecurityIntermediateQuestions.getAll() +
+        SecurityAdvancedQuestions.getAll() +
         otherDomainQuestions
     }
 

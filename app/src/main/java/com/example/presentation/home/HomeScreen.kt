@@ -107,7 +107,7 @@ fun HomeContent(
             Spacer(modifier = Modifier.height(8.dp))
             ScreenHeader(
                 title = "Ace Interview",
-                subtitle = "Iteration 1.0 • Foundation"
+                subtitle = "Real-Time Interview Readiness"
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -140,7 +140,7 @@ fun HomeContent(
                         }
                     }
 
-                    // Minimal User Avatar Chip
+                    // User Profile Chip
                     Surface(
                         shape = CircleShape,
                         color = MaterialTheme.colorScheme.primary,
@@ -148,7 +148,7 @@ fun HomeContent(
                     ) {
                         Box(contentAlignment = Alignment.Center) {
                             Text(
-                                text = "JD",
+                                text = "AI",
                                 style = MaterialTheme.typography.labelSmall.copy(
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 12.sp
@@ -218,7 +218,7 @@ fun HomeContent(
                     MetricStatCard(
                         title = "Target",
                         value = "L5 SWE",
-                        subtitle = "Meta/Uber",
+                        subtitle = "Backend & FullStack",
                         icon = Icons.Filled.Psychology,
                         iconTint = MaterialTheme.colorScheme.secondary,
                         modifier = Modifier
@@ -259,7 +259,7 @@ fun HomeContent(
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
-                            text = "Microservices & Distributed Systems",
+                            text = if (dashboard.questionsCompleted == 0) "Java & Spring Boot Foundations" else "Continuous Technical Drills",
                             style = MaterialTheme.typography.titleMedium.copy(
                                 fontWeight = FontWeight.SemiBold
                             ),
@@ -359,7 +359,7 @@ fun InterviewReadinessCard(
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.4f))
                 ) {
                     Text(
-                        text = "L5 READY",
+                        text = if (readinessScore >= 80) "L5 READY" else if (readinessScore >= 40) "IN PROGRESS" else "BASELINE",
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
                         style = MaterialTheme.typography.labelSmall.copy(
                             fontWeight = FontWeight.SemiBold,
@@ -400,7 +400,7 @@ fun InterviewReadinessCard(
                     }
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        text = "Benchmark: Meta / Amazon / Uber L5 Software Engineer",
+                        text = if (questionsCompleted == 0) "Complete MCQs to calibrate your benchmark score" else "Target: L5 Software Engineer ($readinessLevel)",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -418,10 +418,10 @@ fun InterviewReadinessCard(
                         trackColor = MaterialTheme.colorScheme.surfaceVariant
                     )
                     Text(
-                        text = readinessLevel,
-                        style = MaterialTheme.typography.labelSmall.copy(
+                        text = "$readinessScore%",
+                        style = MaterialTheme.typography.titleSmall.copy(
                             fontWeight = FontWeight.Bold,
-                            fontSize = 11.sp
+                            fontSize = 15.sp
                         ),
                         color = MaterialTheme.colorScheme.onSurface
                     )
@@ -526,7 +526,9 @@ fun WeakAreaItem(
     modifier: Modifier = Modifier
 ) {
     Surface(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onReviewClick() },
         shape = RoundedCornerShape(16.dp),
         color = MaterialTheme.colorScheme.surface,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.35f))

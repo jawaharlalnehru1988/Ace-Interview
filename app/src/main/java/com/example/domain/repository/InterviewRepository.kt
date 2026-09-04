@@ -1,5 +1,6 @@
 package com.example.domain.repository
 
+import com.example.domain.model.DsaProblem
 import com.example.domain.model.DsaTopic
 import com.example.domain.model.InterviewTrack
 import com.example.domain.model.Question
@@ -14,6 +15,10 @@ interface InterviewRepository {
     fun getDsaTopics(): Flow<List<DsaTopic>>
     fun getInterviewTracks(): Flow<List<InterviewTrack>>
     fun getUserProfile(): Flow<UserProfile>
+
+    // DSA problems
+    fun getDsaProblems(topicId: String): Flow<List<DsaProblem>>
+    suspend fun toggleDsaProblemSolved(problemId: String)
 
     // Question bank & Room integration
     fun getAllQuestions(): Flow<List<Question>>

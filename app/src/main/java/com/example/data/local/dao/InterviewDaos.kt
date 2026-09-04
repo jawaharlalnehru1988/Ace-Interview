@@ -97,6 +97,9 @@ interface DsaDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAttempt(attempt: DsaAttemptEntity): Long
+
+    @Query("DELETE FROM dsa_attempts WHERE problemId = :problemId")
+    suspend fun deleteAttemptsByProblemId(problemId: String)
 }
 
 @Dao

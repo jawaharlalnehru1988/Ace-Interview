@@ -3,6 +3,7 @@ package com.example.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.domain.model.DsaProblem
 import com.example.domain.model.DsaTopic
 import com.example.domain.model.InterviewTrack
 import com.example.domain.model.TechnicalCategory
@@ -14,8 +15,11 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 // --- Home ViewModel ---
 sealed interface HomeUiState {
@@ -26,12 +30,12 @@ sealed interface HomeUiState {
 class HomeViewModel(
     private val repository: InterviewRepository
 ) : ViewModel() {
-    private val _completedTrainings = MutableStateFlow<Set<String>>(setOf("tt-3"))
+    private val _completedTrainings = MutableStateFlow<Set<String>>(emptySet())
 
     val uiState: StateFlow<HomeUiState> = repository.getUserDashboard()
         .combine(_completedTrainings) { dashboard, completedSet ->
             val updatedTrainings = dashboard.todayTrainings.map { training ->
-                training.copy(isCompleted = completedSet.contains(training.id))
+                training.copy(isCompleted = training.isCompleted || completedSet.contains(training.id))
             }
             HomeUiState.Success(dashboard.copy(todayTrainings = updatedTrainings))
         }.stateIn(
@@ -107,7 +111,8 @@ sealed interface DsaUiState {
     data object Loading : DsaUiState
     data class Success(
         val topics: List<DsaTopic>,
-        val selectedTopicId: String? = null
+        val selectedTopicId: String? = null,
+        val selectedTopicProblems: List<DsaProblem> = emptyList()
     ) : DsaUiState
 }
 
@@ -118,9 +123,17 @@ class DsaViewModel(
 
     val uiState: StateFlow<DsaUiState> = combine(
         repository.getDsaTopics(),
+        _selectedTopicId.flatMapLatest { topicId ->
+            if (topicId != null) repository.getDsaProblems(topicId)
+            else flowOf(emptyList())
+        },
         _selectedTopicId
-    ) { topics, selectedId ->
-        DsaUiState.Success(topics = topics, selectedTopicId = selectedId)
+    ) { topics, problems, selectedId ->
+        DsaUiState.Success(
+            topics = topics,
+            selectedTopicId = selectedId,
+            selectedTopicProblems = problems
+        )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
@@ -128,8 +141,12 @@ class DsaViewModel(
     )
 
     fun selectTopic(topicId: String?) {
-        _selectedTopicId.update { current ->
-            if (current == topicId) null else topicId
+        _selectedTopicId.value = topicId
+    }
+
+    fun toggleProblemSolved(problemId: String) {
+        viewModelScope.launch {
+            repository.toggleDsaProblemSolved(problemId)
         }
     }
 }

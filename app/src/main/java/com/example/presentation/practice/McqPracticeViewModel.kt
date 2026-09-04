@@ -60,7 +60,7 @@ class McqPracticeViewModel(
             _sessionState.value = McqSessionState.Loading
             val questions = if (categoryId == "all" || categoryId.isBlank()) {
                 repository.getAllQuestions().first()
-            } else if (categoryId.startsWith("java_") || categoryId.startsWith("spring_") || categoryId.startsWith("ms_") || categoryId.startsWith("hld_") || categoryId.startsWith("lld_") || categoryId.startsWith("sql_") || categoryId.startsWith("ng_")) {
+            } else if (categoryId.startsWith("java_") || categoryId.startsWith("spring_") || categoryId.startsWith("ms_") || categoryId.startsWith("hld_") || categoryId.startsWith("lld_") || categoryId.startsWith("sql_") || categoryId.startsWith("ng_") || categoryId.startsWith("sec_")) {
                 val targetDifficulty = when {
                     categoryId.contains("beginner", ignoreCase = true) -> "Beginner"
                     categoryId.contains("intermediate", ignoreCase = true) -> "Intermediate"
@@ -74,7 +74,8 @@ class McqPracticeViewModel(
                     categoryId.startsWith("hld_") -> "hld"
                     categoryId.startsWith("lld_") -> "lld"
                     categoryId.startsWith("sql_") -> "sql"
-                    else -> "angular"
+                    categoryId.startsWith("ng_") -> "angular"
+                    else -> "security"
                 }
                 val domainQuestions = repository.getQuestionsByCategory(domainCategory).first()
                 if (targetDifficulty != null) {

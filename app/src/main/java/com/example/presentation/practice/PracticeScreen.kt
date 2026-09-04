@@ -277,8 +277,8 @@ fun CategoryCardItem(
                 )
             }
 
-            // Sub-levels for multi-tier technical stacks (e.g. Java, Spring Boot, Microservices, HLD, LLD, SQL, Angular: Beginner, Intermediate, Advanced)
-            if ((category.id == "java" || category.id == "spring_boot" || category.id == "microservices" || category.id == "hld" || category.id == "lld" || category.id == "sql" || category.id == "angular") && onSubLevelClick != null) {
+            // Sub-levels for multi-tier technical stacks (e.g. Java, Spring Boot, Microservices, HLD, LLD, SQL, Angular, Security: Beginner, Intermediate, Advanced)
+            if ((category.id == "java" || category.id == "spring_boot" || category.id == "microservices" || category.id == "hld" || category.id == "lld" || category.id == "sql" || category.id == "angular" || category.id == "security") && onSubLevelClick != null) {
                 val prefix = when (category.id) {
                     "java" -> "java"
                     "spring_boot" -> "spring"
@@ -286,7 +286,8 @@ fun CategoryCardItem(
                     "hld" -> "hld"
                     "lld" -> "lld"
                     "sql" -> "sql"
-                    else -> "ng"
+                    "angular" -> "ng"
+                    else -> "sec"
                 }
                 val titlePrefix = when (category.id) {
                     "java" -> "Java"
@@ -295,7 +296,8 @@ fun CategoryCardItem(
                     "hld" -> "HLD"
                     "lld" -> "LLD"
                     "sql" -> "SQL"
-                    else -> "Angular"
+                    "angular" -> "Angular"
+                    else -> "Security"
                 }
                 Spacer(modifier = Modifier.height(12.dp))
                 Row(

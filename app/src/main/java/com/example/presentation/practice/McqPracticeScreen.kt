@@ -44,9 +44,19 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import android.widget.Toast
+import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.AnnotatedString
+import kotlinx.coroutines.delay
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
@@ -233,6 +243,17 @@ private fun ActiveMcqView(
         ) {
             // Question Title & Prompt Card
             item {
+                val context = LocalContext.current
+                val clipboardManager = LocalClipboardManager.current
+                var isCopied by remember(question.id) { mutableStateOf(false) }
+
+                LaunchedEffect(isCopied) {
+                    if (isCopied) {
+                        delay(2000)
+                        isCopied = false
+                    }
+                }
+
                 Surface(
                     shape = RoundedCornerShape(16.dp),
                     color = MaterialTheme.colorScheme.surface,
@@ -240,14 +261,77 @@ private fun ActiveMcqView(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Column(modifier = Modifier.padding(18.dp)) {
-                        Text(
-                            text = question.title,
-                            style = MaterialTheme.typography.titleMedium.copy(
-                                fontWeight = FontWeight.Bold,
-                                letterSpacing = 0.2.sp
-                            ),
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.Top
+                        ) {
+                            Text(
+                                text = question.title,
+                                style = MaterialTheme.typography.titleMedium.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    letterSpacing = 0.2.sp
+                                ),
+                                color = MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier.weight(1f)
+                            )
+                            Spacer(modifier = Modifier.width(10.dp))
+
+                            // Copy Question Button Chip
+                            Surface(
+                                shape = RoundedCornerShape(8.dp),
+                                color = if (isCopied) SuccessGreen.copy(alpha = 0.15f) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
+                                border = BorderStroke(
+                                    0.5.dp,
+                                    if (isCopied) SuccessGreen else MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
+                                ),
+                                modifier = Modifier
+                                    .clickable {
+                                        val textToCopy = buildString {
+                                            appendLine("📌 ${question.title}")
+                                            appendLine()
+                                            appendLine(question.prompt)
+                                            appendLine()
+                                            question.options.forEachIndexed { idx, opt ->
+                                                val letter = ('A' + idx)
+                                                appendLine("$letter) $opt")
+                                            }
+                                            if (activeState.isSubmitted) {
+                                                val correctLetter = ('A' + question.correctAnswerIndex)
+                                                appendLine()
+                                                appendLine("✅ Correct Answer: $correctLetter")
+                                                appendLine()
+                                                appendLine("💡 Explanation: ${question.explanation}")
+                                            }
+                                        }
+                                        clipboardManager.setText(AnnotatedString(textToCopy))
+                                        isCopied = true
+                                        Toast.makeText(context, "Question copied to clipboard!", Toast.LENGTH_SHORT).show()
+                                    }
+                                    .testTag("copy_question_button")
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = if (isCopied) Icons.Filled.Check else Icons.Filled.ContentCopy,
+                                        contentDescription = "Copy Question",
+                                        tint = if (isCopied) SuccessGreen else MaterialTheme.colorScheme.onSurfaceVariant,
+                                        modifier = Modifier.size(14.dp)
+                                    )
+                                    Text(
+                                        text = if (isCopied) "Copied" else "Copy",
+                                        style = MaterialTheme.typography.labelSmall.copy(
+                                            fontWeight = FontWeight.SemiBold,
+                                            fontSize = 11.sp
+                                        ),
+                                        color = if (isCopied) SuccessGreen else MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                            }
+                        }
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             text = question.prompt,

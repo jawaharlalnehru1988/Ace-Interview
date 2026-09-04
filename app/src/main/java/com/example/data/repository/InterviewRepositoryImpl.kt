@@ -2,9 +2,12 @@ package com.example.data.repository
 
 import com.example.data.local.database.AceInterviewDatabase
 import com.example.data.local.database.SampleQuestionData
+import com.example.data.local.dsa.DsaProblemData
+import com.example.data.local.entity.DsaAttemptEntity
 import com.example.data.local.entity.QuestionAttemptEntity
 import com.example.data.local.entity.QuizSessionEntity
 import com.example.data.local.entity.toDomain
+import com.example.domain.model.DsaProblem
 import com.example.domain.model.DsaTopic
 import com.example.domain.model.InterviewTrack
 import com.example.domain.model.Question
@@ -17,6 +20,8 @@ import com.example.domain.repository.InterviewRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
@@ -42,67 +47,172 @@ class InterviewRepositoryImpl(
         }
     }
 
-    override fun getUserDashboard(): Flow<UserDashboard> = flow {
-        // Structured dashboard data ready to bind to database in subsequent iterations
-        emit(
-            UserDashboard(
-                readinessScore = 68,
-                readinessLevel = "Mid-to-Senior Ready",
-                questionsCompleted = 142,
-                targetQuestions = 500,
-                currentStreakDays = 7,
-                accuracyPercentage = 84,
-                weakAreas = listOf(
+    private fun calculateStreakDays(attempts: List<QuestionAttemptEntity>): Int {
+        if (attempts.isEmpty()) return 0
+        val oneDayMs = 24 * 60 * 60 * 1000L
+        val now = System.currentTimeMillis()
+        val attemptDays = attempts.map { it.timestamp / oneDayMs }.toSet().sortedDescending()
+        val todayDay = now / oneDayMs
+        if (attemptDays.isEmpty() || (todayDay - attemptDays.first()) > 1) {
+            return if (attemptDays.contains(todayDay)) 1 else 0
+        }
+        var streak = 0
+        var expectedDay = if (attemptDays.contains(todayDay)) todayDay else todayDay - 1
+        for (day in attemptDays) {
+            if (day == expectedDay) {
+                streak++
+                expectedDay--
+            } else if (day < expectedDay) {
+                break
+            }
+        }
+        return streak.coerceAtLeast(1)
+    }
+
+    override fun getUserDashboard(): Flow<UserDashboard> {
+        return combine(
+            database.quizDao().getAllAttempts().onStart { emit(emptyList()) },
+            database.questionDao().getAllQuestions().onStart { ensureSampleQuestionsSeeded(); emit(emptyList()) }
+        ) { attempts, allQuestions ->
+            val questionMap = allQuestions.associateBy { it.id }
+            val distinctAnsweredIds = attempts.map { it.questionId }.toSet()
+            val questionsCompleted = distinctAnsweredIds.size
+            val totalAttempts = attempts.size
+            val correctAttempts = attempts.count { it.isCorrect }
+
+            val accuracyPercentage = if (totalAttempts > 0) {
+                ((correctAttempts.toDouble() / totalAttempts) * 100).toInt()
+            } else {
+                0
+            }
+
+            val currentStreakDays = calculateStreakDays(attempts)
+            val targetQuestions = 300 // Foundation milestone
+
+            // Dynamic readiness score (0 to 100)
+            val progressScore = (questionsCompleted.toDouble() / targetQuestions).coerceAtMost(1.0) * 40.0
+            val accuracyScore = (accuracyPercentage.toDouble() / 100.0) * 50.0
+            val streakScore = (currentStreakDays.coerceAtMost(7).toDouble() / 7.0) * 10.0
+
+            val readinessScore = if (questionsCompleted > 0) {
+                (progressScore + accuracyScore + streakScore).toInt().coerceIn(1, 100)
+            } else {
+                0
+            }
+
+            val readinessLevel = when {
+                readinessScore >= 85 -> "Senior Ready"
+                readinessScore >= 65 -> "Mid-to-Senior Ready"
+                readinessScore >= 40 -> "Intermediate Ready"
+                readinessScore > 0 -> "In Progress"
+                else -> "Get Started"
+            }
+
+            // Real Weak Areas: dynamically evaluated from user's mistakes
+            val categoryAttempts = attempts.groupBy { questionMap[it.questionId]?.categoryId ?: "general" }
+            val computedWeakAreas = categoryAttempts.mapNotNull { (catId, catAttempts) ->
+                val catTotal = catAttempts.size
+                val catCorrect = catAttempts.count { it.isCorrect }
+                val catAccuracy = (catCorrect * 100) / catTotal
+                if (catAccuracy < 75 && catTotal >= 1) {
+                    val catName = when (catId) {
+                        "java" -> "Java Core"
+                        "spring_boot" -> "Spring Boot"
+                        "microservices" -> "Microservices"
+                        "hld" -> "High Level Design"
+                        "lld" -> "Low Level Design"
+                        "sql" -> "SQL & Databases"
+                        "angular" -> "Angular & Frontend"
+                        "security" -> "Security & AppSec"
+                        else -> catId.replaceFirstChar { it.uppercase() }
+                    }
                     WeakArea(
-                        id = "wa-1",
-                        topic = "System Design",
-                        subtopic = "Database Sharding & Replication",
-                        accuracy = 42,
-                        recommendation = "Review Master-Slave vs Multi-Leader replication trade-offs and consistent hashing"
-                    ),
-                    WeakArea(
-                        id = "wa-2",
-                        topic = "Java",
-                        subtopic = "Concurrency & Volatile Memory Model",
-                        accuracy = 55,
-                        recommendation = "Practice synchronized blocks, CAS operations, and CountDownLatch patterns"
-                    ),
-                    WeakArea(
-                        id = "wa-3",
-                        topic = "Spring Boot",
-                        subtopic = "Distributed Transaction Management",
-                        accuracy = 60,
-                        recommendation = "Focus on Saga orchestrator pattern vs 2PC protocol in microservices"
+                        id = "wa-$catId",
+                        topic = catName,
+                        subtopic = "Diagnostic: $catAccuracy% accuracy ($catCorrect/$catTotal correct)",
+                        accuracy = catAccuracy,
+                        recommendation = "Review missed questions in $catName practice sessions."
                     )
-                ),
-                todayTrainings = listOf(
-                    TodayTraining(
-                        id = "tt-1",
-                        title = "Microservices Resiliency Drills",
-                        category = "Microservices",
-                        questionsCount = 10,
-                        estimatedMinutes = 12,
-                        isCompleted = false
-                    ),
-                    TodayTraining(
-                        id = "tt-2",
-                        title = "System Design Scenario: Rate Limiter",
-                        category = "System Design",
-                        questionsCount = 5,
-                        estimatedMinutes = 15,
-                        isCompleted = false
-                    ),
-                    TodayTraining(
-                        id = "tt-3",
-                        title = "Java Virtual Threads & Garbage Collection",
-                        category = "Java",
-                        questionsCount = 8,
-                        estimatedMinutes = 10,
-                        isCompleted = true
+                } else null
+            }.sortedBy { it.accuracy }
+
+            val weakAreas = if (computedWeakAreas.isNotEmpty()) {
+                computedWeakAreas.take(3)
+            } else if (questionsCompleted > 0) {
+                listOf(
+                    WeakArea(
+                        id = "wa-strong",
+                        topic = "Consistent Performance",
+                        subtopic = "High accuracy across attempted categories",
+                        accuracy = accuracyPercentage,
+                        recommendation = "Keep taking advanced drills to discover subtle edge cases."
                     )
                 )
+            } else {
+                listOf(
+                    WeakArea(
+                        id = "wa-diag-1",
+                        topic = "Java & Spring Boot",
+                        subtopic = "Core Backend Architecture",
+                        accuracy = 0,
+                        recommendation = "Practice your first set of MCQs to diagnose personal weak areas."
+                    ),
+                    WeakArea(
+                        id = "wa-diag-2",
+                        topic = "System Design (HLD/LLD)",
+                        subtopic = "Architecture & Patterns",
+                        accuracy = 0,
+                        recommendation = "Take a quick design drill to establish your baseline score."
+                    ),
+                    WeakArea(
+                        id = "wa-diag-3",
+                        topic = "SQL & Security",
+                        subtopic = "Data & AppSec",
+                        accuracy = 0,
+                        recommendation = "Test your knowledge on indexing, transactions, and OAuth 2.0."
+                    )
+                )
+            }
+
+            // Real Today's Training: dynamically checks if user practiced in those categories
+            val todayTrainings = listOf(
+                TodayTraining(
+                    id = "tt-java",
+                    title = "Java Core & Concurrency Drills",
+                    category = "Java",
+                    questionsCount = 10,
+                    estimatedMinutes = 10,
+                    isCompleted = attempts.any { questionMap[it.questionId]?.categoryId == "java" }
+                ),
+                TodayTraining(
+                    id = "tt-spring-ms",
+                    title = "Spring Boot & Microservices Review",
+                    category = "Spring Boot",
+                    questionsCount = 10,
+                    estimatedMinutes = 12,
+                    isCompleted = attempts.any { questionMap[it.questionId]?.categoryId in listOf("spring_boot", "microservices") }
+                ),
+                TodayTraining(
+                    id = "tt-sql-sec",
+                    title = "SQL Design & Security Drills",
+                    category = "Security",
+                    questionsCount = 10,
+                    estimatedMinutes = 10,
+                    isCompleted = attempts.any { questionMap[it.questionId]?.categoryId in listOf("sql", "security") }
+                )
             )
-        )
+
+            UserDashboard(
+                readinessScore = readinessScore,
+                readinessLevel = readinessLevel,
+                questionsCompleted = questionsCompleted,
+                targetQuestions = targetQuestions,
+                currentStreakDays = currentStreakDays,
+                accuracyPercentage = accuracyPercentage,
+                weakAreas = weakAreas,
+                todayTrainings = todayTrainings
+            )
+        }
     }
 
     override fun getTechnicalCategories(): Flow<List<TechnicalCategory>> = flow {
@@ -158,10 +268,10 @@ class InterviewRepositoryImpl(
                 ),
                 TechnicalCategory(
                     id = "security",
-                    name = "Security",
-                    description = "OAuth 2.0, OpenID Connect, JWT, SQL Injection, CSRF, TLS/mTLS, and API gateway authorization.",
-                    questionCount = 75,
-                    difficulty = "Intermediate",
+                    name = "Security & AppSec",
+                    description = "OAuth 2.0, OpenID Connect, JWT, SQLi, CSRF, TLS 1.3/mTLS, Zero Trust, Post-Quantum Crypto, and container security.",
+                    questionCount = 300,
+                    difficulty = "Beginner to Advanced (100+100+100)",
                     badgeText = "AppSec"
                 ),
                 TechnicalCategory(
@@ -192,15 +302,19 @@ class InterviewRepositoryImpl(
         )
     }
 
-    override fun getDsaTopics(): Flow<List<DsaTopic>> = flow {
-        emit(
+    override fun getDsaTopics(): Flow<List<DsaTopic>> {
+        return database.dsaDao().getAllAttempts().onStart { emit(emptyList()) }.map { attempts ->
+            val solvedProblemIds = attempts.map { it.problemId }.toSet()
+            val allProblems = DsaProblemData.getAll()
+            val solvedByTopic = allProblems.filter { solvedProblemIds.contains(it.id) }.groupBy { it.topic }
+
             listOf(
                 DsaTopic(
                     id = "arrays",
                     name = "Arrays",
                     description = "Two Pointers, Sliding Window, Prefix Sums, and Matrix traversals.",
                     problemsCount = 45,
-                    solvedCount = 6,
+                    solvedCount = solvedByTopic["arrays"]?.size ?: 0,
                     easyCount = 15,
                     mediumCount = 20,
                     hardCount = 10
@@ -210,7 +324,7 @@ class InterviewRepositoryImpl(
                     name = "Strings",
                     description = "Pattern matching, anagrams, palindrome manipulation, and string hashing.",
                     problemsCount = 35,
-                    solvedCount = 4,
+                    solvedCount = solvedByTopic["strings"]?.size ?: 0,
                     easyCount = 12,
                     mediumCount = 16,
                     hardCount = 7
@@ -220,7 +334,7 @@ class InterviewRepositoryImpl(
                     name = "Linked List",
                     description = "Cycle detection (Floyd's algorithm), reversal, fast-slow pointers, and merging.",
                     problemsCount = 25,
-                    solvedCount = 3,
+                    solvedCount = solvedByTopic["linked_list"]?.size ?: 0,
                     easyCount = 8,
                     mediumCount = 12,
                     hardCount = 5
@@ -230,7 +344,7 @@ class InterviewRepositoryImpl(
                     name = "Stack",
                     description = "Monotonic stack, parentheses validation, and expression evaluation.",
                     problemsCount = 28,
-                    solvedCount = 2,
+                    solvedCount = solvedByTopic["stack"]?.size ?: 0,
                     easyCount = 9,
                     mediumCount = 14,
                     hardCount = 5
@@ -240,7 +354,7 @@ class InterviewRepositoryImpl(
                     name = "Queue",
                     description = "Double-ended queues (Deque), BFS orderings, and circular buffers.",
                     problemsCount = 22,
-                    solvedCount = 1,
+                    solvedCount = solvedByTopic["queue"]?.size ?: 0,
                     easyCount = 7,
                     mediumCount = 11,
                     hardCount = 4
@@ -250,7 +364,7 @@ class InterviewRepositoryImpl(
                     name = "Trees",
                     description = "Binary trees, BST properties, Lowest Common Ancestor, and Trie structures.",
                     problemsCount = 40,
-                    solvedCount = 2,
+                    solvedCount = solvedByTopic["trees"]?.size ?: 0,
                     easyCount = 10,
                     mediumCount = 22,
                     hardCount = 8
@@ -260,7 +374,7 @@ class InterviewRepositoryImpl(
                     name = "Graphs",
                     description = "DFS, BFS, Dijkstra shortest path, topological sorting, and Union-Find.",
                     problemsCount = 38,
-                    solvedCount = 0,
+                    solvedCount = solvedByTopic["graphs"]?.size ?: 0,
                     easyCount = 6,
                     mediumCount = 20,
                     hardCount = 12
@@ -270,7 +384,7 @@ class InterviewRepositoryImpl(
                     name = "Recursion",
                     description = "Backtracking, permutation generation, subsets, and divide & conquer paradigms.",
                     problemsCount = 26,
-                    solvedCount = 0,
+                    solvedCount = solvedByTopic["recursion"]?.size ?: 0,
                     easyCount = 5,
                     mediumCount = 15,
                     hardCount = 6
@@ -280,13 +394,40 @@ class InterviewRepositoryImpl(
                     name = "Dynamic Programming",
                     description = "1D & 2D memoization, knapsack variants, longest common subsequence, and interval DP.",
                     problemsCount = 48,
-                    solvedCount = 0,
+                    solvedCount = solvedByTopic["dp"]?.size ?: 0,
                     easyCount = 8,
                     mediumCount = 25,
                     hardCount = 15
                 )
             )
-        )
+        }
+    }
+
+    override fun getDsaProblems(topicId: String): Flow<List<DsaProblem>> {
+        return database.dsaDao().getAllAttempts().onStart { emit(emptyList()) }.map { attempts ->
+            val solvedIds = attempts.map { it.problemId }.toSet()
+            DsaProblemData.getByTopic(topicId).map { problem ->
+                problem.copy(isSolved = solvedIds.contains(problem.id))
+            }
+        }
+    }
+
+    override suspend fun toggleDsaProblemSolved(problemId: String) {
+        val attempts = database.dsaDao().getAllAttempts().firstOrNull() ?: emptyList()
+        val isAlreadySolved = attempts.any { it.problemId == problemId }
+        if (isAlreadySolved) {
+            database.dsaDao().deleteAttemptsByProblemId(problemId)
+        } else {
+            database.dsaDao().insertAttempt(
+                DsaAttemptEntity(
+                    problemId = problemId,
+                    status = "solved",
+                    language = "Java",
+                    notes = "",
+                    attemptedAt = System.currentTimeMillis()
+                )
+            )
+        }
     }
 
     override fun getInterviewTracks(): Flow<List<InterviewTrack>> = flow {
@@ -368,20 +509,31 @@ class InterviewRepositoryImpl(
         )
     }
 
-    override fun getUserProfile(): Flow<UserProfile> = flow {
-        emit(
+    override fun getUserProfile(): Flow<UserProfile> {
+        return database.quizDao().getAllAttempts().onStart { emit(emptyList()) }.map { attempts ->
+            val distinctAnsweredIds = attempts.map { it.questionId }.toSet()
+            val totalAttempts = attempts.size
+            val correctAttempts = attempts.count { it.isCorrect }
+            val accuracy = if (totalAttempts > 0) ((correctAttempts * 100) / totalAttempts) else 0
+            val streak = calculateStreakDays(attempts)
+
             UserProfile(
-                name = "Alex Morgan",
+                name = "Interview Candidate",
                 targetRole = "Senior Software Engineer",
-                targetTimeline = "Target Date: Q4 2026",
-                overallLevel = "Senior Candidate (L5)",
-                questionsAttempted = 142,
-                accuracyPercentage = 84,
-                dsaProblemsSolved = 18,
-                interviewSessions = 3,
-                streakDays = 7
+                targetTimeline = "Target: L5 / Staff Track",
+                overallLevel = when {
+                    distinctAnsweredIds.size >= 100 -> "Senior Candidate (L5)"
+                    distinctAnsweredIds.size >= 30 -> "Intermediate Ready"
+                    distinctAnsweredIds.isNotEmpty() -> "In Progress"
+                    else -> "New Candidate"
+                },
+                questionsAttempted = distinctAnsweredIds.size,
+                accuracyPercentage = accuracy,
+                dsaProblemsSolved = 0,
+                interviewSessions = (distinctAnsweredIds.size / 10),
+                streakDays = streak
             )
-        )
+        }
     }
 
     override fun getAllQuestions(): Flow<List<Question>> {

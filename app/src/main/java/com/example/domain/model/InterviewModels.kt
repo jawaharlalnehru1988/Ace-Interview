@@ -48,6 +48,22 @@ data class DsaTopic(
     val hardCount: Int
 )
 
+data class DsaProblem(
+    val id: String,
+    val topic: String,
+    val title: String,
+    val difficulty: String,
+    val pattern: String,
+    val timeComplexity: String,
+    val spaceComplexity: String,
+    val description: String,
+    val exampleInput: String,
+    val exampleOutput: String,
+    val keyInsight: String,
+    val solutionCode: String,
+    val isSolved: Boolean = false
+)
+
 data class InterviewTrack(
     val id: String,
     val title: String,
