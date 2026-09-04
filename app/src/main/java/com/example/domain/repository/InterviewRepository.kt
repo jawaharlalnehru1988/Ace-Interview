@@ -27,4 +27,6 @@ interface InterviewRepository {
     suspend fun seedSampleQuestions()
     suspend fun recordQuestionAttempt(questionId: String, selectedIndex: Int, isCorrect: Boolean, timeSpentSeconds: Int)
     suspend fun recordQuizSession(categoryId: String, totalQuestions: Int, correctCount: Int, scorePercentage: Int)
+    fun getLastAttemptedConceptId(): Flow<String?>
+    fun setLastAttemptedConcept(conceptId: String)
 }

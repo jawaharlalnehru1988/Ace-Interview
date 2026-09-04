@@ -36,7 +36,7 @@ import kotlinx.coroutines.launch
         InterviewSessionEntity::class,
         InterviewResponseEntity::class
     ],
-    version = 1,
+    version = 4,
     exportSchema = false
 )
 abstract class AceInterviewDatabase : RoomDatabase() {

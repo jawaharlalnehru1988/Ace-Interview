@@ -20,6 +20,8 @@ import com.example.domain.repository.InterviewRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
@@ -215,91 +217,148 @@ class InterviewRepositoryImpl(
         }
     }
 
-    override fun getTechnicalCategories(): Flow<List<TechnicalCategory>> = flow {
-        emit(
-            listOf(
-                TechnicalCategory(
-                    id = "java",
-                    name = "Java",
-                    description = "Core language, JVM internals, multithreading, collections, and modern Java 17-21 features.",
-                    questionCount = 300,
-                    difficulty = "Beginner to Advanced (100+100+100)",
-                    badgeText = "Core Language"
-                ),
-                TechnicalCategory(
-                    id = "spring_boot",
-                    name = "Spring Boot",
-                    description = "IoC container, dependency injection, autoconfiguration, JPA/Hibernate, and actuators.",
-                    questionCount = 300,
-                    difficulty = "Beginner to Advanced (100+100+100)",
-                    badgeText = "Framework"
-                ),
-                TechnicalCategory(
-                    id = "microservices",
-                    name = "Microservices",
-                    description = "Service discovery, API gateways, circuit breakers, event-driven design, and Saga patterns.",
-                    questionCount = 300,
-                    difficulty = "Beginner to Advanced (100+100+100)",
-                    badgeText = "Architecture"
-                ),
-                TechnicalCategory(
-                    id = "hld",
-                    name = "HLD",
-                    description = "High Level Design, scalability, load balancing, caching, CDN, and high availability systems.",
-                    questionCount = 300,
-                    difficulty = "Beginner to Advanced (100+100+100)",
-                    badgeText = "System Architecture"
-                ),
-                TechnicalCategory(
-                    id = "lld",
-                    name = "LLD",
-                    description = "Low Level Design, SOLID principles, design patterns (Creational, Structural, Behavioral), and UML diagrams.",
-                    questionCount = 300,
-                    difficulty = "Beginner to Advanced (100+100+100)",
-                    badgeText = "Software Design"
-                ),
-                TechnicalCategory(
-                    id = "system_design",
-                    name = "System Design",
-                    description = "End-to-end distributed system blueprints: chat systems, URL shorteners, search auto-complete, and payment gateways.",
-                    questionCount = 90,
-                    difficulty = "Senior+",
-                    badgeText = "Distributed Systems"
-                ),
-                TechnicalCategory(
-                    id = "security",
-                    name = "Security & AppSec",
-                    description = "OAuth 2.0, OpenID Connect, JWT, SQLi, CSRF, TLS 1.3/mTLS, Zero Trust, Post-Quantum Crypto, and container security.",
-                    questionCount = 300,
-                    difficulty = "Beginner to Advanced (100+100+100)",
-                    badgeText = "AppSec"
-                ),
-                TechnicalCategory(
-                    id = "sql",
-                    name = "SQL & Database Design",
-                    description = "Relational modeling, indexing (B-Tree/GIN/Hash), ACID transactions, isolation levels, query optimization, and window functions.",
-                    questionCount = 300,
-                    difficulty = "Beginner to Advanced (100+100+100)",
-                    badgeText = "Database"
-                ),
-                TechnicalCategory(
-                    id = "angular",
-                    name = "Angular & Frontend",
-                    description = "Components, Signals, RxJS reactive patterns, dependency injection, Zoneless change detection, and routing.",
-                    questionCount = 300,
-                    difficulty = "Beginner to Advanced (100+100+100)",
-                    badgeText = "Frontend"
-                ),
-                TechnicalCategory(
-                    id = "devops",
-                    name = "DevOps",
-                    description = "Docker containerization, Kubernetes orchestration, CI/CD pipelines, Terraform, and Prometheus monitoring.",
-                    questionCount = 90,
-                    difficulty = "Intermediate to Advanced",
-                    badgeText = "Infrastructure"
-                )
+    private val _lastAttemptedConceptId = kotlinx.coroutines.flow.MutableStateFlow<String?>(null)
+
+    override fun getLastAttemptedConceptId(): Flow<String?> = _lastAttemptedConceptId.asStateFlow()
+
+    override fun setLastAttemptedConcept(conceptId: String) {
+        _lastAttemptedConceptId.value = conceptId
+    }
+
+    override fun getTechnicalCategories(): Flow<List<TechnicalCategory>> {
+        val baseCategories = listOf(
+            TechnicalCategory(
+                id = "java",
+                name = "Java",
+                description = "Core language, JVM internals, multithreading, collections, and modern Java 17-21 features.",
+                questionCount = com.example.domain.model.TechnicalConceptCatalog.javaConcepts.sumOf { it.questionCount },
+                difficulty = "${com.example.domain.model.TechnicalConceptCatalog.javaConcepts.size} Concepts",
+                badgeText = "Core Language",
+                concepts = com.example.domain.model.TechnicalConceptCatalog.javaConcepts
+            ),
+            TechnicalCategory(
+                id = "spring_boot",
+                name = "Spring Boot",
+                description = "IoC container, dependency injection, autoconfiguration, JPA/Hibernate, and actuators.",
+                questionCount = com.example.domain.model.TechnicalConceptCatalog.springBootConcepts.sumOf { it.questionCount },
+                difficulty = "${com.example.domain.model.TechnicalConceptCatalog.springBootConcepts.size} Concepts",
+                badgeText = "Framework",
+                concepts = com.example.domain.model.TechnicalConceptCatalog.springBootConcepts
+            ),
+            TechnicalCategory(
+                id = "microservices",
+                name = "Microservices",
+                description = "Service discovery, API gateways, circuit breakers, event-driven design, and Saga patterns.",
+                questionCount = com.example.domain.model.TechnicalConceptCatalog.microservicesConcepts.sumOf { it.questionCount },
+                difficulty = "${com.example.domain.model.TechnicalConceptCatalog.microservicesConcepts.size} Concepts",
+                badgeText = "Architecture",
+                concepts = com.example.domain.model.TechnicalConceptCatalog.microservicesConcepts
+            ),
+            TechnicalCategory(
+                id = "hld",
+                name = "HLD",
+                description = "High Level Design, scalability, load balancing, caching, CDN, and high availability systems.",
+                questionCount = com.example.domain.model.TechnicalConceptCatalog.hldConcepts.sumOf { it.questionCount },
+                difficulty = "${com.example.domain.model.TechnicalConceptCatalog.hldConcepts.size} Concepts",
+                badgeText = "System Architecture",
+                concepts = com.example.domain.model.TechnicalConceptCatalog.hldConcepts
+            ),
+            TechnicalCategory(
+                id = "lld",
+                name = "LLD",
+                description = "Low Level Design, SOLID principles, design patterns (Creational, Structural, Behavioral), and UML diagrams.",
+                questionCount = com.example.domain.model.TechnicalConceptCatalog.lldConcepts.sumOf { it.questionCount },
+                difficulty = "${com.example.domain.model.TechnicalConceptCatalog.lldConcepts.size} Concepts",
+                badgeText = "Software Design",
+                concepts = com.example.domain.model.TechnicalConceptCatalog.lldConcepts
+            ),
+            TechnicalCategory(
+                id = "system_design",
+                name = "System Design",
+                description = "End-to-end distributed system blueprints: chat systems, URL shorteners, search auto-complete, and payment gateways.",
+                questionCount = com.example.domain.model.TechnicalConceptCatalog.systemDesignConcepts.sumOf { it.questionCount },
+                difficulty = "${com.example.domain.model.TechnicalConceptCatalog.systemDesignConcepts.size} Concepts",
+                badgeText = "Distributed Systems",
+                concepts = com.example.domain.model.TechnicalConceptCatalog.systemDesignConcepts
+            ),
+            TechnicalCategory(
+                id = "security",
+                name = "Security & AppSec",
+                description = "OAuth 2.0, OpenID Connect, JWT, SQLi, CSRF, TLS 1.3/mTLS, Zero Trust, Post-Quantum Crypto, and container security.",
+                questionCount = com.example.domain.model.TechnicalConceptCatalog.securityConcepts.sumOf { it.questionCount },
+                difficulty = "${com.example.domain.model.TechnicalConceptCatalog.securityConcepts.size} Concepts",
+                badgeText = "AppSec",
+                concepts = com.example.domain.model.TechnicalConceptCatalog.securityConcepts
+            ),
+            TechnicalCategory(
+                id = "sql",
+                name = "SQL & Database Design",
+                description = "Relational modeling, indexing (B-Tree/GIN/Hash), ACID transactions, isolation levels, query optimization, and window functions.",
+                questionCount = com.example.domain.model.TechnicalConceptCatalog.sqlConcepts.sumOf { it.questionCount },
+                difficulty = "${com.example.domain.model.TechnicalConceptCatalog.sqlConcepts.size} Concepts",
+                badgeText = "Database",
+                concepts = com.example.domain.model.TechnicalConceptCatalog.sqlConcepts
+            ),
+            TechnicalCategory(
+                id = "angular",
+                name = "Angular & Frontend",
+                description = "Components, Signals, RxJS reactive patterns, dependency injection, Zoneless change detection, and routing.",
+                questionCount = com.example.domain.model.TechnicalConceptCatalog.angularConcepts.sumOf { it.questionCount },
+                difficulty = "${com.example.domain.model.TechnicalConceptCatalog.angularConcepts.size} Concepts",
+                badgeText = "Frontend",
+                concepts = com.example.domain.model.TechnicalConceptCatalog.angularConcepts
+            ),
+            TechnicalCategory(
+                id = "devops",
+                name = "DevOps",
+                description = "Docker containerization, Kubernetes orchestration, CI/CD pipelines, Terraform, and Prometheus monitoring.",
+                questionCount = com.example.domain.model.TechnicalConceptCatalog.devopsConcepts.sumOf { it.questionCount },
+                difficulty = "${com.example.domain.model.TechnicalConceptCatalog.devopsConcepts.size} Concepts",
+                badgeText = "Infrastructure",
+                concepts = com.example.domain.model.TechnicalConceptCatalog.devopsConcepts
             )
         )
+
+        return combine(
+            database.quizDao().getAllSessions().onStart { emit(emptyList()) },
+            _lastAttemptedConceptId
+        ) { sessions, lastAttemptedId ->
+            val latestSessionByConcept = sessions
+                .groupBy { it.categoryId }
+                .mapValues { entry -> entry.value.maxByOrNull { it.completedAt } }
+
+            val effectiveLastAttempted = lastAttemptedId ?: sessions.firstOrNull()?.categoryId
+
+            baseCategories.map { category ->
+                val updatedConcepts = category.concepts.map { concept ->
+                    val session = latestSessionByConcept[concept.id]
+                    concept.copy(
+                        userScore = session?.correctCount,
+                        totalQuestionsAttempted = session?.totalQuestions,
+                        isLastAttempted = (concept.id == effectiveLastAttempted)
+                    )
+                }
+
+                val scoredConcepts = updatedConcepts.filter { it.hasScore }
+                val totalScore = scoredConcepts.sumOf { it.userScore ?: 0 }
+                val totalAttempted = scoredConcepts.sumOf { it.totalQuestionsAttempted ?: 0 }
+                val hasAnyScore = totalAttempted > 0
+
+                val difficultyText = if (hasAnyScore) {
+                    "Score: $totalScore/$totalAttempted • ${updatedConcepts.size} Concepts"
+                } else if (updatedConcepts.isNotEmpty()) {
+                    "${updatedConcepts.size} Concepts"
+                } else {
+                    category.difficulty
+                }
+
+                category.copy(
+                    concepts = updatedConcepts,
+                    questionCount = updatedConcepts.sumOf { it.questionCount }.takeIf { it > 0 } ?: category.questionCount,
+                    difficulty = difficultyText
+                )
+            }
+        }
     }
 
     override fun getDsaTopics(): Flow<List<DsaTopic>> {
@@ -591,5 +650,6 @@ class InterviewRepositoryImpl(
                 completedAt = now
             )
         )
+        _lastAttemptedConceptId.value = categoryId
     }
 }

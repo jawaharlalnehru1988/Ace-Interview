@@ -6,6 +6,7 @@ import com.example.domain.model.Question
 import com.example.domain.model.QuestionResult
 import com.example.domain.model.QuizSummary
 import com.example.domain.repository.InterviewRepository
+import com.example.domain.model.TechnicalConceptCatalog
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -60,47 +61,66 @@ class McqPracticeViewModel(
             _sessionState.value = McqSessionState.Loading
             val questions = if (categoryId == "all" || categoryId.isBlank()) {
                 repository.getAllQuestions().first()
-            } else if (categoryId.startsWith("java_") || categoryId.startsWith("spring_") || categoryId.startsWith("ms_") || categoryId.startsWith("hld_") || categoryId.startsWith("lld_") || categoryId.startsWith("sql_") || categoryId.startsWith("ng_") || categoryId.startsWith("sec_")) {
-                val targetDifficulty = when {
-                    categoryId.contains("beginner", ignoreCase = true) -> "Beginner"
-                    categoryId.contains("intermediate", ignoreCase = true) -> "Intermediate"
-                    categoryId.contains("advanced", ignoreCase = true) -> "Advanced"
-                    else -> null
-                }
-                val domainCategory = when {
-                    categoryId.startsWith("java_") -> "java"
-                    categoryId.startsWith("spring_") -> "spring_boot"
-                    categoryId.startsWith("ms_") -> "microservices"
-                    categoryId.startsWith("hld_") -> "hld"
-                    categoryId.startsWith("lld_") -> "lld"
-                    categoryId.startsWith("sql_") -> "sql"
-                    categoryId.startsWith("ng_") -> "angular"
-                    else -> "security"
-                }
-                val domainQuestions = repository.getQuestionsByCategory(domainCategory).first()
-                if (targetDifficulty != null) {
-                    val filtered = domainQuestions.filter { it.difficulty.equals(targetDifficulty, ignoreCase = true) }
-                    if (filtered.isNotEmpty()) filtered else domainQuestions
-                } else {
-                    domainQuestions
-                }
             } else {
-                val categoryQuestions = repository.getQuestionsByCategory(categoryId).first()
-                if (categoryQuestions.isEmpty()) {
-                    // Fall back to all questions if specific category has no questions yet
-                    repository.getAllQuestions().first()
+                val concept = TechnicalConceptCatalog.findConcept(categoryId)
+                if (concept != null) {
+                    val domainCategory = TechnicalConceptCatalog.getDomainForConcept(categoryId)
+                    val domainQuestions = repository.getQuestionsByCategory(domainCategory).first()
+                    val filtered = domainQuestions.filter { q ->
+                        TechnicalConceptCatalog.matchesConcept(concept, q.title, q.prompt, q.tags)
+                    }
+                    if (filtered.isNotEmpty()) filtered else domainQuestions
+                } else if (categoryId.startsWith("java_") || categoryId.startsWith("spring_") || categoryId.startsWith("ms_") || categoryId.startsWith("hld_") || categoryId.startsWith("lld_") || categoryId.startsWith("sql_") || categoryId.startsWith("ng_") || categoryId.startsWith("sec_") || categoryId.startsWith("sys_") || categoryId.startsWith("devops_")) {
+                    val targetDifficulty = when {
+                        categoryId.contains("beginner", ignoreCase = true) -> "Beginner"
+                        categoryId.contains("intermediate", ignoreCase = true) -> "Intermediate"
+                        categoryId.contains("advanced", ignoreCase = true) -> "Advanced"
+                        else -> null
+                    }
+                    val domainCategory = when {
+                        categoryId.startsWith("java_") -> "java"
+                        categoryId.startsWith("spring_") -> "spring_boot"
+                        categoryId.startsWith("ms_") -> "microservices"
+                        categoryId.startsWith("hld_") -> "hld"
+                        categoryId.startsWith("lld_") -> "lld"
+                        categoryId.startsWith("sql_") -> "sql"
+                        categoryId.startsWith("ng_") -> "angular"
+                        categoryId.startsWith("sys_") -> "system_design"
+                        categoryId.startsWith("devops_") -> "devops"
+                        else -> "security"
+                    }
+                    val domainQuestions = repository.getQuestionsByCategory(domainCategory).first()
+                    if (targetDifficulty != null) {
+                        val filtered = domainQuestions.filter { it.difficulty.equals(targetDifficulty, ignoreCase = true) }
+                        if (filtered.isNotEmpty()) filtered else domainQuestions
+                    } else {
+                        domainQuestions
+                    }
                 } else {
-                    categoryQuestions
+                    val categoryQuestions = repository.getQuestionsByCategory(categoryId).first()
+                    if (categoryQuestions.isEmpty()) {
+                        repository.getAllQuestions().first()
+                    } else {
+                        categoryQuestions
+                    }
                 }
             }
 
-            if (questions.isEmpty()) {
+            val difficultyRank = mapOf("beginner" to 1, "intermediate" to 2, "advanced" to 3)
+            val sortedQuestions = questions.sortedWith(
+                compareBy(
+                    { difficultyRank[it.difficulty.lowercase()] ?: 4 },
+                    { it.id }
+                )
+            )
+
+            if (sortedQuestions.isEmpty()) {
                 _sessionState.value = McqSessionState.Empty
             } else {
                 _sessionState.value = McqSessionState.Active(
                     categoryId = categoryId,
                     categoryName = categoryName,
-                    questions = questions,
+                    questions = sortedQuestions,
                     currentIndex = 0,
                     selectedOptionIndex = null,
                     isSubmitted = false,
@@ -198,6 +218,7 @@ class McqPracticeViewModel(
                 correctCount = correct,
                 scorePercentage = percentage
             )
+            repository.setLastAttemptedConcept(activeState.categoryId)
         }
 
         _sessionState.value = McqSessionState.Finished(
@@ -205,6 +226,31 @@ class McqPracticeViewModel(
             categoryName = activeState.categoryName,
             summary = summary
         )
+    }
+
+    fun finishAndReturn(onReturn: () -> Unit) {
+        val current = _sessionState.value
+        if (current is McqSessionState.Active) {
+            val total = current.results.size
+            val correct = current.results.count { it.isCorrect }
+            val percentage = if (total > 0) ((correct.toFloat() / total) * 100).toInt() else 0
+
+            viewModelScope.launch {
+                repository.recordQuizSession(
+                    categoryId = current.categoryId,
+                    totalQuestions = total,
+                    correctCount = correct,
+                    scorePercentage = percentage
+                )
+                repository.setLastAttemptedConcept(current.categoryId)
+                onReturn()
+            }
+        } else if (current is McqSessionState.Finished) {
+            repository.setLastAttemptedConcept(current.categoryId)
+            onReturn()
+        } else {
+            onReturn()
+        }
     }
 
     fun restartQuiz() {

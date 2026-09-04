@@ -29,10 +29,31 @@ interface CategoryDao {
 
 @Dao
 interface QuestionDao {
-    @Query("SELECT * FROM questions ORDER BY id ASC")
+    @Query("""
+        SELECT * FROM questions 
+        ORDER BY 
+            CASE LOWER(difficulty)
+                WHEN 'beginner' THEN 1
+                WHEN 'intermediate' THEN 2
+                WHEN 'advanced' THEN 3
+                ELSE 4
+            END,
+            id ASC
+    """)
     fun getAllQuestions(): Flow<List<QuestionEntity>>
 
-    @Query("SELECT * FROM questions WHERE categoryId = :categoryId ORDER BY id ASC")
+    @Query("""
+        SELECT * FROM questions 
+        WHERE categoryId = :categoryId 
+        ORDER BY 
+            CASE LOWER(difficulty)
+                WHEN 'beginner' THEN 1
+                WHEN 'intermediate' THEN 2
+                WHEN 'advanced' THEN 3
+                ELSE 4
+            END,
+            id ASC
+    """)
     fun getQuestionsByCategory(categoryId: String): Flow<List<QuestionEntity>>
 
     @Query("SELECT * FROM questions WHERE id = :id")

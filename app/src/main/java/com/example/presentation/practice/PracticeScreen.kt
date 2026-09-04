@@ -19,9 +19,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.CloudQueue
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.DataObject
@@ -46,6 +49,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -250,8 +254,12 @@ fun CategoryCardItem(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
+                        val totalCategoryScore = category.concepts.mapNotNull { it.userScore }.sum()
+                        val totalCategoryAttempted = category.concepts.mapNotNull { it.totalQuestionsAttempted }.sum()
+                        val hasCategoryScore = totalCategoryAttempted > 0
+
                         Text(
-                            text = "${category.questionCount} Questions",
+                            text = if (category.concepts.isNotEmpty()) "${category.concepts.size} Concepts • ${category.questionCount} Qs" else "${category.questionCount} Questions",
                             style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.SemiBold),
                             color = MaterialTheme.colorScheme.primary
                         )
@@ -261,9 +269,11 @@ fun CategoryCardItem(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Text(
-                            text = category.difficulty,
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            text = if (hasCategoryScore) "Score: $totalCategoryScore/$totalCategoryAttempted" else category.difficulty,
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontWeight = if (hasCategoryScore) FontWeight.Bold else FontWeight.Normal
+                            ),
+                            color = if (hasCategoryScore) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
@@ -277,8 +287,36 @@ fun CategoryCardItem(
                 )
             }
 
-            // Sub-levels for multi-tier technical stacks (e.g. Java, Spring Boot, Microservices, HLD, LLD, SQL, Angular, Security: Beginner, Intermediate, Advanced)
-            if ((category.id == "java" || category.id == "spring_boot" || category.id == "microservices" || category.id == "hld" || category.id == "lld" || category.id == "sql" || category.id == "angular" || category.id == "security") && onSubLevelClick != null) {
+            // Concept-based practice modules (e.g. OOP, Collections, Concurrency, etc.)
+            if (category.concepts.isNotEmpty() && onSubLevelClick != null) {
+                Spacer(modifier = Modifier.height(10.dp))
+                val listState = rememberLazyListState()
+                val highlightedIndex = category.concepts.indexOfFirst { it.isLastAttempted }
+                LaunchedEffect(highlightedIndex) {
+                    if (highlightedIndex >= 0) {
+                        listState.animateScrollToItem(highlightedIndex)
+                    }
+                }
+                LazyRow(
+                    state = listState,
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(category.concepts, key = { it.id }) { concept ->
+                        val chipLabel = if (concept.hasScore) {
+                            "${concept.name}: ${concept.scoreDisplay}"
+                        } else {
+                            "${concept.name} (${concept.questionCount})"
+                        }
+                        LevelPracticeChip(
+                            label = chipLabel,
+                            isHighlighted = concept.isLastAttempted,
+                            hasScore = concept.hasScore,
+                            onClick = { onSubLevelClick(concept.id, "${category.name}: ${concept.name}") }
+                        )
+                    }
+                }
+            } else if ((category.id == "java" || category.id == "spring_boot" || category.id == "microservices" || category.id == "hld" || category.id == "lld" || category.id == "sql" || category.id == "angular" || category.id == "security") && onSubLevelClick != null) {
                 val prefix = when (category.id) {
                     "java" -> "java"
                     "spring_boot" -> "spring"
@@ -305,17 +343,17 @@ fun CategoryCardItem(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     LevelPracticeChip(
-                        label = "Beginner (100)",
+                        label = "Beginner",
                         onClick = { onSubLevelClick("${prefix}_beginner", "$titlePrefix Beginner") },
                         modifier = Modifier.weight(1f)
                     )
                     LevelPracticeChip(
-                        label = "Intermediate (100)",
+                        label = "Intermediate",
                         onClick = { onSubLevelClick("${prefix}_intermediate", "$titlePrefix Intermediate") },
                         modifier = Modifier.weight(1f)
                     )
                     LevelPracticeChip(
-                        label = "Advanced (100)",
+                        label = "Advanced",
                         onClick = { onSubLevelClick("${prefix}_advanced", "$titlePrefix Advanced") },
                         modifier = Modifier.weight(1f)
                     )
@@ -329,27 +367,61 @@ fun CategoryCardItem(
 private fun LevelPracticeChip(
     label: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isHighlighted: Boolean = false,
+    hasScore: Boolean = false
 ) {
+    val containerColor = when {
+        isHighlighted -> MaterialTheme.colorScheme.primaryContainer
+        hasScore -> MaterialTheme.colorScheme.surfaceVariant
+        else -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+    }
+    val borderColor = when {
+        isHighlighted -> MaterialTheme.colorScheme.primary
+        hasScore -> MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)
+        else -> MaterialTheme.colorScheme.outline.copy(alpha = 0.25f)
+    }
+    val textColor = when {
+        isHighlighted -> MaterialTheme.colorScheme.onPrimaryContainer
+        hasScore -> MaterialTheme.colorScheme.primary
+        else -> MaterialTheme.colorScheme.primary.copy(alpha = 0.85f)
+    }
+
     Surface(
         modifier = modifier
             .clickable { onClick() }
-            .testTag("level_chip_${label.lowercase().replace(" ", "_").replace("(", "").replace(")", "")}"),
+            .testTag("level_chip_${label.lowercase().replace(" ", "_").replace("(", "").replace(")", "").replace(":", "")}"),
         shape = RoundedCornerShape(8.dp),
-        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.25f))
+        color = containerColor,
+        border = BorderStroke(if (isHighlighted) 2.dp else 1.dp, borderColor)
     ) {
-        Box(
-            modifier = Modifier.padding(vertical = 6.dp, horizontal = 4.dp),
-            contentAlignment = Alignment.Center
+        Row(
+            modifier = Modifier.padding(vertical = 6.dp, horizontal = 10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(5.dp)
         ) {
+            if (isHighlighted) {
+                Icon(
+                    imageVector = Icons.Filled.Star,
+                    contentDescription = "Attempted",
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(13.dp)
+                )
+            } else if (hasScore) {
+                Icon(
+                    imageVector = Icons.Filled.Check,
+                    contentDescription = "Scored",
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(13.dp)
+                )
+            }
             Text(
                 text = label,
                 style = MaterialTheme.typography.labelSmall.copy(
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 11.sp
+                    fontWeight = if (isHighlighted) FontWeight.Bold else FontWeight.SemiBold,
+                    fontSize = 12.sp
                 ),
-                color = MaterialTheme.colorScheme.primary,
+                color = textColor,
                 maxLines = 1
             )
         }

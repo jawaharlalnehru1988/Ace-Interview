@@ -34,7 +34,8 @@ data class TechnicalCategory(
     val description: String,
     val questionCount: Int,
     val difficulty: String,
-    val badgeText: String
+    val badgeText: String,
+    val concepts: List<TechnicalConceptModule> = emptyList()
 )
 
 data class DsaTopic(
