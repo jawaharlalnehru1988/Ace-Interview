@@ -1,7 +1,6 @@
 package com.example.data.local.questions
 
 import com.example.data.local.entity.QuestionEntity
-import org.json.JSONArray
 import java.util.Random
 
 object QuestionHelper {
@@ -40,15 +39,20 @@ object QuestionHelper {
         val shuffledOptions = indices.map { originalOptions[it] }
         val newCorrectIndex = shuffledOptions.indexOf(correctOption).coerceAtLeast(0)
 
-        val optionsArray = JSONArray().apply {
-            shuffledOptions.forEach { put(it) }
+        val optionsJsonString = shuffledOptions.joinToString(separator = ",", prefix = "[", postfix = "]") { opt ->
+            "\"" + opt.replace("\\", "\\\\")
+                .replace("\"", "\\\"")
+                .replace("\n", "\\n")
+                .replace("\r", "\\r")
+                .replace("\t", "\\t") + "\""
         }
+
         return QuestionEntity(
             id = id,
             categoryId = categoryId,
             title = title,
             prompt = prompt,
-            optionsJson = optionsArray.toString(),
+            optionsJson = optionsJsonString,
             correctAnswerIndex = newCorrectIndex,
             explanation = explanation,
             difficulty = difficulty,

@@ -44,4 +44,9 @@ interface InterviewRepository {
         durationMs: Long
     )
     suspend fun deleteAudioAnswer(questionId: String)
+
+    // Functional Programming Tracks (Java Stream API, JS Built-in, RxJS)
+    fun getFunctionalProblems(trackId: String): Flow<List<com.example.domain.model.FunctionalProblem>>
+    fun getFunctionalTracks(): Flow<List<com.example.domain.model.FunctionalTrack>>
+    suspend fun toggleFunctionalProblemSolved(problemId: String)
 }

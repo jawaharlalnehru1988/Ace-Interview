@@ -196,11 +196,23 @@ fun ProfileContent(
 
                     Spacer(modifier = Modifier.height(14.dp))
 
-                    ProgressBarRow(label = "Backend & Frameworks", progress = 0.78f, valueText = "78%")
+                    ProgressBarRow(
+                        label = "Backend & Frameworks",
+                        progress = profile.backendProgress,
+                        valueText = "${(profile.backendProgress * 100).toInt()}%"
+                    )
                     Spacer(modifier = Modifier.height(8.dp))
-                    ProgressBarRow(label = "System Architecture & HLD", progress = 0.65f, valueText = "65%")
+                    ProgressBarRow(
+                        label = "System Architecture & HLD",
+                        progress = profile.systemDesignProgress,
+                        valueText = "${(profile.systemDesignProgress * 100).toInt()}%"
+                    )
                     Spacer(modifier = Modifier.height(8.dp))
-                    ProgressBarRow(label = "DSA & Problem Solving", progress = 0.58f, valueText = "58%")
+                    ProgressBarRow(
+                        label = "DSA & Problem Solving",
+                        progress = profile.dsaProgress,
+                        valueText = "${(profile.dsaProgress * 100).toInt()}%"
+                    )
                 }
             }
         }
@@ -245,7 +257,7 @@ fun ProfileContent(
                 MetricStatCard(
                     title = "DSA Solved",
                     value = "${profile.dsaProblemsSolved}",
-                    subtitle = "18 of 307",
+                    subtitle = "${profile.dsaProblemsSolved} of ${profile.totalDsaProblems}",
                     icon = Icons.Filled.AccountTree,
                     iconTint = CyanSecondaryDark,
                     modifier = Modifier
@@ -255,7 +267,7 @@ fun ProfileContent(
                 MetricStatCard(
                     title = "Interviews",
                     value = "${profile.interviewSessions}",
-                    subtitle = "Sessions completed",
+                    subtitle = if (profile.interviewSessions == 1) "1 Session completed" else "${profile.interviewSessions} Sessions completed",
                     icon = Icons.Filled.VideoCameraFront,
                     iconTint = AmberTertiaryLight,
                     modifier = Modifier
@@ -299,7 +311,7 @@ fun ProfileContent(
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
                                 Text(
-                                    text = "09:00 AM daily training alert",
+                                    text = "08:00 PM daily training alert",
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )

@@ -17,6 +17,7 @@ import com.example.domain.model.UserDashboard
 import com.example.domain.model.UserProfile
 import com.example.domain.model.WeakArea
 import com.example.domain.repository.InterviewRepository
+import com.example.util.training.DailyTrainingScheduler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -74,13 +75,21 @@ class InterviewRepositoryImpl(
     override fun getUserDashboard(): Flow<UserDashboard> {
         return combine(
             database.quizDao().getAllAttempts().onStart { emit(emptyList()) },
-            database.questionDao().getAllQuestions().onStart { ensureSampleQuestionsSeeded(); emit(emptyList()) }
-        ) { attempts, allQuestions ->
+            database.questionDao().getAllQuestions().onStart { ensureSampleQuestionsSeeded(); emit(emptyList()) },
+            database.quizDao().getAllSessions().onStart { emit(emptyList()) },
+            database.interviewDao().getAllRecordedResponses().onStart { emit(emptyList()) },
+            database.dsaDao().getAllAttempts().onStart { emit(emptyList()) }
+        ) { attempts, allQuestions, quizSessions, recordedAudios, dsaAttempts ->
             val questionMap = allQuestions.associateBy { it.id }
             val distinctAnsweredIds = attempts.map { it.questionId }.toSet()
             val questionsCompleted = distinctAnsweredIds.size
             val totalAttempts = attempts.size
             val correctAttempts = attempts.count { it.isCorrect }
+
+            val allDsaIds = DsaProblemData.getAll().map { it.id }.toSet()
+            val dsaSolvedIds = dsaAttempts.map { it.problemId }.filter { allDsaIds.contains(it) }.toSet()
+            val dsaSolvedCount = dsaSolvedIds.size
+            val totalDsaProblems = allDsaIds.size
 
             val accuracyPercentage = if (totalAttempts > 0) {
                 ((correctAttempts.toDouble() / totalAttempts) * 100).toInt()
@@ -91,13 +100,16 @@ class InterviewRepositoryImpl(
             val currentStreakDays = calculateStreakDays(attempts)
             val targetQuestions = 300 // Foundation milestone
 
-            // Dynamic readiness score (0 to 100)
-            val progressScore = (questionsCompleted.toDouble() / targetQuestions).coerceAtMost(1.0) * 40.0
-            val accuracyScore = (accuracyPercentage.toDouble() / 100.0) * 50.0
+            // Dynamic readiness score (0 to 100) combining MCQ + DSA Solved + Accuracy + Streak
+            val progressScore = (questionsCompleted.toDouble() / targetQuestions).coerceAtMost(1.0) * 35.0
+            val dsaScore = if (totalDsaProblems > 0) {
+                (dsaSolvedCount.toDouble() / totalDsaProblems.toDouble()).coerceAtMost(1.0) * 20.0
+            } else 0.0
+            val accuracyScore = (accuracyPercentage.toDouble() / 100.0) * 35.0
             val streakScore = (currentStreakDays.coerceAtMost(7).toDouble() / 7.0) * 10.0
 
-            val readinessScore = if (questionsCompleted > 0) {
-                (progressScore + accuracyScore + streakScore).toInt().coerceIn(1, 100)
+            val readinessScore = if (questionsCompleted > 0 || dsaSolvedCount > 0) {
+                (progressScore + dsaScore + accuracyScore + streakScore).toInt().coerceIn(1, 100)
             } else {
                 0
             }
@@ -176,33 +188,28 @@ class InterviewRepositoryImpl(
                 )
             }
 
-            // Real Today's Training: dynamically checks if user practiced in those categories
+            // Dynamic Daily Training: Rotating Daily MCQ concept + Rotating Daily Interview concept (5 Audio recordings target)
             val todayTrainings = listOf(
-                TodayTraining(
-                    id = "tt-java",
-                    title = "Java Core & Concurrency Drills",
-                    category = "Java",
-                    questionsCount = 10,
-                    estimatedMinutes = 10,
-                    isCompleted = attempts.any { questionMap[it.questionId]?.categoryId == "java" }
+                DailyTrainingScheduler.getTodayMcqTraining(
+                    sessions = quizSessions,
+                    attempts = attempts
                 ),
-                TodayTraining(
-                    id = "tt-spring-ms",
-                    title = "Spring Boot & Microservices Review",
-                    category = "Spring Boot",
-                    questionsCount = 10,
-                    estimatedMinutes = 12,
-                    isCompleted = attempts.any { questionMap[it.questionId]?.categoryId in listOf("spring_boot", "microservices") }
-                ),
-                TodayTraining(
-                    id = "tt-sql-sec",
-                    title = "SQL Design & Security Drills",
-                    category = "Security",
-                    questionsCount = 10,
-                    estimatedMinutes = 10,
-                    isCompleted = attempts.any { questionMap[it.questionId]?.categoryId in listOf("sql", "security") }
+                DailyTrainingScheduler.getTodayInterviewTraining(
+                    audioResponses = recordedAudios
                 )
             )
+
+            // Calculate Tricky Questions metrics
+            val trickyAttempts = attempts.filter {
+                val cat = questionMap[it.questionId]?.categoryId
+                cat == "java_tricky" || cat == "js_tricky"
+            }
+            val trickySolvedIds = trickyAttempts.filter { it.isCorrect }.map { it.questionId }.toSet()
+            val trickySolvedCount = trickySolvedIds.size
+            val trickyTotalCount = com.example.data.local.questions.JavaTrickyQuestions.getAll().size + com.example.data.local.questions.JsTrickyQuestions.getAll().size
+            val trickyAccuracy = if (trickyAttempts.isNotEmpty()) {
+                ((trickyAttempts.count { it.isCorrect }.toDouble() / trickyAttempts.size) * 100).toInt()
+            } else 0
 
             UserDashboard(
                 readinessScore = readinessScore,
@@ -212,7 +219,12 @@ class InterviewRepositoryImpl(
                 currentStreakDays = currentStreakDays,
                 accuracyPercentage = accuracyPercentage,
                 weakAreas = weakAreas,
-                todayTrainings = todayTrainings
+                todayTrainings = todayTrainings,
+                dsaSolvedCount = dsaSolvedCount,
+                totalDsaProblems = totalDsaProblems,
+                trickySolvedCount = trickySolvedCount,
+                trickyTotalCount = trickyTotalCount,
+                trickyAccuracy = trickyAccuracy
             )
         }
     }
@@ -367,98 +379,32 @@ class InterviewRepositoryImpl(
             val allProblems = DsaProblemData.getAll()
             val solvedByTopic = allProblems.filter { solvedProblemIds.contains(it.id) }.groupBy { it.topic }
 
-            listOf(
-                DsaTopic(
-                    id = "arrays",
-                    name = "Arrays",
-                    description = "Two Pointers, Sliding Window, Prefix Sums, and Matrix traversals.",
-                    problemsCount = 45,
-                    solvedCount = solvedByTopic["arrays"]?.size ?: 0,
-                    easyCount = 15,
-                    mediumCount = 20,
-                    hardCount = 10
-                ),
-                DsaTopic(
-                    id = "strings",
-                    name = "Strings",
-                    description = "Pattern matching, anagrams, palindrome manipulation, and string hashing.",
-                    problemsCount = 35,
-                    solvedCount = solvedByTopic["strings"]?.size ?: 0,
-                    easyCount = 12,
-                    mediumCount = 16,
-                    hardCount = 7
-                ),
-                DsaTopic(
-                    id = "linked_list",
-                    name = "Linked List",
-                    description = "Cycle detection (Floyd's algorithm), reversal, fast-slow pointers, and merging.",
-                    problemsCount = 25,
-                    solvedCount = solvedByTopic["linked_list"]?.size ?: 0,
-                    easyCount = 8,
-                    mediumCount = 12,
-                    hardCount = 5
-                ),
-                DsaTopic(
-                    id = "stack",
-                    name = "Stack",
-                    description = "Monotonic stack, parentheses validation, and expression evaluation.",
-                    problemsCount = 28,
-                    solvedCount = solvedByTopic["stack"]?.size ?: 0,
-                    easyCount = 9,
-                    mediumCount = 14,
-                    hardCount = 5
-                ),
-                DsaTopic(
-                    id = "queue",
-                    name = "Queue",
-                    description = "Double-ended queues (Deque), BFS orderings, and circular buffers.",
-                    problemsCount = 22,
-                    solvedCount = solvedByTopic["queue"]?.size ?: 0,
-                    easyCount = 7,
-                    mediumCount = 11,
-                    hardCount = 4
-                ),
-                DsaTopic(
-                    id = "trees",
-                    name = "Trees",
-                    description = "Binary trees, BST properties, Lowest Common Ancestor, and Trie structures.",
-                    problemsCount = 40,
-                    solvedCount = solvedByTopic["trees"]?.size ?: 0,
-                    easyCount = 10,
-                    mediumCount = 22,
-                    hardCount = 8
-                ),
-                DsaTopic(
-                    id = "graphs",
-                    name = "Graphs",
-                    description = "DFS, BFS, Dijkstra shortest path, topological sorting, and Union-Find.",
-                    problemsCount = 38,
-                    solvedCount = solvedByTopic["graphs"]?.size ?: 0,
-                    easyCount = 6,
-                    mediumCount = 20,
-                    hardCount = 12
-                ),
-                DsaTopic(
-                    id = "recursion",
-                    name = "Recursion",
-                    description = "Backtracking, permutation generation, subsets, and divide & conquer paradigms.",
-                    problemsCount = 26,
-                    solvedCount = solvedByTopic["recursion"]?.size ?: 0,
-                    easyCount = 5,
-                    mediumCount = 15,
-                    hardCount = 6
-                ),
-                DsaTopic(
-                    id = "dp",
-                    name = "Dynamic Programming",
-                    description = "1D & 2D memoization, knapsack variants, longest common subsequence, and interval DP.",
-                    problemsCount = 48,
-                    solvedCount = solvedByTopic["dp"]?.size ?: 0,
-                    easyCount = 8,
-                    mediumCount = 25,
-                    hardCount = 15
-                )
+            val topicConfigs = listOf(
+                Triple("arrays", "Arrays", "Two Pointers, Sliding Window, Prefix Sums, and Matrix traversals."),
+                Triple("strings", "Strings", "Pattern matching, anagrams, palindrome manipulation, and string hashing."),
+                Triple("linked_list", "Linked List", "Cycle detection (Floyd's algorithm), reversal, fast-slow pointers, and merging."),
+                Triple("stack", "Stack", "Monotonic stack, parentheses validation, and expression evaluation."),
+                Triple("queue", "Queue", "Double-ended queues (Deque), BFS orderings, and circular buffers."),
+                Triple("trees", "Trees", "Binary trees, BST properties, Lowest Common Ancestor, and Trie structures."),
+                Triple("graphs", "Graphs", "DFS, BFS, Dijkstra shortest path, topological sorting, and Union-Find."),
+                Triple("recursion", "Recursion", "Backtracking, permutation generation, subsets, and divide & conquer paradigms."),
+                Triple("dp", "Dynamic Programming", "1D & 2D memoization, knapsack variants, longest common subsequence, and interval DP.")
             )
+
+            topicConfigs.map { (id, name, desc) ->
+                val topicProblems = DsaProblemData.getByTopic(id)
+                val solvedList = solvedByTopic[id] ?: emptyList()
+                DsaTopic(
+                    id = id,
+                    name = name,
+                    description = desc,
+                    problemsCount = topicProblems.size,
+                    solvedCount = solvedList.size,
+                    easyCount = topicProblems.count { it.difficulty.equals("Easy", ignoreCase = true) },
+                    mediumCount = topicProblems.count { it.difficulty.equals("Medium", ignoreCase = true) },
+                    hardCount = topicProblems.count { it.difficulty.equals("Hard", ignoreCase = true) }
+                )
+            }
         }
     }
 
@@ -497,7 +443,7 @@ class InterviewRepositoryImpl(
                     title = "Java Interview",
                     roleLevel = "Mid-Level",
                     durationMinutes = 45,
-                    questionCount = 12,
+                    questionCount = com.example.data.local.interview.InterviewQuestionCatalog.getQuestionsForTrack("java_interview").size,
                     format = "Language Internals & Concurrency",
                     description = "Simulates a round covering JVM memory, garbage collection algorithms, functional streams, and thread synchronization."
                 ),
@@ -506,7 +452,7 @@ class InterviewRepositoryImpl(
                     title = "Spring Boot Interview",
                     roleLevel = "Mid-to-Senior",
                     durationMinutes = 45,
-                    questionCount = 10,
+                    questionCount = com.example.data.local.interview.InterviewQuestionCatalog.getQuestionsForTrack("spring_boot_interview").size,
                     format = "Enterprise Architecture & Best Practices",
                     description = "Evaluates dependency injection lifecycle, Spring Security filter chains, REST API design, and transaction boundaries."
                 ),
@@ -515,7 +461,7 @@ class InterviewRepositoryImpl(
                     title = "Microservices Interview",
                     roleLevel = "Senior Engineer",
                     durationMinutes = 50,
-                    questionCount = 8,
+                    questionCount = com.example.data.local.interview.InterviewQuestionCatalog.getQuestionsForTrack("microservices_interview").size,
                     format = "Distributed Architecture & Scenarios",
                     description = "Focuses on event-driven streaming with Kafka, circuit breaking, distributed tracing, and database per service patterns."
                 ),
@@ -524,34 +470,34 @@ class InterviewRepositoryImpl(
                     title = "Full Stack Interview",
                     roleLevel = "Senior Full Stack",
                     durationMinutes = 60,
-                    questionCount = 14,
+                    questionCount = com.example.data.local.interview.InterviewQuestionCatalog.getQuestionsForTrack("full_stack_interview").size,
                     format = "End-to-End System Integration",
                     description = "Cross-cutting evaluation from Angular front-end state management to Java/Spring Boot backend REST APIs and SQL schema design."
                 ),
                 InterviewTrack(
                     id = "hld_interview",
-                    title = "HLD Interview",
+                    title = "HLD (High-Level Design) Interview",
                     roleLevel = "Staff / Principal",
-                    durationMinutes = 45,
-                    questionCount = 5,
-                    format = "High-Level Architectural Design",
-                    description = "Architect large-scale distributed platforms: capacity estimations, geo-DNS routing, caching layers, and database partitioning."
+                    durationMinutes = 60,
+                    questionCount = com.example.data.local.interview.InterviewQuestionCatalog.getQuestionsForTrack("hld_interview").size,
+                    format = "Real-World Distributed Blueprints & Scale",
+                    description = "End-to-end distributed system blueprints: Twitter/X, YouTube, Uber, WhatsApp, Stripe, Netflix, Google Search, Kafka, LLM inference serving (vLLM/RAG), and zero-downtime migrations."
                 ),
                 InterviewTrack(
                     id = "lld_interview",
                     title = "LLD Interview",
                     roleLevel = "Senior Engineer",
                     durationMinutes = 50,
-                    questionCount = 6,
-                    format = "Object-Oriented Design & Clean Code",
-                    description = "Live object modeling: design a Parking Lot, Movie Ticket Booking System, or Elevator system adhering to SOLID principles."
+                    questionCount = com.example.data.local.interview.InterviewQuestionCatalog.getQuestionsForTrack("lld_interview").size,
+                    format = "Object-Oriented Design, SOLID & Machine Coding",
+                    description = "Deep object-oriented modeling, GoF creational/structural/behavioral patterns, thread safety, real-world machine coding (Parking Lot, Splitwise, Elevator, Rate Limiter), and DDD Clean Architecture."
                 ),
                 InterviewTrack(
                     id = "system_design_interview",
                     title = "System Design Interview",
                     roleLevel = "Senior / Lead",
                     durationMinutes = 60,
-                    questionCount = 6,
+                    questionCount = com.example.data.local.interview.InterviewQuestionCatalog.getQuestionsForTrack("system_design_interview").size,
                     format = "Deep-Dive Trade-offs & Availability",
                     description = "Design mission-critical systems like distributed message queues, video streaming pipelines, and rate limiting engines."
                 ),
@@ -560,7 +506,7 @@ class InterviewRepositoryImpl(
                     title = "DevOps Interview",
                     roleLevel = "Senior / SRE",
                     durationMinutes = 50,
-                    questionCount = 7,
+                    questionCount = com.example.data.local.interview.InterviewQuestionCatalog.getQuestionsForTrack("devops_interview").size,
                     format = "Containerization, K8s & GitOps",
                     description = "Evaluates Linux cgroups/namespaces, Docker layer caching, Kubernetes pod lifecycle, CrashLoopBackOff troubleshooting, and CI/CD pipelines."
                 ),
@@ -569,18 +515,27 @@ class InterviewRepositoryImpl(
                     title = "SQL & Database Interview",
                     roleLevel = "Mid-to-Senior",
                     durationMinutes = 45,
-                    questionCount = 4,
+                    questionCount = com.example.data.local.interview.InterviewQuestionCatalog.getQuestionsForTrack("sql_interview").size,
                     format = "Indexing, ACID & Query Optimization",
                     description = "Deep dive into B-Tree vs Hash indexing, Covering indexes, Clustered index lookups, MVCC, and SQL transaction isolation levels."
                 ),
                 InterviewTrack(
+                    id = "angular_interview",
+                    title = "Angular & Frontend Interview",
+                    roleLevel = "Senior / Lead Frontend",
+                    durationMinutes = 55,
+                    questionCount = com.example.data.local.interview.InterviewQuestionCatalog.getQuestionsForTrack("angular_interview").size,
+                    format = "Signals, Zoneless, RxJS & Architecture",
+                    description = "Comprehensive modern Angular 16-19+ mastery: Signals, computed & effects, Push-Pull reactivity, Zoneless change detection, RxJS streams, hierarchical DI, NgRx & SignalStore, standalone routing, micro-frontends, and SSR hydration."
+                ),
+                InterviewTrack(
                     id = "security_interview",
                     title = "Security & AppSec Interview",
-                    roleLevel = "Senior AppSec",
-                    durationMinutes = 45,
-                    questionCount = 4,
-                    format = "OAuth 2.0, JWT & OWASP Defenses",
-                    description = "Covers OAuth 2.0 PKCE, JWT stateless token revocation, SQL Injection mechanics, and CSRF SameSite cookie mitigation."
+                    roleLevel = "Senior AppSec / InfoSec",
+                    durationMinutes = 55,
+                    questionCount = com.example.data.local.interview.InterviewQuestionCatalog.getQuestionsForTrack("security_interview").size,
+                    format = "OAuth 2.0, Zero Trust, Cryptography & AppSec",
+                    description = "End-to-end security architecture: OAuth 2.0 PKCE, OIDC, JWT revocation, OWASP Top 10 defenses (SQLi, XSS, SSRF, IDOR), RBAC/ABAC, TLS 1.3 & mTLS, KMS envelope encryption, container security, DevSecOps, and Zero Trust architecture."
                 ),
                 InterviewTrack(
                     id = "senior_engineer_interview",
@@ -596,28 +551,58 @@ class InterviewRepositoryImpl(
     }
 
     override fun getUserProfile(): Flow<UserProfile> {
-        return database.quizDao().getAllAttempts().onStart { emit(emptyList()) }.map { attempts ->
+        return combine(
+            database.quizDao().getAllAttempts().onStart { emit(emptyList()) },
+            database.questionDao().getAllQuestions().onStart { ensureSampleQuestionsSeeded(); emit(emptyList()) },
+            database.dsaDao().getAllAttempts().onStart { emit(emptyList()) },
+            database.interviewDao().getAllRecordedResponses().onStart { emit(emptyList()) },
+            database.interviewDao().getAllSessions().onStart { emit(emptyList()) }
+        ) { attempts, allQuestions, dsaAttempts, recordedAudios, interviewSessions ->
             val distinctAnsweredIds = attempts.map { it.questionId }.toSet()
             val totalAttempts = attempts.size
             val correctAttempts = attempts.count { it.isCorrect }
             val accuracy = if (totalAttempts > 0) ((correctAttempts * 100) / totalAttempts) else 0
             val streak = calculateStreakDays(attempts)
 
+            val dsaSolvedIds = dsaAttempts.map { it.problemId }.toSet()
+            val dsaProblemsSolved = dsaSolvedIds.size
+            val totalDsa = DsaProblemData.getAll().size
+            val dsaProgress = if (totalDsa > 0) (dsaProblemsSolved.toFloat() / totalDsa.toFloat()).coerceIn(0f, 1f) else 0f
+
+            // Dynamic progress for Backend & Frameworks (Java, Spring Boot, Microservices, SQL)
+            val backendQuestions = allQuestions.filter { it.categoryId in setOf("java", "spring_boot", "microservices", "sql") }
+            val backendSolvedCount = distinctAnsweredIds.count { qId -> backendQuestions.any { it.id == qId } }
+            val backendTarget = backendQuestions.size.coerceAtMost(50).coerceAtLeast(15)
+            val backendProgress = (backendSolvedCount.toFloat() / backendTarget.toFloat()).coerceIn(0f, 1f)
+
+            // Dynamic progress for System Architecture & HLD (HLD, LLD, Security)
+            val archQuestions = allQuestions.filter { it.categoryId in setOf("hld", "lld", "security") }
+            val archSolvedCount = distinctAnsweredIds.count { qId -> archQuestions.any { it.id == qId } }
+            val archTarget = archQuestions.size.coerceAtMost(40).coerceAtLeast(15)
+            val systemDesignProgress = (archSolvedCount.toFloat() / archTarget.toFloat()).coerceIn(0f, 1f)
+
+            // Real completed interview sessions count
+            val completedInterviews = interviewSessions.size + (recordedAudios.size / 5).coerceAtLeast(if (recordedAudios.isNotEmpty()) 1 else 0)
+
             UserProfile(
                 name = "Interview Candidate",
                 targetRole = "Senior Software Engineer",
                 targetTimeline = "Target: L5 / Staff Track",
                 overallLevel = when {
-                    distinctAnsweredIds.size >= 100 -> "Senior Candidate (L5)"
-                    distinctAnsweredIds.size >= 30 -> "Intermediate Ready"
-                    distinctAnsweredIds.isNotEmpty() -> "In Progress"
+                    (dsaProblemsSolved >= 50 && distinctAnsweredIds.size >= 80) -> "Senior Candidate (L5)"
+                    (dsaProblemsSolved >= 15 || distinctAnsweredIds.size >= 30) -> "Intermediate Ready"
+                    (dsaProblemsSolved > 0 || distinctAnsweredIds.isNotEmpty() || recordedAudios.isNotEmpty()) -> "In Progress"
                     else -> "New Candidate"
                 },
                 questionsAttempted = distinctAnsweredIds.size,
                 accuracyPercentage = accuracy,
-                dsaProblemsSolved = 0,
-                interviewSessions = (distinctAnsweredIds.size / 10),
-                streakDays = streak
+                dsaProblemsSolved = dsaProblemsSolved,
+                totalDsaProblems = totalDsa,
+                interviewSessions = completedInterviews,
+                streakDays = streak,
+                backendProgress = backendProgress,
+                systemDesignProgress = systemDesignProgress,
+                dsaProgress = dsaProgress
             )
         }
     }
@@ -733,5 +718,45 @@ class InterviewRepositoryImpl(
 
     override suspend fun deleteAudioAnswer(questionId: String) {
         database.interviewDao().deleteResponsesForQuestion(questionId)
+    }
+
+    override fun getFunctionalProblems(trackId: String): Flow<List<com.example.domain.model.FunctionalProblem>> {
+        return database.dsaDao().getAllAttempts().onStart { emit(emptyList()) }.map { attempts ->
+            val solvedIds = attempts.map { it.problemId }.toSet()
+            val problems = com.example.data.local.functional.FunctionalProblemCatalog.getProblemsByTrack(trackId)
+            problems.map { problem ->
+                problem.copy(isSolved = solvedIds.contains(problem.id))
+            }
+        }
+    }
+
+    override fun getFunctionalTracks(): Flow<List<com.example.domain.model.FunctionalTrack>> {
+        return database.dsaDao().getAllAttempts().onStart { emit(emptyList()) }.map { attempts ->
+            val solvedIds = attempts.map { it.problemId }.toSet()
+            val baseTracks = com.example.data.local.functional.FunctionalProblemCatalog.getTracks()
+            baseTracks.map { track ->
+                val trackProblems = com.example.data.local.functional.FunctionalProblemCatalog.getProblemsByTrack(track.id)
+                val solvedInTrack = trackProblems.count { solvedIds.contains(it.id) }
+                track.copy(solvedCount = solvedInTrack)
+            }
+        }
+    }
+
+    override suspend fun toggleFunctionalProblemSolved(problemId: String) {
+        val attempts = database.dsaDao().getAllAttempts().firstOrNull() ?: emptyList()
+        val isAlreadySolved = attempts.any { it.problemId == problemId }
+        if (isAlreadySolved) {
+            database.dsaDao().deleteAttemptsByProblemId(problemId)
+        } else {
+            database.dsaDao().insertAttempt(
+                com.example.data.local.entity.DsaAttemptEntity(
+                    problemId = problemId,
+                    status = "solved",
+                    language = "Functional",
+                    notes = "",
+                    attemptedAt = System.currentTimeMillis()
+                )
+            )
+        }
     }
 }

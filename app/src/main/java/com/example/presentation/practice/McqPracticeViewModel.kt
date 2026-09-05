@@ -70,6 +70,8 @@ class McqPracticeViewModel(
                         TechnicalConceptCatalog.matchesConcept(concept, q.title, q.prompt, q.tags)
                     }
                     if (filtered.isNotEmpty()) filtered else domainQuestions
+                } else if (categoryId == "java_tricky" || categoryId == "js_tricky") {
+                    repository.getQuestionsByCategory(categoryId).first()
                 } else if (categoryId.startsWith("java_") || categoryId.startsWith("spring_") || categoryId.startsWith("ms_") || categoryId.startsWith("hld_") || categoryId.startsWith("lld_") || categoryId.startsWith("sql_") || categoryId.startsWith("ng_") || categoryId.startsWith("sec_") || categoryId.startsWith("sys_") || categoryId.startsWith("devops_")) {
                     val targetDifficulty = when {
                         categoryId.contains("beginner", ignoreCase = true) -> "Beginner"

@@ -119,10 +119,10 @@ class MockInterviewViewModel(
         initialValue = MockInterviewSessionUiState.Loading
     )
 
-    fun loadSession(trackId: String, trackTitle: String) {
+    fun loadSession(trackId: String, trackTitle: String, initialConceptId: String? = null) {
         _trackId.value = trackId
         _trackTitle.value = trackTitle
-        _selectedConceptId.value = null
+        _selectedConceptId.value = initialConceptId
         _recordingQuestion.value = null
 
         viewModelScope.launch {

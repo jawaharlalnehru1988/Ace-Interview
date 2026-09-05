@@ -263,6 +263,10 @@ class ViewModelFactory(
                     application ?: throw IllegalStateException("Application required for MockInterviewViewModel"),
                     repository
                 ) as T
+            modelClass.isAssignableFrom(com.example.presentation.tricky.TrickyViewModel::class.java) ->
+                com.example.presentation.tricky.TrickyViewModel(repository) as T
+            modelClass.isAssignableFrom(com.example.presentation.functional.FunctionalViewModel::class.java) ->
+                com.example.presentation.functional.FunctionalViewModel(repository) as T
             modelClass.isAssignableFrom(ProfileViewModel::class.java) ->
                 ProfileViewModel(repository) as T
             else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")

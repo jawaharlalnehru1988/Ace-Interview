@@ -143,6 +143,9 @@ interface InterviewDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertResponse(response: InterviewResponseEntity): Long
 
+    @Query("SELECT * FROM interview_responses WHERE audioFilePath IS NOT NULL AND audioFilePath != '' ORDER BY recordedAt DESC")
+    fun getAllRecordedResponses(): Flow<List<InterviewResponseEntity>>
+
     @Query("DELETE FROM interview_responses WHERE questionId = :questionId")
     suspend fun deleteResponsesForQuestion(questionId: String)
 }

@@ -10,11 +10,13 @@ object InterviewQuestionCatalog {
             SpringBootInterviewQuestions.getQuestions() +
             MicroservicesInterviewQuestions.getQuestions() +
             SystemDesignInterviewQuestions.getQuestions() +
+            HldInterviewQuestions.getQuestions() +
             DevopsInterviewQuestions.getQuestions() +
             LldInterviewQuestions.getQuestions() +
             SqlInterviewQuestions.getQuestions() +
             SecurityInterviewQuestions.getQuestions() +
-            FullStackInterviewQuestions.getQuestions()
+            FullStackInterviewQuestions.getQuestions() +
+            AngularInterviewQuestions.getQuestions()
     }
 
     fun getQuestionsForTrack(trackId: String): List<InterviewQuestion> {
@@ -23,15 +25,16 @@ object InterviewQuestionCatalog {
             "spring_boot_interview", "spring_boot", "spring" -> SpringBootInterviewQuestions.getQuestions()
             "microservices_interview", "microservices" -> MicroservicesInterviewQuestions.getQuestions()
             "system_design_interview", "system_design" -> SystemDesignInterviewQuestions.getQuestions()
-            "hld_interview", "hld" -> SystemDesignInterviewQuestions.getQuestions()
+            "hld_interview", "hld" -> HldInterviewQuestions.getQuestions()
             "devops_interview", "devops" -> DevopsInterviewQuestions.getQuestions()
             "lld_interview", "lld" -> LldInterviewQuestions.getQuestions()
             "sql_interview", "sql" -> SqlInterviewQuestions.getQuestions()
             "security_interview", "security" -> SecurityInterviewQuestions.getQuestions()
-            "full_stack_interview", "full_stack", "angular" -> FullStackInterviewQuestions.getQuestions()
+            "full_stack_interview", "full_stack" -> FullStackInterviewQuestions.getQuestions()
+            "angular_interview", "angular", "frontend_interview", "frontend" -> AngularInterviewQuestions.getQuestions()
             "senior_engineer_interview", "senior_engineer" -> {
                 // Blend of architecture, microservices, and system design
-                SystemDesignInterviewQuestions.getQuestions().take(3) +
+                HldInterviewQuestions.getQuestions().take(3) +
                 MicroservicesInterviewQuestions.getQuestions().take(3) +
                 DevopsInterviewQuestions.getQuestions().take(2) +
                 JavaInterviewQuestions.getQuestions().take(2)

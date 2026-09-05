@@ -290,22 +290,19 @@ private fun ActiveMcqView(
                                 modifier = Modifier
                                     .clickable {
                                         val textToCopy = buildString {
-                                            appendLine("📌 ${question.title}")
-                                            appendLine()
+                                            if (question.title.isNotBlank() && question.title != question.prompt) {
+                                                appendLine("📌 ${question.title}")
+                                                appendLine()
+                                            }
                                             appendLine(question.prompt)
-                                            appendLine()
-                                            question.options.forEachIndexed { idx, opt ->
-                                                val letter = ('A' + idx)
-                                                appendLine("$letter) $opt")
-                                            }
-                                            if (activeState.isSubmitted) {
-                                                val correctLetter = ('A' + question.correctAnswerIndex)
+                                            if (question.options.isNotEmpty()) {
                                                 appendLine()
-                                                appendLine("✅ Correct Answer: $correctLetter")
-                                                appendLine()
-                                                appendLine("💡 Explanation: ${question.explanation}")
+                                                question.options.forEachIndexed { idx, opt ->
+                                                    val letter = ('A' + idx)
+                                                    appendLine("$letter) $opt")
+                                                }
                                             }
-                                        }
+                                        }.trimEnd()
                                         clipboardManager.setText(AnnotatedString(textToCopy))
                                         isCopied = true
                                         Toast.makeText(context, "Question copied to clipboard!", Toast.LENGTH_SHORT).show()
@@ -335,10 +332,9 @@ private fun ActiveMcqView(
                             }
                         }
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = question.prompt,
-                            style = MaterialTheme.typography.bodyMedium.copy(lineHeight = 22.sp),
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.9f)
+                        com.example.presentation.common.RichCodePromptView(
+                            prompt = question.prompt,
+                            defaultLanguage = if (question.categoryId.contains("js", ignoreCase = true)) "JavaScript" else "Java"
                         )
 
                         if (question.tags.isNotEmpty()) {

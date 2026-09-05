@@ -8,7 +8,12 @@ data class UserDashboard(
     val currentStreakDays: Int,
     val accuracyPercentage: Int,
     val weakAreas: List<WeakArea>,
-    val todayTrainings: List<TodayTraining>
+    val todayTrainings: List<TodayTraining>,
+    val dsaSolvedCount: Int = 0,
+    val totalDsaProblems: Int = 0,
+    val trickySolvedCount: Int = 0,
+    val trickyTotalCount: Int = 0,
+    val trickyAccuracy: Int = 0
 )
 
 data class WeakArea(
@@ -19,13 +24,25 @@ data class WeakArea(
     val recommendation: String
 )
 
+enum class TrainingType {
+    MCQ,
+    INTERVIEW
+}
+
 data class TodayTraining(
     val id: String,
     val title: String,
     val category: String,
     val questionsCount: Int,
     val estimatedMinutes: Int,
-    val isCompleted: Boolean
+    val isCompleted: Boolean,
+    val type: TrainingType = TrainingType.MCQ,
+    val subtitle: String = "",
+    val targetId: String = "",
+    val targetConceptId: String? = null,
+    val targetConceptName: String? = null,
+    val completedCount: Int = 0,
+    val targetGoalCount: Int = 0
 )
 
 data class TechnicalCategory(
@@ -65,6 +82,32 @@ data class DsaProblem(
     val isSolved: Boolean = false
 )
 
+data class FunctionalProblem(
+    val id: String,
+    val trackId: String, // "java_stream", "js_functional", "rxjs"
+    val category: String,
+    val title: String,
+    val difficulty: String,
+    val pattern: String,
+    val description: String,
+    val inputData: String,
+    val expectedOutput: String,
+    val functionalSolution: String,
+    val imperativeSolution: String,
+    val comparisonInsight: String,
+    val isSolved: Boolean = false
+)
+
+data class FunctionalTrack(
+    val id: String,
+    val title: String,
+    val subtitle: String,
+    val description: String,
+    val totalCount: Int,
+    val solvedCount: Int,
+    val tags: List<String>
+)
+
 data class InterviewTrack(
     val id: String,
     val title: String,
@@ -83,8 +126,12 @@ data class UserProfile(
     val questionsAttempted: Int,
     val accuracyPercentage: Int,
     val dsaProblemsSolved: Int,
+    val totalDsaProblems: Int = 0,
     val interviewSessions: Int,
-    val streakDays: Int
+    val streakDays: Int,
+    val backendProgress: Float = 0f,
+    val systemDesignProgress: Float = 0f,
+    val dsaProgress: Float = 0f
 )
 
 data class Question(

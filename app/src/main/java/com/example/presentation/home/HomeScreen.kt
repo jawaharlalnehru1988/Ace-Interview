@@ -19,10 +19,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountTree
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.ElectricBolt
 import androidx.compose.material.icons.filled.LocalFireDepartment
+import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Psychology
+import androidx.compose.material.icons.filled.Quiz
 import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.compose.material.icons.filled.School
 import androidx.compose.material.icons.filled.Speed
@@ -50,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.domain.model.TodayTraining
+import com.example.domain.model.TrainingType
 import com.example.domain.model.UserDashboard
 import com.example.domain.model.WeakArea
 import com.example.presentation.common.LoadingState
@@ -70,7 +75,11 @@ import com.example.ui.theme.WarningOrange
 fun HomeScreen(
     viewModel: HomeViewModel,
     modifier: Modifier = Modifier,
-    onNavigateToPractice: () -> Unit = {}
+    onNavigateToPractice: () -> Unit = {},
+    onNavigateToQuiz: (categoryId: String, categoryName: String) -> Unit = { _, _ -> },
+    onNavigateToInterview: (trackId: String, trackTitle: String, conceptId: String?) -> Unit = { _, _, _ -> },
+    onNavigateToDsa: () -> Unit = {},
+    onNavigateToTricky: () -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -83,6 +92,10 @@ fun HomeScreen(
                 dashboard = current.dashboard,
                 onToggleTraining = { viewModel.toggleTrainingItem(it) },
                 onNavigateToPractice = onNavigateToPractice,
+                onNavigateToQuiz = onNavigateToQuiz,
+                onNavigateToInterview = onNavigateToInterview,
+                onNavigateToDsa = onNavigateToDsa,
+                onNavigateToTricky = onNavigateToTricky,
                 modifier = modifier
             )
         }
@@ -94,6 +107,10 @@ fun HomeContent(
     dashboard: UserDashboard,
     onToggleTraining: (String) -> Unit,
     onNavigateToPractice: () -> Unit,
+    onNavigateToQuiz: (categoryId: String, categoryName: String) -> Unit = { _, _ -> },
+    onNavigateToInterview: (trackId: String, trackTitle: String, conceptId: String?) -> Unit = { _, _, _ -> },
+    onNavigateToDsa: () -> Unit = {},
+    onNavigateToTricky: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -216,14 +233,179 @@ fun HomeContent(
                             .testTag("metric_accuracy")
                     )
                     MetricStatCard(
-                        title = "Target",
-                        value = "L5 SWE",
-                        subtitle = "Backend & FullStack",
-                        icon = Icons.Filled.Psychology,
-                        iconTint = MaterialTheme.colorScheme.secondary,
+                        title = "DSA Solved",
+                        value = "${dashboard.dsaSolvedCount}",
+                        subtitle = "${dashboard.dsaSolvedCount} of ${dashboard.totalDsaProblems}",
+                        icon = Icons.Filled.AccountTree,
+                        iconTint = CyanSecondaryDark,
                         modifier = Modifier
                             .weight(1f)
-                            .testTag("metric_target")
+                            .clickable { onNavigateToDsa() }
+                            .testTag("metric_dsa_solved")
+                    )
+                }
+            }
+        }
+
+        // --- Dedicated DSA Progress Roadmap Card ---
+        item {
+            val dsaPercent = if (dashboard.totalDsaProblems > 0) {
+                (dashboard.dsaSolvedCount.toFloat() / dashboard.totalDsaProblems.toFloat() * 100).toInt()
+            } else 0
+
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onNavigateToDsa() }
+                    .testTag("card_home_dsa_progress"),
+                shape = RoundedCornerShape(18.dp),
+                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.65f),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.3f))
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.AccountTree,
+                                contentDescription = "DSA Progress",
+                                tint = CyanSecondaryDark,
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Text(
+                                text = "DSA ROADMAP PROGRESS",
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    letterSpacing = 1.1.sp,
+                                    fontSize = 11.sp
+                                ),
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+
+                        StatusBadge(
+                            text = "${dashboard.dsaSolvedCount} / ${dashboard.totalDsaProblems} Solved",
+                            color = if (dashboard.dsaSolvedCount > 0) SuccessGreen else MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Algorithmic Foundation Coverage",
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = "$dsaPercent%",
+                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                            color = if (dsaPercent > 0) SuccessGreen else MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(6.dp))
+
+                    LinearProgressIndicator(
+                        progress = { if (dashboard.totalDsaProblems > 0) dashboard.dsaSolvedCount.toFloat() / dashboard.totalDsaProblems.toFloat() else 0f },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(6.dp)
+                            .clip(RoundedCornerShape(3.dp)),
+                        color = MaterialTheme.colorScheme.primary,
+                        trackColor = MaterialTheme.colorScheme.surface
+                    )
+                }
+            }
+        }
+
+        // --- Dedicated Tricky Code Mastery Card ---
+        item {
+            val trickyPercent = if (dashboard.trickyTotalCount > 0) {
+                (dashboard.trickySolvedCount.toFloat() / dashboard.trickyTotalCount.toFloat() * 100).toInt()
+            } else 0
+
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onNavigateToTricky() }
+                    .testTag("card_home_tricky_progress"),
+                shape = RoundedCornerShape(18.dp),
+                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.65f),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.3f))
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Psychology,
+                                contentDescription = "Tricky Progress",
+                                tint = WarningOrange,
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Text(
+                                text = "TRICKY CODE MASTERY",
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    letterSpacing = 1.1.sp,
+                                    fontSize = 11.sp
+                                ),
+                                color = WarningOrange
+                            )
+                        }
+
+                        StatusBadge(
+                            text = if (dashboard.trickySolvedCount > 0) "${dashboard.trickySolvedCount} Solved (${dashboard.trickyAccuracy}%)" else "Start Drills",
+                            color = if (dashboard.trickySolvedCount > 0) SuccessGreen else MaterialTheme.colorScheme.primary
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Java & JS Counter-Intuitive Edge Cases",
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = "$trickyPercent%",
+                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                            color = if (trickyPercent > 0) SuccessGreen else MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(6.dp))
+
+                    LinearProgressIndicator(
+                        progress = { if (dashboard.trickyTotalCount > 0) dashboard.trickySolvedCount.toFloat() / dashboard.trickyTotalCount.toFloat() else 0f },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(6.dp)
+                            .clip(RoundedCornerShape(3.dp)),
+                        color = WarningOrange,
+                        trackColor = MaterialTheme.colorScheme.surface
                     )
                 }
             }
@@ -295,7 +477,13 @@ fun HomeContent(
         items(dashboard.todayTrainings, key = { it.id }) { training ->
             TodayTrainingItem(
                 training = training,
-                onToggle = { onToggleTraining(training.id) }
+                onClick = {
+                    if (training.type == TrainingType.MCQ) {
+                        onNavigateToQuiz(training.targetId, training.title)
+                    } else {
+                        onNavigateToInterview(training.targetId, training.title, training.targetConceptId)
+                    }
+                }
             )
         }
 
@@ -467,18 +655,18 @@ fun InterviewReadinessCard(
 @Composable
 fun TodayTrainingItem(
     training: TodayTraining,
-    onToggle: () -> Unit,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Surface(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { onToggle() },
+            .clickable { onClick() },
         shape = RoundedCornerShape(16.dp),
         color = MaterialTheme.colorScheme.surface,
         border = BorderStroke(
             1.dp,
-            if (training.isCompleted) SuccessGreen.copy(alpha = 0.4f)
+            if (training.isCompleted) SuccessGreen.copy(alpha = 0.5f)
             else MaterialTheme.colorScheme.outline.copy(alpha = 0.35f)
         )
     ) {
@@ -490,10 +678,26 @@ fun TodayTrainingItem(
                 imageVector = if (training.isCompleted) Icons.Filled.CheckCircle else Icons.Filled.RadioButtonUnchecked,
                 contentDescription = if (training.isCompleted) "Completed" else "Incomplete",
                 tint = if (training.isCompleted) SuccessGreen else MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(22.dp)
+                modifier = Modifier.size(24.dp)
             )
             Spacer(modifier = Modifier.width(14.dp))
             Column(modifier = Modifier.weight(1f)) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    StatusBadge(
+                        text = if (training.type == TrainingType.MCQ) "MCQ Drill" else "Interview Practice",
+                        color = if (training.type == TrainingType.MCQ) MaterialTheme.colorScheme.primary else IndigoPrimaryDark
+                    )
+                    StatusBadge(
+                        text = training.category,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(6.dp))
+
                 Text(
                     text = training.title,
                     style = MaterialTheme.typography.bodyMedium.copy(
@@ -501,20 +705,43 @@ fun TodayTrainingItem(
                     ),
                     color = MaterialTheme.colorScheme.onSurface
                 )
-                Spacer(modifier = Modifier.height(3.dp))
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    StatusBadge(
-                        text = training.category,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
+
+                if (training.subtitle.isNotBlank()) {
+                    Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        text = "${training.questionsCount} Qs • ${training.estimatedMinutes} min",
-                        style = MaterialTheme.typography.labelSmall.copy(fontSize = 11.sp),
+                        text = training.subtitle,
+                        style = MaterialTheme.typography.bodySmall.copy(fontSize = 12.sp),
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    val detailText = if (training.type == TrainingType.INTERVIEW) {
+                        "${training.completedCount}/${training.targetGoalCount} Audio Recorded • ${training.questionsCount} Qs in Pool"
+                    } else {
+                        "${training.questionsCount} Qs • ~${training.estimatedMinutes} min"
+                    }
+                    Text(
+                        text = detailText,
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            fontSize = 11.sp,
+                            fontWeight = if (training.isCompleted) FontWeight.Bold else FontWeight.Normal
+                        ),
+                        color = if (training.isCompleted) SuccessGreen else MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Icon(
+                imageVector = Icons.Filled.ChevronRight,
+                contentDescription = "Start training",
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(20.dp)
+            )
         }
     }
 }

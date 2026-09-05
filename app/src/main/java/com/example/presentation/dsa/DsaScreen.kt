@@ -78,6 +78,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.domain.model.DsaProblem
 import com.example.domain.model.DsaTopic
+import com.example.presentation.common.DsaCodeBlock
 import com.example.presentation.common.LoadingState
 import com.example.presentation.common.ScreenHeader
 import com.example.presentation.common.StatusBadge
@@ -629,7 +630,7 @@ fun DsaProblemCard(
 
                     Spacer(modifier = Modifier.height(14.dp))
 
-                    // Solution Header & Copy Action
+                    // Solution Header
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -644,80 +645,37 @@ fun DsaProblemCard(
                             ),
                             color = MaterialTheme.colorScheme.primary
                         )
-
-                        // Copy Code Button
-                        Surface(
-                            shape = RoundedCornerShape(8.dp),
-                            color = if (isCopied) SuccessGreen.copy(alpha = 0.15f) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f),
-                            border = BorderStroke(
-                                0.5.dp,
-                                if (isCopied) SuccessGreen else MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
-                            ),
-                            modifier = Modifier.clickable {
-                                val fullText = buildString {
-                                    appendLine("📌 ${problem.title} (${problem.difficulty})")
-                                    appendLine("Pattern: ${problem.pattern}")
-                                    appendLine("Complexity: Time ${problem.timeComplexity} | Space ${problem.spaceComplexity}")
-                                    appendLine()
-                                    appendLine(problem.description)
-                                    appendLine()
-                                    appendLine("Example:")
-                                    appendLine("Input:  ${problem.exampleInput}")
-                                    appendLine("Output: ${problem.exampleOutput}")
-                                    appendLine()
-                                    appendLine("💡 Insight: ${problem.keyInsight}")
-                                    appendLine()
-                                    appendLine("Java Solution:")
-                                    appendLine(problem.solutionCode)
-                                }
-                                clipboardManager.setText(AnnotatedString(fullText))
-                                isCopied = true
-                                Toast.makeText(context, "Problem & Solution copied to clipboard!", Toast.LENGTH_SHORT).show()
-                            }
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(4.dp)
-                            ) {
-                                Icon(
-                                    imageVector = if (isCopied) Icons.Filled.Check else Icons.Filled.ContentCopy,
-                                    contentDescription = "Copy Solution",
-                                    tint = if (isCopied) SuccessGreen else MaterialTheme.colorScheme.onSurfaceVariant,
-                                    modifier = Modifier.size(13.dp)
-                                )
-                                Text(
-                                    text = if (isCopied) "Copied" else "Copy Solution",
-                                    style = MaterialTheme.typography.labelSmall.copy(
-                                        fontWeight = FontWeight.SemiBold,
-                                        fontSize = 11.sp
-                                    ),
-                                    color = if (isCopied) SuccessGreen else MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                        }
                     }
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    // Code Container
-                    Surface(
-                        shape = RoundedCornerShape(12.dp),
-                        color = Color(0xFF14171E),
-                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            text = problem.solutionCode,
-                            modifier = Modifier.padding(14.dp),
-                            style = MaterialTheme.typography.bodySmall.copy(
-                                fontFamily = FontFamily.Monospace,
-                                fontSize = 12.sp,
-                                lineHeight = 18.sp
-                            ),
-                            color = Color(0xFFD6DEEB)
-                        )
-                    }
+                    // Syntax-Highlighted Code Block with Line Numbers and IDE Controls
+                    DsaCodeBlock(
+                        code = problem.solutionCode,
+                        language = "Java",
+                        isCopied = isCopied,
+                        onCopy = {
+                            val fullText = buildString {
+                                appendLine("📌 ${problem.title} (${problem.difficulty})")
+                                appendLine("Pattern: ${problem.pattern}")
+                                appendLine("Complexity: Time ${problem.timeComplexity} | Space ${problem.spaceComplexity}")
+                                appendLine()
+                                appendLine(problem.description)
+                                appendLine()
+                                appendLine("Example:")
+                                appendLine("Input:  ${problem.exampleInput}")
+                                appendLine("Output: ${problem.exampleOutput}")
+                                appendLine()
+                                appendLine("💡 Insight: ${problem.keyInsight}")
+                                appendLine()
+                                appendLine("Java Solution:")
+                                appendLine(problem.solutionCode)
+                            }
+                            clipboardManager.setText(AnnotatedString(fullText))
+                            isCopied = true
+                            Toast.makeText(context, "Problem & Solution copied to clipboard!", Toast.LENGTH_SHORT).show()
+                        }
+                    )
 
                     Spacer(modifier = Modifier.height(14.dp))
 

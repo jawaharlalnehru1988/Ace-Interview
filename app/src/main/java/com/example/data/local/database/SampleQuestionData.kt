@@ -25,6 +25,8 @@ import com.example.data.local.questions.SpringBootIntermediateQuestions
 import com.example.data.local.questions.SqlAdvancedQuestions
 import com.example.data.local.questions.SqlBeginnerQuestions
 import com.example.data.local.questions.SqlIntermediateQuestions
+import com.example.data.local.questions.JavaTrickyQuestions
+import com.example.data.local.questions.JsTrickyQuestions
 import com.example.data.local.questions.DevopsQuestions
 import com.example.data.local.questions.SystemDesignQuestions
 import org.json.JSONArray
@@ -50,6 +52,8 @@ object SampleQuestionData {
      * - Security & AppSec Beginner, Intermediate, Advanced (300 MCQs)
      * - System Design (80 MCQs)
      * - DevOps (80 MCQs)
+     * - Java Tricky Questions (155 MCQs)
+     * - JavaScript Tricky Questions (155 MCQs)
      */
     val sampleQuestions: List<QuestionEntity> by lazy {
         JavaBeginnerQuestions.getAll() +
@@ -78,6 +82,8 @@ object SampleQuestionData {
         SecurityAdvancedQuestions.getAll() +
         SystemDesignQuestions.getAll() +
         DevopsQuestions.getAll() +
+        JavaTrickyQuestions.getAll() +
+        JsTrickyQuestions.getAll() +
         otherDomainQuestions
     }
 

@@ -11,6 +11,10 @@ import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.MenuBook
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.RecordVoiceOver
+import androidx.compose.material.icons.filled.Psychology
+import androidx.compose.material.icons.outlined.Psychology
+import androidx.compose.material.icons.filled.AltRoute
+import androidx.compose.material.icons.outlined.AltRoute
 import androidx.compose.ui.graphics.vector.ImageVector
 
 enum class ScreenDestination(
@@ -40,6 +44,20 @@ enum class ScreenDestination(
         selectedIcon = Icons.Filled.AccountTree,
         unselectedIcon = Icons.Outlined.AccountTree,
         testTag = "nav_tab_dsa"
+    ),
+    TRICKY(
+        route = "tricky",
+        label = "Tricky",
+        selectedIcon = Icons.Filled.Psychology,
+        unselectedIcon = Icons.Outlined.Psychology,
+        testTag = "nav_tab_tricky"
+    ),
+    FUNCTIONAL(
+        route = "functional",
+        label = "Functional",
+        selectedIcon = Icons.Filled.AltRoute,
+        unselectedIcon = Icons.Outlined.AltRoute,
+        testTag = "nav_tab_functional"
     ),
     INTERVIEW(
         route = "interview",

@@ -30,7 +30,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.GraphicEq
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
@@ -55,14 +57,21 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import kotlinx.coroutines.delay
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.domain.model.InterviewQuestion
 import com.example.domain.model.QuestionAudioAnswer
@@ -241,6 +250,17 @@ fun InterviewQuestionCard(
     val currentPosMs by viewModel.audioPlayer.currentPositionMs.collectAsStateWithLifecycle()
     val totalDurationMs by viewModel.audioPlayer.durationMs.collectAsStateWithLifecycle()
 
+    val context = LocalContext.current
+    val clipboardManager = LocalClipboardManager.current
+    var isCopied by remember(question.id) { mutableStateOf(false) }
+
+    LaunchedEffect(isCopied) {
+        if (isCopied) {
+            delay(2000)
+            isCopied = false
+        }
+    }
+
     val isThisAudioPlaying = isPlaying && playingPath == audioAnswer?.audioFilePath
 
     Surface(
@@ -258,7 +278,7 @@ fun InterviewQuestionCard(
         tonalElevation = 1.dp
     ) {
         Column(modifier = Modifier.padding(18.dp)) {
-            // Header: Concept Tag & Role Level
+            // Header: Concept Tag, Role Level & Copy Question Button
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -276,10 +296,48 @@ fun InterviewQuestionCard(
                     )
                 }
 
-                StatusBadge(
-                    text = question.difficulty,
-                    color = MaterialTheme.colorScheme.primary
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    StatusBadge(
+                        text = question.difficulty,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+
+                    // Copy Question Button Chip (Copies ONLY the question prompt, zero answers)
+                    Surface(
+                        shape = RoundedCornerShape(8.dp),
+                        color = if (isCopied) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.85f) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
+                        border = BorderStroke(
+                            0.5.dp,
+                            if (isCopied) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
+                        ),
+                        modifier = Modifier.clickable {
+                            clipboardManager.setText(AnnotatedString(question.question))
+                            isCopied = true
+                            Toast.makeText(context, "Question copied to clipboard!", Toast.LENGTH_SHORT).show()
+                        }
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Icon(
+                                imageVector = if (isCopied) Icons.Filled.Check else Icons.Filled.ContentCopy,
+                                contentDescription = "Copy Question",
+                                tint = if (isCopied) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.size(13.dp)
+                            )
+                            Text(
+                                text = if (isCopied) "Copied" else "Copy",
+                                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Medium),
+                                color = if (isCopied) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
             }
 
             Spacer(modifier = Modifier.height(10.dp))

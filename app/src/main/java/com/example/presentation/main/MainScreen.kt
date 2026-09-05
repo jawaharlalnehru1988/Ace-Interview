@@ -1,21 +1,29 @@
 package com.example.presentation.main
 
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
@@ -69,51 +77,63 @@ fun MainScreen(
                         color = MaterialTheme.colorScheme.outline.copy(alpha = 0.35f),
                         thickness = 1.dp
                     )
-                    NavigationBar(
-                        windowInsets = WindowInsets.navigationBars,
-                        containerColor = MaterialTheme.colorScheme.surface,
-                        tonalElevation = 0.dp,
-                        modifier = Modifier.testTag("bottom_navigation_bar")
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .testTag("bottom_navigation_bar"),
+                        color = MaterialTheme.colorScheme.surface,
+                        tonalElevation = 0.dp
                     ) {
-                        ScreenDestination.entries.forEach { destination ->
-                            val isSelected = currentRoute == destination.route
-                            NavigationBarItem(
-                                selected = isSelected,
-                                onClick = {
-                                    if (currentRoute != destination.route) {
-                                        navController.navigate(destination.route) {
-                                            popUpTo(navController.graph.findStartDestination().id) {
-                                                saveState = true
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .horizontalScroll(rememberScrollState())
+                                .padding(horizontal = 4.dp, vertical = 6.dp),
+                            horizontalArrangement = Arrangement.SpaceAround,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            ScreenDestination.entries.forEach { destination ->
+                                val isSelected = currentRoute == destination.route
+                                NavigationBarItem(
+                                    selected = isSelected,
+                                    onClick = {
+                                        if (currentRoute != destination.route) {
+                                            navController.navigate(destination.route) {
+                                                popUpTo(navController.graph.findStartDestination().id) {
+                                                    saveState = true
+                                                }
+                                                launchSingleTop = true
+                                                restoreState = true
                                             }
-                                            launchSingleTop = true
-                                            restoreState = true
                                         }
-                                    }
-                                },
-                                icon = {
-                                    Icon(
-                                        imageVector = if (isSelected) destination.selectedIcon else destination.unselectedIcon,
-                                        contentDescription = destination.label
-                                    )
-                                },
-                                label = {
-                                    Text(
-                                        text = destination.label,
-                                        style = MaterialTheme.typography.labelSmall.copy(
-                                            fontSize = 11.sp,
-                                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
+                                    },
+                                    icon = {
+                                        Icon(
+                                            imageVector = if (isSelected) destination.selectedIcon else destination.unselectedIcon,
+                                            contentDescription = destination.label
                                         )
-                                    )
-                                },
-                                colors = NavigationBarItemDefaults.colors(
-                                    selectedIconColor = MaterialTheme.colorScheme.primary,
-                                    selectedTextColor = MaterialTheme.colorScheme.primary,
-                                    indicatorColor = MaterialTheme.colorScheme.primaryContainer,
-                                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
-                                ),
-                                modifier = Modifier.testTag(destination.testTag)
-                            )
+                                    },
+                                    label = {
+                                        Text(
+                                            text = destination.label,
+                                            style = MaterialTheme.typography.labelSmall.copy(
+                                                fontSize = 11.sp,
+                                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
+                                            )
+                                        )
+                                    },
+                                    colors = NavigationBarItemDefaults.colors(
+                                        selectedIconColor = MaterialTheme.colorScheme.primary,
+                                        selectedTextColor = MaterialTheme.colorScheme.primary,
+                                        indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+                                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                                    ),
+                                    modifier = Modifier
+                                        .widthIn(min = 72.dp)
+                                        .testTag(destination.testTag)
+                                )
+                            }
                         }
                     }
                 }
@@ -133,6 +153,41 @@ fun MainScreen(
                     viewModel = homeViewModel,
                     onNavigateToPractice = {
                         navController.navigate(ScreenDestination.PRACTICE.route) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
+                    onNavigateToQuiz = { categoryId, categoryName ->
+                        val encodedName = java.net.URLEncoder.encode(categoryName, "UTF-8")
+                        navController.navigate("mcq_quiz/$categoryId/$encodedName")
+                    },
+                    onNavigateToInterview = { trackId, trackTitle, conceptId ->
+                        val encodedTitle = try {
+                            java.net.URLEncoder.encode(trackTitle, "UTF-8")
+                        } catch (_: Exception) {
+                            trackTitle
+                        }
+                        val route = if (!conceptId.isNullOrBlank()) {
+                            "mock_interview/$trackId/$encodedTitle?conceptId=$conceptId"
+                        } else {
+                            "mock_interview/$trackId/$encodedTitle"
+                        }
+                        navController.navigate(route)
+                    },
+                    onNavigateToDsa = {
+                        navController.navigate(ScreenDestination.DSA.route) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
+                    onNavigateToTricky = {
+                        navController.navigate(ScreenDestination.TRICKY.route) {
                             popUpTo(navController.graph.findStartDestination().id) {
                                 saveState = true
                             }
@@ -187,6 +242,26 @@ fun MainScreen(
                 DsaScreen(viewModel = dsaViewModel)
             }
 
+            composable(ScreenDestination.TRICKY.route) {
+                val trickyViewModel: com.example.presentation.tricky.TrickyViewModel = viewModel(factory = viewModelFactory)
+                com.example.presentation.tricky.TrickyScreen(
+                    viewModel = trickyViewModel,
+                    onStartTrickyQuiz = { trackId, trackTitle ->
+                        val encodedTitle = try {
+                            java.net.URLEncoder.encode(trackTitle, "UTF-8")
+                        } catch (_: Exception) {
+                            trackTitle
+                        }
+                        navController.navigate("mcq_quiz/$trackId/$encodedTitle")
+                    }
+                )
+            }
+
+            composable(ScreenDestination.FUNCTIONAL.route) {
+                val functionalViewModel: com.example.presentation.functional.FunctionalViewModel = viewModel(factory = viewModelFactory)
+                com.example.presentation.functional.FunctionalScreen(viewModel = functionalViewModel)
+            }
+
             composable(ScreenDestination.INTERVIEW.route) {
                 val interviewViewModel: InterviewViewModel = viewModel(factory = viewModelFactory)
                 InterviewScreen(
@@ -203,10 +278,15 @@ fun MainScreen(
             }
 
             composable(
-                route = "mock_interview/{trackId}/{trackTitle}",
+                route = "mock_interview/{trackId}/{trackTitle}?conceptId={conceptId}",
                 arguments = listOf(
                     navArgument("trackId") { type = NavType.StringType },
-                    navArgument("trackTitle") { type = NavType.StringType }
+                    navArgument("trackTitle") { type = NavType.StringType },
+                    navArgument("conceptId") {
+                        type = NavType.StringType
+                        nullable = true
+                        defaultValue = null
+                    }
                 )
             ) { backStackEntry ->
                 val trackId = backStackEntry.arguments?.getString("trackId") ?: "java_interview"
@@ -216,10 +296,11 @@ fun MainScreen(
                 } catch (_: Exception) {
                     rawTrackTitle
                 }
+                val conceptId = backStackEntry.arguments?.getString("conceptId")
 
                 val mockViewModel: com.example.presentation.interview.MockInterviewViewModel = viewModel(factory = viewModelFactory)
-                LaunchedEffect(trackId) {
-                    mockViewModel.loadSession(trackId, trackTitle)
+                LaunchedEffect(trackId, conceptId) {
+                    mockViewModel.loadSession(trackId, trackTitle, conceptId)
                 }
 
                 com.example.presentation.interview.MockInterviewSessionScreen(
