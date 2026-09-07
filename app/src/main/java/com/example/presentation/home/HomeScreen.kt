@@ -40,8 +40,15 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -62,6 +69,7 @@ import com.example.presentation.common.MetricStatCard
 import com.example.presentation.common.ScreenHeader
 import com.example.presentation.common.SectionTitle
 import com.example.presentation.common.StatusBadge
+import com.example.presentation.dsa.DsaTopicCard
 import com.example.presentation.viewmodel.HomeUiState
 import com.example.presentation.viewmodel.HomeViewModel
 import com.example.ui.theme.AmberTertiaryLight
@@ -79,6 +87,7 @@ fun HomeScreen(
     onNavigateToQuiz: (categoryId: String, categoryName: String) -> Unit = { _, _ -> },
     onNavigateToInterview: (trackId: String, trackTitle: String, conceptId: String?) -> Unit = { _, _, _ -> },
     onNavigateToDsa: () -> Unit = {},
+    onNavigateToDsaTopic: (topicId: String) -> Unit = {},
     onNavigateToTricky: () -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -95,6 +104,7 @@ fun HomeScreen(
                 onNavigateToQuiz = onNavigateToQuiz,
                 onNavigateToInterview = onNavigateToInterview,
                 onNavigateToDsa = onNavigateToDsa,
+                onNavigateToDsaTopic = onNavigateToDsaTopic,
                 onNavigateToTricky = onNavigateToTricky,
                 modifier = modifier
             )
@@ -110,9 +120,12 @@ fun HomeContent(
     onNavigateToQuiz: (categoryId: String, categoryName: String) -> Unit = { _, _ -> },
     onNavigateToInterview: (trackId: String, trackTitle: String, conceptId: String?) -> Unit = { _, _, _ -> },
     onNavigateToDsa: () -> Unit = {},
+    onNavigateToDsaTopic: (topicId: String) -> Unit = {},
     onNavigateToTricky: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    var selectedDsaCategory by remember { mutableStateOf("All") }
+
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
@@ -123,7 +136,7 @@ fun HomeContent(
         item {
             Spacer(modifier = Modifier.height(8.dp))
             ScreenHeader(
-                title = "Ace Interview",
+                title = "Software Interview Drill",
                 subtitle = "Real-Time Interview Readiness"
             ) {
                 Row(
@@ -326,6 +339,96 @@ fun HomeContent(
                         trackColor = MaterialTheme.colorScheme.surface
                     )
                 }
+            }
+        }
+
+        // --- Data Structure Category Roadmaps Section ---
+        if (dashboard.dsaTopics.isNotEmpty()) {
+            item {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 6.dp, bottom = 2.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            text = "Data Structure Categories",
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                fontWeight = FontWeight.Bold,
+                                letterSpacing = (-0.2).sp
+                            ),
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                        StatusBadge(
+                            text = "${dashboard.dsaTopics.size} Categories",
+                            color = CyanSecondaryDark
+                        )
+                    }
+                    Text(
+                        text = "View All",
+                        style = MaterialTheme.typography.labelMedium.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary
+                        ),
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .clickable { onNavigateToDsa() }
+                            .padding(horizontal = 8.dp, vertical = 4.dp)
+                            .testTag("action_view_all_dsa")
+                    )
+                }
+            }
+
+            // Horizontal Filter Chips based on Data Structure Categories
+            item {
+                val categoryFilterOptions = listOf("All") + dashboard.dsaTopics.map { it.name }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    categoryFilterOptions.forEach { catName ->
+                        val isSelected = (selectedDsaCategory == catName)
+                        FilterChip(
+                            selected = isSelected,
+                            onClick = { selectedDsaCategory = catName },
+                            label = {
+                                Text(
+                                    text = catName,
+                                    style = MaterialTheme.typography.labelSmall.copy(
+                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
+                                    )
+                                )
+                            },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                                selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                            ),
+                            modifier = Modifier.testTag("dsa_filter_chip_$catName")
+                        )
+                    }
+                }
+            }
+
+            // Data Structure Category Cards
+            val displayedTopics = if (selectedDsaCategory == "All") {
+                dashboard.dsaTopics
+            } else {
+                dashboard.dsaTopics.filter { it.name.equals(selectedDsaCategory, ignoreCase = true) }
+            }
+
+            items(displayedTopics, key = { "home_dsa_${it.id}" }) { topic ->
+                DsaTopicCard(
+                    topic = topic,
+                    onClick = { onNavigateToDsaTopic(topic.id) },
+                    modifier = Modifier.testTag("home_dsa_topic_${topic.id}")
+                )
             }
         }
 

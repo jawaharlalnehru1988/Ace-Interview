@@ -13,17 +13,23 @@ import com.example.presentation.main.MainScreen
 import com.example.ui.theme.MyApplicationTheme
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import androidx.compose.runtime.mutableStateOf
 import com.example.util.notification.ReminderScheduler
 
 class MainActivity : ComponentActivity() {
+  private val pendingIntentState = mutableStateOf<Intent?>(null)
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     enableEdgeToEdge()
 
-    // Schedule 8:00 PM training reminder
-    ReminderScheduler.scheduleDailyReminder(applicationContext, 20, 0)
+    pendingIntentState.value = intent
+
+    // Schedule twice-daily training reminders (10:00 AM & 08:00 PM)
+    ReminderScheduler.scheduleDailyReminders(applicationContext)
 
     // Request notification permission on Android 13+
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -35,9 +41,19 @@ class MainActivity : ComponentActivity() {
     val container = AceInterviewAppContainer(applicationContext)
     setContent {
       MyApplicationTheme {
-        MainScreen(container = container)
+        MainScreen(
+          container = container,
+          pendingNavigationIntent = pendingIntentState.value,
+          onIntentConsumed = { pendingIntentState.value = null }
+        )
       }
     }
+  }
+
+  override fun onNewIntent(intent: Intent) {
+    super.onNewIntent(intent)
+    setIntent(intent)
+    pendingIntentState.value = intent
   }
 }
 
@@ -49,5 +65,5 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-  MyApplicationTheme { Greeting("Ace Interview") }
+  MyApplicationTheme { Greeting("Software Interview Drill") }
 }

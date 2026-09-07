@@ -24,12 +24,34 @@ import kotlinx.coroutines.launch
 class TrainingReminderReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent?) {
-        Log.d(TAG, "Received alarm broadcast for 8:00 PM reminder check")
+        val requestCode = intent?.getIntExtra("request_code", ReminderScheduler.REQUEST_CODE_EVENING)
+            ?: ReminderScheduler.REQUEST_CODE_EVENING
+        val isMorning = (requestCode == ReminderScheduler.REQUEST_CODE_MORNING)
+        val slotLabel = if (isMorning) "Morning Drill" else "Evening Drill"
+        Log.d(TAG, "Received alarm broadcast for [$slotLabel]")
 
-        // Schedule next day's 8:00 PM reminder
-        ReminderScheduler.scheduleDailyReminder(context, 20, 0)
+        // Reschedule next day's alarm for this specific slot
+        if (isMorning) {
+            ReminderScheduler.scheduleAlarm(
+                context,
+                ReminderScheduler.REQUEST_CODE_MORNING,
+                ReminderScheduler.MORNING_HOUR,
+                ReminderScheduler.MORNING_MINUTE,
+                "Morning Drill"
+            )
+        } else {
+            ReminderScheduler.scheduleAlarm(
+                context,
+                ReminderScheduler.REQUEST_CODE_EVENING,
+                ReminderScheduler.EVENING_HOUR,
+                ReminderScheduler.EVENING_MINUTE,
+                "Evening Drill"
+            )
+        }
 
-        // Check if user has already completed today's MCQ practice
+        val notificationId = if (isMorning) 9001 else 9002
+
+        // Check training status and dispatch notification with deep link to practice section
         val pendingResult = goAsync()
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -42,11 +64,14 @@ class TrainingReminderReceiver : BroadcastReceiver() {
                     attempts = attempts
                 )
 
-                if (!todayMcq.isCompleted) {
-                    showNotification(context, todayMcq.category, todayMcq.title)
-                } else {
-                    Log.d(TAG, "Today's MCQ training already completed. Skipping reminder notification.")
-                }
+                showNotification(
+                    context = context,
+                    isMorning = isMorning,
+                    categoryName = todayMcq.category,
+                    title = todayMcq.title,
+                    targetConceptId = todayMcq.targetConceptId ?: todayMcq.targetId,
+                    notificationId = notificationId
+                )
             } catch (e: Exception) {
                 Log.e(TAG, "Error checking daily training status in reminder receiver", e)
             } finally {
@@ -55,39 +80,59 @@ class TrainingReminderReceiver : BroadcastReceiver() {
         }
     }
 
-    private fun showNotification(context: Context, categoryName: String, title: String) {
+    private fun showNotification(
+        context: Context,
+        isMorning: Boolean,
+        categoryName: String,
+        title: String,
+        targetConceptId: String?,
+        notificationId: Int
+    ) {
         val channelId = "daily_training_channel"
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 channelId,
-                "Daily Training Reminder",
-                NotificationManager.IMPORTANCE_DEFAULT
+                "Daily Training Reminders",
+                NotificationManager.IMPORTANCE_HIGH
             ).apply {
-                description = "Daily 8:00 PM reminder for unattempted interview training drills"
+                description = "Daily morning & evening reminders for interview practice drills"
             }
             val notificationManager = context.getSystemService(NotificationManager::class.java)
             notificationManager?.createNotificationChannel(channel)
         }
 
         val openIntent = Intent(context, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            putExtra("navigate_to", "practice_quiz")
+            putExtra("category_id", targetConceptId ?: "all")
+            putExtra("category_name", title)
         }
         val pendingIntent = PendingIntent.getActivity(
             context,
-            0,
+            notificationId,
             openIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
+        val notifTitle = if (isMorning) "Morning Interview Drill ☀️" else "Evening Practice Drill 🎯"
+        val notifSubtitle = if (isMorning) {
+            "Kickstart your day with $title! Tap to practice now."
+        } else {
+            "Keep your streak alive! Today's $title is waiting for you."
+        }
+        val notifBigText = if (isMorning) {
+            "Ready for a quick drill? Practice $categoryName ($title) to sharpen your problem-solving skills today."
+        } else {
+            "Don't miss your daily progress! Spend 5 minutes on $categoryName ($title) before the day ends."
+        }
+
         val notification = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(android.R.drawable.ic_dialog_info)
-            .setContentTitle("Daily MCQ Drill Reminder 🎯")
-            .setContentText("Don't break your streak! Today's $title is waiting for you.")
-            .setStyle(NotificationCompat.BigTextStyle().bigText(
-                "You haven't attempted today's $categoryName training ($title). Take a few minutes to complete today's drills!"
-            ))
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentTitle(notifTitle)
+            .setContentText(notifSubtitle)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(notifBigText))
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
             .build()
@@ -96,7 +141,7 @@ class TrainingReminderReceiver : BroadcastReceiver() {
             ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
         ) {
             try {
-                NotificationManagerCompat.from(context).notify(NOTIFICATION_ID, notification)
+                NotificationManagerCompat.from(context).notify(notificationId, notification)
             } catch (e: SecurityException) {
                 Log.e(TAG, "Missing POST_NOTIFICATIONS permission", e)
             }
@@ -105,6 +150,5 @@ class TrainingReminderReceiver : BroadcastReceiver() {
 
     companion object {
         private const val TAG = "TrainingReminderReceiver"
-        private const val NOTIFICATION_ID = 9001
     }
 }

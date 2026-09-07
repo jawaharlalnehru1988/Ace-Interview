@@ -32,17 +32,25 @@ class HomeViewModel(
 ) : ViewModel() {
     private val _completedTrainings = MutableStateFlow<Set<String>>(emptySet())
 
-    val uiState: StateFlow<HomeUiState> = repository.getUserDashboard()
-        .combine(_completedTrainings) { dashboard, completedSet ->
-            val updatedTrainings = dashboard.todayTrainings.map { training ->
-                training.copy(isCompleted = training.isCompleted || completedSet.contains(training.id))
-            }
-            HomeUiState.Success(dashboard.copy(todayTrainings = updatedTrainings))
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = HomeUiState.Loading
+    val uiState: StateFlow<HomeUiState> = combine(
+        repository.getUserDashboard(),
+        repository.getDsaTopics(),
+        _completedTrainings
+    ) { dashboard, dsaTopics, completedSet ->
+        val updatedTrainings = dashboard.todayTrainings.map { training ->
+            training.copy(isCompleted = training.isCompleted || completedSet.contains(training.id))
+        }
+        HomeUiState.Success(
+            dashboard.copy(
+                todayTrainings = updatedTrainings,
+                dsaTopics = dsaTopics
+            )
         )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = HomeUiState.Loading
+    )
 
     fun toggleTrainingItem(id: String) {
         _completedTrainings.update { current ->
@@ -210,7 +218,8 @@ sealed interface ProfileUiState {
 }
 
 class ProfileViewModel(
-    private val repository: InterviewRepository
+    private val repository: InterviewRepository,
+    private val application: android.app.Application? = null
 ) : ViewModel() {
     private val _dailyReminderEnabled = MutableStateFlow(true)
     private val _offlineSyncEnabled = MutableStateFlow(true)
@@ -232,7 +241,15 @@ class ProfileViewModel(
     )
 
     fun toggleDailyReminder() {
-        _dailyReminderEnabled.update { !it }
+        val newState = !_dailyReminderEnabled.value
+        _dailyReminderEnabled.value = newState
+        application?.let { ctx ->
+            if (newState) {
+                com.example.util.notification.ReminderScheduler.scheduleDailyReminders(ctx)
+            } else {
+                com.example.util.notification.ReminderScheduler.cancelAllReminders(ctx)
+            }
+        }
     }
 
     fun toggleOfflineSync() {
@@ -268,7 +285,7 @@ class ViewModelFactory(
             modelClass.isAssignableFrom(com.example.presentation.functional.FunctionalViewModel::class.java) ->
                 com.example.presentation.functional.FunctionalViewModel(repository) as T
             modelClass.isAssignableFrom(ProfileViewModel::class.java) ->
-                ProfileViewModel(repository) as T
+                ProfileViewModel(repository, application) as T
             else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         }
     }

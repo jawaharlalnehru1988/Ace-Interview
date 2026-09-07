@@ -96,4 +96,50 @@ class ProfileAndDashboardDsaProgressTest {
 
         assertTrue("Solving DSA problems must increase readiness score", scoreWithDsa > scoreWithoutDsa)
     }
+
+    @Test
+    fun testDashboardDsaTopicsList() {
+        val sampleTopics = listOf(
+            com.example.domain.model.DsaTopic(
+                id = "arrays",
+                name = "Arrays",
+                description = "Two Pointers, Sliding Window, Prefix Sums, and Matrix traversals.",
+                problemsCount = 100,
+                solvedCount = 10,
+                easyCount = 64,
+                mediumCount = 36,
+                hardCount = 0
+            ),
+            com.example.domain.model.DsaTopic(
+                id = "strings",
+                name = "Strings",
+                description = "Pattern matching, anagrams, palindrome manipulation, and string hashing.",
+                problemsCount = 100,
+                solvedCount = 5,
+                easyCount = 70,
+                mediumCount = 30,
+                hardCount = 0
+            )
+        )
+
+        val dashboard = UserDashboard(
+            readinessScore = 50,
+            readinessLevel = "Intermediate",
+            questionsCompleted = 10,
+            targetQuestions = 300,
+            currentStreakDays = 3,
+            accuracyPercentage = 75,
+            weakAreas = emptyList(),
+            todayTrainings = emptyList(),
+            dsaSolvedCount = 15,
+            totalDsaProblems = 313,
+            dsaTopics = sampleTopics
+        )
+
+        assertEquals(2, dashboard.dsaTopics.size)
+        assertEquals("Arrays", dashboard.dsaTopics[0].name)
+        assertEquals(100, dashboard.dsaTopics[0].problemsCount)
+        assertEquals("Strings", dashboard.dsaTopics[1].name)
+        assertEquals(5, dashboard.dsaTopics[1].solvedCount)
+    }
 }

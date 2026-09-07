@@ -18,6 +18,7 @@ data class TrickyTrackInfo(
     val solvedCount: Int,
     val accuracy: Int,
     val tags: List<String>,
+    val categories: List<com.example.domain.model.TrickyCategory> = emptyList(),
     val badge: String
 )
 
@@ -43,6 +44,32 @@ class TrickyViewModel(
         val javaQuestions = com.example.data.local.questions.JavaTrickyQuestions.getAll()
         val jsQuestions = com.example.data.local.questions.JsTrickyQuestions.getAll()
 
+        val javaCategoriesWithCounts = com.example.domain.model.TrickyCategoryCatalog.javaCategories.map { cat ->
+            val count = if (cat.id.endsWith("_all")) {
+                javaQuestions.size
+            } else {
+                javaQuestions.count { q ->
+                    com.example.domain.model.TrickyCategoryCatalog.matchesCategory(
+                        cat, q.title, q.prompt, q.explanation, q.tags?.split(",") ?: emptyList()
+                    )
+                }
+            }
+            cat.copy(questionCount = count)
+        }
+
+        val jsCategoriesWithCounts = com.example.domain.model.TrickyCategoryCatalog.jsCategories.map { cat ->
+            val count = if (cat.id.endsWith("_all")) {
+                jsQuestions.size
+            } else {
+                jsQuestions.count { q ->
+                    com.example.domain.model.TrickyCategoryCatalog.matchesCategory(
+                        cat, q.title, q.prompt, q.explanation, q.tags?.split(",") ?: emptyList()
+                    )
+                }
+            }
+            cat.copy(questionCount = count)
+        }
+
         val javaTrack = TrickyTrackInfo(
             id = "java_tricky",
             title = "Java Tricky Questions",
@@ -52,6 +79,7 @@ class TrickyViewModel(
             solvedCount = 0,
             accuracy = 0,
             tags = listOf("Syntax Nuances", "Control Flow", "Collections & Generics", "OOP & Inheritance"),
+            categories = javaCategoriesWithCounts,
             badge = "150+ MCQs"
         )
 
@@ -64,6 +92,7 @@ class TrickyViewModel(
             solvedCount = 0,
             accuracy = 0,
             tags = listOf("Type Coercion", "Scoping & TDZ", "This & Prototypes", "Event Loop"),
+            categories = jsCategoriesWithCounts,
             badge = "150+ MCQs"
         )
 

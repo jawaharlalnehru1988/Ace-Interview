@@ -80,4 +80,34 @@ class TrickyQuestionsAndNavigationTest {
         val percent = (dashboard.trickySolvedCount.toFloat() / dashboard.trickyTotalCount.toFloat() * 100).toInt()
         assertEquals(8, percent)
     }
+
+    @Test
+    fun testTrickyCategoriesHaveQuestions() {
+        val javaQuestions = JavaTrickyQuestions.getAll()
+        val jsQuestions = JsTrickyQuestions.getAll()
+
+        val javaCategories = com.example.domain.model.TrickyCategoryCatalog.javaCategories
+        val jsCategories = com.example.domain.model.TrickyCategoryCatalog.jsCategories
+
+        assertTrue("Must have at least 4 java categories", javaCategories.size >= 4)
+        assertTrue("Must have at least 4 js categories", jsCategories.size >= 4)
+
+        for (cat in javaCategories) {
+            val count = javaQuestions.count {
+                com.example.domain.model.TrickyCategoryCatalog.matchesCategory(
+                    cat, it.title, it.prompt, it.explanation, it.tags?.split(",") ?: emptyList()
+                )
+            }
+            assertTrue("Category ${cat.name} should have questions, but had $count", count > 0)
+        }
+
+        for (cat in jsCategories) {
+            val count = jsQuestions.count {
+                com.example.domain.model.TrickyCategoryCatalog.matchesCategory(
+                    cat, it.title, it.prompt, it.explanation, it.tags?.split(",") ?: emptyList()
+                )
+            }
+            assertTrue("Category ${cat.name} should have questions, but had $count", count > 0)
+        }
+    }
 }

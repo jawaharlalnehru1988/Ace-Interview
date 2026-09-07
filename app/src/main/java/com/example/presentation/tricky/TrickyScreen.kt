@@ -22,6 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Bolt
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.DataObject
 import androidx.compose.material.icons.filled.Javascript
@@ -36,6 +37,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,6 +47,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -187,7 +192,7 @@ fun TrickyContent(
                 track = state.javaTrack,
                 icon = Icons.Filled.Code,
                 accentColor = Color(0xFFE5C07B), // Amber/Duke Java color
-                onClick = { onStartTrack(state.javaTrack.id, state.javaTrack.title) },
+                onStartCategory = onStartTrack,
                 testTag = "card_tricky_java"
             )
         }
@@ -198,7 +203,7 @@ fun TrickyContent(
                 track = state.jsTrack,
                 icon = Icons.Filled.Javascript,
                 accentColor = Color(0xFFF7DF1E), // JavaScript Yellow
-                onClick = { onStartTrack(state.jsTrack.id, state.jsTrack.title) },
+                onStartCategory = onStartTrack,
                 testTag = "card_tricky_js"
             )
         }
@@ -253,14 +258,30 @@ fun TrickyDivisionCard(
     track: TrickyTrackInfo,
     icon: ImageVector,
     accentColor: Color,
-    onClick: () -> Unit,
+    onStartCategory: (categoryId: String, categoryTitle: String) -> Unit,
     testTag: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null
 ) {
+    val categories = track.categories.ifEmpty {
+        listOf(
+            com.example.domain.model.TrickyCategory(
+                id = track.id,
+                trackId = track.id,
+                name = "All Questions",
+                subtitle = "Complete questions collection",
+                questionCount = track.totalQuestions
+            )
+        )
+    }
+
+    var selectedCategory by remember(track.id, categories) {
+        mutableStateOf(categories.first())
+    }
+
     Surface(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { onClick() }
             .testTag(testTag),
         shape = RoundedCornerShape(18.dp),
         color = MaterialTheme.colorScheme.surface,
@@ -327,44 +348,129 @@ fun TrickyDivisionCard(
 
             Spacer(modifier = Modifier.height(14.dp))
 
-            // Tags Pill Row
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                verticalArrangement = Arrangement.spacedBy(6.dp)
+            // Category Selection Header
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                track.tags.forEach { tag ->
+                Text(
+                    text = "SELECT TOPIC CATEGORY",
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 0.8.sp
+                    ),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = "${selectedCategory.questionCount} Questions Available",
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        fontSize = 10.5.sp,
+                        fontWeight = FontWeight.SemiBold
+                    ),
+                    color = accentColor
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Category Selection Chips
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                categories.forEach { category ->
+                    val isSelected = category.id == selectedCategory.id
                     Surface(
-                        shape = RoundedCornerShape(6.dp),
-                        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
-                        border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.25f))
+                        shape = RoundedCornerShape(10.dp),
+                        color = if (isSelected) accentColor.copy(alpha = 0.18f) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.55f),
+                        border = BorderStroke(
+                            if (isSelected) 1.5.dp else 0.8.dp,
+                            if (isSelected) accentColor else MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
+                        ),
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(10.dp))
+                            .clickable { selectedCategory = category }
+                            .testTag("chip_tricky_${category.id}")
                     ) {
-                        Text(
-                            text = tag,
-                            style = MaterialTheme.typography.labelSmall.copy(
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.Medium
-                            ),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                        )
+                        Row(
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            if (isSelected) {
+                                Icon(
+                                    imageVector = Icons.Filled.Check,
+                                    contentDescription = null,
+                                    tint = accentColor,
+                                    modifier = Modifier.size(13.dp)
+                                )
+                            }
+                            Text(
+                                text = category.name,
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontSize = 11.sp,
+                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
+                                ),
+                                color = if (isSelected) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            if (category.questionCount > 0) {
+                                Surface(
+                                    shape = RoundedCornerShape(6.dp),
+                                    color = if (isSelected) accentColor.copy(alpha = 0.25f) else MaterialTheme.colorScheme.surface.copy(alpha = 0.6f),
+                                    modifier = Modifier.padding(start = 2.dp)
+                                ) {
+                                    Text(
+                                        text = "${category.questionCount}",
+                                        style = MaterialTheme.typography.labelSmall.copy(
+                                            fontSize = 9.5.sp,
+                                            fontWeight = FontWeight.Bold
+                                        ),
+                                        color = if (isSelected) accentColor else MaterialTheme.colorScheme.onSurfaceVariant,
+                                        modifier = Modifier.padding(horizontal = 5.dp, vertical = 1.dp)
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
+            }
+
+            if (selectedCategory.subtitle.isNotBlank()) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Focus: ${selectedCategory.subtitle}",
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        fontSize = 11.5.sp,
+                        fontStyle = FontStyle.Italic
+                    ),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.85f)
+                )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             // Action CTA Button
             Button(
-                onClick = onClick,
+                onClick = {
+                    if (onClick != null) {
+                        onClick()
+                    } else {
+                        onStartCategory(selectedCategory.id, "${track.title}: ${selectedCategory.name}")
+                    }
+                },
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                 ),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("btn_practice_${track.id}")
             ) {
                 Text(
-                    text = "Practice ${track.title.replace(" Questions", "")}",
+                    text = "Practice ${selectedCategory.name} (${selectedCategory.questionCount} MCQs)",
                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
                 )
                 Spacer(modifier = Modifier.width(6.dp))

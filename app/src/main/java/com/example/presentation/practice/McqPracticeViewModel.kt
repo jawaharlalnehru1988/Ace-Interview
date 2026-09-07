@@ -62,16 +62,26 @@ class McqPracticeViewModel(
             val questions = if (categoryId == "all" || categoryId.isBlank()) {
                 repository.getAllQuestions().first()
             } else {
+                val trickyCategory = com.example.domain.model.TrickyCategoryCatalog.findCategory(categoryId)
                 val concept = TechnicalConceptCatalog.findConcept(categoryId)
-                if (concept != null) {
+
+                if (trickyCategory != null) {
+                    val trackQuestions = repository.getQuestionsByCategory(trickyCategory.trackId).first()
+                    val filtered = trackQuestions.filter { q ->
+                        com.example.domain.model.TrickyCategoryCatalog.matchesCategory(
+                            trickyCategory, q.title, q.prompt, q.explanation, q.tags
+                        )
+                    }
+                    if (filtered.isNotEmpty()) filtered else trackQuestions
+                } else if (categoryId == "java_tricky" || categoryId == "js_tricky") {
+                    repository.getQuestionsByCategory(categoryId).first()
+                } else if (concept != null) {
                     val domainCategory = TechnicalConceptCatalog.getDomainForConcept(categoryId)
                     val domainQuestions = repository.getQuestionsByCategory(domainCategory).first()
                     val filtered = domainQuestions.filter { q ->
                         TechnicalConceptCatalog.matchesConcept(concept, q.title, q.prompt, q.tags)
                     }
                     if (filtered.isNotEmpty()) filtered else domainQuestions
-                } else if (categoryId == "java_tricky" || categoryId == "js_tricky") {
-                    repository.getQuestionsByCategory(categoryId).first()
                 } else if (categoryId.startsWith("java_") || categoryId.startsWith("spring_") || categoryId.startsWith("ms_") || categoryId.startsWith("hld_") || categoryId.startsWith("lld_") || categoryId.startsWith("sql_") || categoryId.startsWith("ng_") || categoryId.startsWith("sec_") || categoryId.startsWith("sys_") || categoryId.startsWith("devops_")) {
                     val targetDifficulty = when {
                         categoryId.contains("beginner", ignoreCase = true) -> "Beginner"

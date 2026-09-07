@@ -13,7 +13,8 @@ data class UserDashboard(
     val totalDsaProblems: Int = 0,
     val trickySolvedCount: Int = 0,
     val trickyTotalCount: Int = 0,
-    val trickyAccuracy: Int = 0
+    val trickyAccuracy: Int = 0,
+    val dsaTopics: List<DsaTopic> = emptyList()
 )
 
 data class WeakArea(

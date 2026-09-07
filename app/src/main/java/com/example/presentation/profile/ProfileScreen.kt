@@ -311,7 +311,7 @@ fun ProfileContent(
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
                                 Text(
-                                    text = "08:00 PM daily training alert",
+                                    text = "Twice daily training alerts (10:00 AM & 08:00 PM)",
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -383,7 +383,7 @@ fun ProfileContent(
                         Spacer(modifier = Modifier.width(12.dp))
                         Column {
                             Text(
-                                text = "Ace Interview",
+                                text = "Software Interview Drill",
                                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
                                 color = MaterialTheme.colorScheme.onSurface
                             )
