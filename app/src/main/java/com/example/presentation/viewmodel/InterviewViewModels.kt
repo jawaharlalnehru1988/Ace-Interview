@@ -4,9 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.domain.model.DsaProblem
+import com.example.domain.model.DsaScreenMode
 import com.example.domain.model.DsaTopic
 import com.example.domain.model.InterviewTrack
 import com.example.domain.model.TechnicalCategory
+import com.example.domain.model.TrainingDrill
+import com.example.domain.model.TrainingTopic
 import com.example.domain.model.UserDashboard
 import com.example.domain.model.UserProfile
 import com.example.domain.repository.InterviewRepository
@@ -121,27 +124,74 @@ sealed interface DsaUiState {
     data class Success(
         val topics: List<DsaTopic>,
         val selectedTopicId: String? = null,
-        val selectedTopicProblems: List<DsaProblem> = emptyList()
+        val selectedTopicProblems: List<DsaProblem> = emptyList(),
+        val screenMode: DsaScreenMode = DsaScreenMode.ROADMAP,
+        val trainingTopics: List<TrainingTopic> = emptyList(),
+        val selectedTrainingTopicId: String? = "arrays",
+        val selectedTrainingDrills: List<TrainingDrill> = emptyList(),
+        val selectedDrillId: String? = null
     ) : DsaUiState
 }
+
+private data class DsaRoadmapData(
+    val topics: List<DsaTopic>,
+    val problems: List<DsaProblem>,
+    val selectedId: String?,
+    val mode: DsaScreenMode
+)
+
+private data class DsaTrainingData(
+    val trainTopics: List<TrainingTopic>,
+    val drills: List<TrainingDrill>,
+    val trainTopicId: String?,
+    val drillId: String?
+)
 
 class DsaViewModel(
     private val repository: InterviewRepository
 ) : ViewModel() {
     private val _selectedTopicId = MutableStateFlow<String?>(null)
+    private val _screenMode = MutableStateFlow(DsaScreenMode.ROADMAP)
+    private val _selectedTrainingTopicId = MutableStateFlow<String?>("arrays")
+    private val _selectedDrillId = MutableStateFlow<String?>(null)
+
+    private val dsaProblemsFlow = _selectedTopicId.flatMapLatest { topicId ->
+        if (topicId != null) repository.getDsaProblems(topicId)
+        else flowOf(emptyList())
+    }
+
+    private val trainingDrillsFlow = _selectedTrainingTopicId.flatMapLatest { topicId ->
+        if (topicId != null) repository.getDrillsForTopic(topicId)
+        else flowOf(emptyList())
+    }
 
     val uiState: StateFlow<DsaUiState> = combine(
-        repository.getDsaTopics(),
-        _selectedTopicId.flatMapLatest { topicId ->
-            if (topicId != null) repository.getDsaProblems(topicId)
-            else flowOf(emptyList())
+        combine(
+            repository.getDsaTopics(),
+            dsaProblemsFlow,
+            _selectedTopicId,
+            _screenMode
+        ) { topics, problems, topicId, mode ->
+            DsaRoadmapData(topics, problems, topicId, mode)
         },
-        _selectedTopicId
-    ) { topics, problems, selectedId ->
+        combine(
+            repository.getTrainingTopics(),
+            trainingDrillsFlow,
+            _selectedTrainingTopicId,
+            _selectedDrillId
+        ) { trainTopics, drills, trainTopicId, drillId ->
+            DsaTrainingData(trainTopics, drills, trainTopicId, drillId)
+        }
+    ) { roadmap, training ->
         DsaUiState.Success(
-            topics = topics,
-            selectedTopicId = selectedId,
-            selectedTopicProblems = problems
+            topics = roadmap.topics,
+            selectedTopicId = roadmap.selectedId,
+            selectedTopicProblems = roadmap.problems,
+            screenMode = roadmap.mode,
+            trainingTopics = training.trainTopics,
+            selectedTrainingTopicId = training.trainTopicId,
+            selectedTrainingDrills = training.drills,
+            selectedDrillId = training.drillId
         )
     }.stateIn(
         scope = viewModelScope,
@@ -157,6 +207,33 @@ class DsaViewModel(
         viewModelScope.launch {
             repository.toggleDsaProblemSolved(problemId)
         }
+    }
+
+    fun setScreenMode(mode: DsaScreenMode) {
+        _screenMode.value = mode
+    }
+
+    fun selectTrainingTopic(topicId: String?) {
+        _selectedTrainingTopicId.value = topicId
+        _selectedDrillId.value = null
+    }
+
+    fun selectDrill(drillId: String?) {
+        _selectedDrillId.value = drillId
+    }
+
+    fun toggleDrillCompleted(drillId: String) {
+        viewModelScope.launch {
+            repository.toggleDrillCompleted(drillId)
+        }
+    }
+
+    fun navigateToTraining(topicId: String? = null) {
+        _screenMode.value = DsaScreenMode.TRAINING
+        if (topicId != null) {
+            _selectedTrainingTopicId.value = topicId
+        }
+        _selectedDrillId.value = null
     }
 }
 

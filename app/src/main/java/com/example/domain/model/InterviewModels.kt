@@ -160,3 +160,44 @@ data class QuizSummary(
     val scorePercentage: Int,
     val questionResults: List<QuestionResult>
 )
+
+enum class DsaScreenMode {
+    ROADMAP,
+    TRAINING
+}
+
+data class DrillTraceStep(
+    val stepNumber: Int,
+    val state: String,
+    val explanation: String
+)
+
+data class DrillQuiz(
+    val question: String,
+    val options: List<String>,
+    val correctOptionIndex: Int,
+    val explanation: String
+)
+
+data class TrainingDrill(
+    val id: String,
+    val topicId: String,
+    val lessonNumber: Int,
+    val title: String,
+    val subtitle: String,
+    val conceptDelta: String,
+    val intuition: String,
+    val codePattern: String,
+    val stepTrace: List<DrillTraceStep>,
+    val quizQuestion: DrillQuiz,
+    val isCompleted: Boolean = false
+)
+
+data class TrainingTopic(
+    val id: String,
+    val name: String,
+    val description: String,
+    val drills: List<TrainingDrill> = emptyList(),
+    val completedCount: Int = 0,
+    val totalCount: Int = 0
+)

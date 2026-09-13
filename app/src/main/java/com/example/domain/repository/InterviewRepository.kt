@@ -7,6 +7,8 @@ import com.example.domain.model.Question
 import com.example.domain.model.TechnicalCategory
 import com.example.domain.model.UserDashboard
 import com.example.domain.model.UserProfile
+import com.example.domain.model.TrainingDrill
+import com.example.domain.model.TrainingTopic
 import kotlinx.coroutines.flow.Flow
 
 interface InterviewRepository {
@@ -19,6 +21,11 @@ interface InterviewRepository {
     // DSA problems
     fun getDsaProblems(topicId: String): Flow<List<DsaProblem>>
     suspend fun toggleDsaProblemSolved(problemId: String)
+
+    // DSA Gradual Training & Drills
+    fun getTrainingTopics(): Flow<List<TrainingTopic>>
+    fun getDrillsForTopic(topicId: String): Flow<List<TrainingDrill>>
+    suspend fun toggleDrillCompleted(drillId: String)
 
     // Question bank & Room integration
     fun getAllQuestions(): Flow<List<Question>>

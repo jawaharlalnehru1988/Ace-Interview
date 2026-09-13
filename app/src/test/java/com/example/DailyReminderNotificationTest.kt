@@ -23,7 +23,7 @@ class DailyReminderNotificationTest {
     fun testDailyMcqTargetConceptForDeepLinking() {
         val training = DailyTrainingScheduler.getTodayMcqTraining(epochDay = 100L)
         assertNotNull(training.targetConceptId)
-        assertTrue(training.targetConceptId.isNotEmpty())
+        assertTrue(!training.targetConceptId.isNullOrEmpty())
         assertNotNull(training.title)
         assertTrue(training.title.isNotEmpty())
         assertNotNull(training.category)

@@ -7,12 +7,15 @@ import com.example.data.local.entity.DsaAttemptEntity
 import com.example.data.local.entity.QuestionAttemptEntity
 import com.example.data.local.entity.QuizSessionEntity
 import com.example.data.local.entity.toDomain
+import com.example.data.local.dsa.TrainingDrillData
 import com.example.domain.model.DsaProblem
 import com.example.domain.model.DsaTopic
 import com.example.domain.model.InterviewTrack
 import com.example.domain.model.Question
 import com.example.domain.model.TechnicalCategory
 import com.example.domain.model.TodayTraining
+import com.example.domain.model.TrainingDrill
+import com.example.domain.model.TrainingTopic
 import com.example.domain.model.UserDashboard
 import com.example.domain.model.UserProfile
 import com.example.domain.model.WeakArea
@@ -429,6 +432,56 @@ class InterviewRepositoryImpl(
                     status = "solved",
                     language = "Java",
                     notes = "",
+                    attemptedAt = System.currentTimeMillis()
+                )
+            )
+        }
+    }
+
+    override fun getTrainingTopics(): Flow<List<TrainingTopic>> {
+        return database.dsaDao().getAllAttempts().onStart { emit(emptyList()) }.map { attempts ->
+            val solvedDrillIds = attempts.map { it.problemId }
+                .filter { it.startsWith("drill_") }
+                .map { it.removePrefix("drill_") }
+                .toSet()
+
+            TrainingDrillData.getTopics().map { topic ->
+                val topicDrills = TrainingDrillData.getDrillsByTopic(topic.id)
+                val completedInTopic = topicDrills.count { solvedDrillIds.contains(it.id) }
+                topic.copy(
+                    completedCount = completedInTopic,
+                    totalCount = topicDrills.size
+                )
+            }
+        }
+    }
+
+    override fun getDrillsForTopic(topicId: String): Flow<List<TrainingDrill>> {
+        return database.dsaDao().getAllAttempts().onStart { emit(emptyList()) }.map { attempts ->
+            val solvedDrillIds = attempts.map { it.problemId }
+                .filter { it.startsWith("drill_") }
+                .map { it.removePrefix("drill_") }
+                .toSet()
+
+            TrainingDrillData.getDrillsByTopic(topicId).map { drill ->
+                drill.copy(isCompleted = solvedDrillIds.contains(drill.id))
+            }
+        }
+    }
+
+    override suspend fun toggleDrillCompleted(drillId: String) {
+        val storageKey = "drill_$drillId"
+        val attempts = database.dsaDao().getAllAttempts().firstOrNull() ?: emptyList()
+        val isAlreadySolved = attempts.any { it.problemId == storageKey }
+        if (isAlreadySolved) {
+            database.dsaDao().deleteAttemptsByProblemId(storageKey)
+        } else {
+            database.dsaDao().insertAttempt(
+                DsaAttemptEntity(
+                    problemId = storageKey,
+                    status = "mastered",
+                    language = "Java",
+                    notes = "Drill completed",
                     attemptedAt = System.currentTimeMillis()
                 )
             )

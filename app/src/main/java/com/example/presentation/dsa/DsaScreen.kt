@@ -29,6 +29,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.AccountTree
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
@@ -77,6 +78,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.domain.model.DsaProblem
+import com.example.domain.model.DsaScreenMode
 import com.example.domain.model.DsaTopic
 import com.example.presentation.common.DsaCodeBlock
 import com.example.presentation.common.LoadingState
@@ -109,13 +111,66 @@ fun DsaScreen(
                         topic = topic,
                         problems = current.selectedTopicProblems,
                         onToggleSolved = { viewModel.toggleProblemSolved(it) },
-                        onNavigateBack = { viewModel.selectTopic(null) }
+                        onNavigateBack = { viewModel.selectTopic(null) },
+                        onNavigateToDrills = {
+                            viewModel.selectTopic(null)
+                            viewModel.navigateToTraining(topic.id)
+                        }
                     )
+                } else if (current.screenMode == DsaScreenMode.TRAINING) {
+                    if (current.selectedDrillId != null) {
+                        val drill = current.selectedTrainingDrills.firstOrNull { it.id == current.selectedDrillId }
+                        if (drill != null) {
+                            val currentIndex = current.selectedTrainingDrills.indexOfFirst { it.id == drill.id }
+                            val nextDrill = if (currentIndex != -1 && currentIndex < current.selectedTrainingDrills.lastIndex) {
+                                current.selectedTrainingDrills[currentIndex + 1]
+                            } else null
+
+                            TrainingDrillDetailView(
+                                drill = drill,
+                                onToggleCompleted = { viewModel.toggleDrillCompleted(drill.id) },
+                                onNavigateBack = { viewModel.selectDrill(null) },
+                                onNextDrill = nextDrill?.let { next ->
+                                    { viewModel.selectDrill(next.id) }
+                                }
+                            )
+                        } else {
+                            viewModel.selectDrill(null)
+                        }
+                    } else {
+                        Column(modifier = Modifier.fillMaxSize()) {
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Box(modifier = Modifier.padding(horizontal = 20.dp)) {
+                                DsaModeSwitcher(
+                                    selectedMode = current.screenMode,
+                                    onSelectMode = { viewModel.setScreenMode(it) },
+                                    completedDrillsCount = current.trainingTopics.sumOf { it.completedCount },
+                                    totalDrillsCount = current.trainingTopics.sumOf { it.totalCount }
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(10.dp))
+                            TrainingDashboardView(
+                                topics = current.trainingTopics,
+                                selectedTopicId = current.selectedTrainingTopicId,
+                                drills = current.selectedTrainingDrills,
+                                onSelectTopic = { viewModel.selectTrainingTopic(it) },
+                                onSelectDrill = { viewModel.selectDrill(it.id) },
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                    }
                 } else {
                     DsaContent(
                         topics = current.topics,
+                        screenMode = current.screenMode,
+                        onSelectMode = { viewModel.setScreenMode(it) },
+                        completedDrillsCount = current.trainingTopics.sumOf { it.completedCount },
+                        totalDrillsCount = current.trainingTopics.sumOf { it.totalCount },
                         onTopicClick = { topic ->
                             viewModel.selectTopic(topic.id)
+                        },
+                        onStartTraining = {
+                            viewModel.navigateToTraining()
                         }
                     )
                 }
@@ -127,7 +182,12 @@ fun DsaScreen(
 @Composable
 fun DsaContent(
     topics: List<DsaTopic>,
+    screenMode: DsaScreenMode,
+    onSelectMode: (DsaScreenMode) -> Unit,
+    completedDrillsCount: Int,
+    totalDrillsCount: Int,
     onTopicClick: (DsaTopic) -> Unit,
+    onStartTraining: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val totalProblems = topics.sumOf { it.problemsCount }
@@ -142,9 +202,25 @@ fun DsaContent(
     ) {
         item {
             Spacer(modifier = Modifier.height(8.dp))
+            DsaModeSwitcher(
+                selectedMode = screenMode,
+                onSelectMode = onSelectMode,
+                completedDrillsCount = completedDrillsCount,
+                totalDrillsCount = totalDrillsCount
+            )
+        }
+
+        item {
             ScreenHeader(
                 title = "DSA Roadmap",
                 subtitle = "Algorithmic patterns commonly tested at top tier engineering teams"
+            )
+        }
+
+        // Hero Training Drill Banner
+        item {
+            DsaTrainingHeroBanner(
+                onStartTraining = onStartTraining
             )
         }
 
@@ -241,6 +317,7 @@ fun DsaTopicDetailView(
     problems: List<DsaProblem>,
     onToggleSolved: (String) -> Unit,
     onNavigateBack: () -> Unit,
+    onNavigateToDrills: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     var selectedFilter by remember { mutableStateOf("All") }
@@ -314,6 +391,45 @@ fun DsaTopicDetailView(
                 color = MaterialTheme.colorScheme.primary,
                 trackColor = MaterialTheme.colorScheme.surfaceVariant
             )
+
+            // Gradual Drills Suggestion Card
+            if (onNavigateToDrills != null) {
+                Spacer(modifier = Modifier.height(12.dp))
+                Surface(
+                    shape = RoundedCornerShape(12.dp),
+                    color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.4f),
+                    border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.secondary.copy(alpha = 0.3f)),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { onNavigateToDrills() }
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(text = "🧠", fontSize = 16.sp)
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = "Build Intuition with Gradual Drills",
+                                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                                color = MaterialTheme.colorScheme.onSecondaryContainer
+                            )
+                            Text(
+                                text = "Master one concept at a time before solving full problems",
+                                style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp),
+                                color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f)
+                            )
+                        }
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                }
+            }
 
             Spacer(modifier = Modifier.height(14.dp))
 
