@@ -82,6 +82,7 @@ fun MainScreen(
 
     val viewModelFactory = ViewModelFactory(container.interviewRepository, container.application)
     val dsaViewModel: DsaViewModel = viewModel(factory = viewModelFactory)
+    val mcqViewModel: McqPracticeViewModel = viewModel(factory = viewModelFactory)
 
     // Handle deep-link notification intents (e.g., daily practice reminder)
     LaunchedEffect(pendingNavigationIntent) {
@@ -285,9 +286,8 @@ fun MainScreen(
                     rawCategoryName
                 }
 
-                val mcqViewModel: McqPracticeViewModel = viewModel(factory = viewModelFactory)
                 LaunchedEffect(categoryId) {
-                    mcqViewModel.startQuiz(categoryId, categoryName)
+                    mcqViewModel.startOrResumeQuiz(categoryId, categoryName)
                 }
 
                 McqPracticeScreen(

@@ -109,7 +109,7 @@ fun PracticeContent(
     onCategoryClick: (TechnicalCategory) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val filterOptions = listOf("All", "Backend", "Architecture", "Infra & Sec", "Frontend")
+    val filterOptions = listOf("All", "Backend", "Database", "Architecture", "Infra & Sec", "Frontend")
 
     LazyColumn(
         modifier = modifier

@@ -84,6 +84,7 @@ class PracticeViewModel(
             val matchesFilter = when (filter) {
                 "Architecture" -> cat.id in listOf("hld", "lld", "system_design", "microservices")
                 "Backend" -> cat.id in listOf("java", "spring_boot", "sql")
+                "Database" -> cat.id == "sql"
                 "Infra & Sec" -> cat.id in listOf("devops", "security")
                 "Frontend" -> cat.id == "angular"
                 else -> true

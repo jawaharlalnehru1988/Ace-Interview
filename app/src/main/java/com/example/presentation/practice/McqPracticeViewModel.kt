@@ -56,7 +56,23 @@ class McqPracticeViewModel(
     private val _sessionState = MutableStateFlow<McqSessionState>(McqSessionState.Loading)
     val sessionState: StateFlow<McqSessionState> = _sessionState.asStateFlow()
 
+    private val activeSessions = mutableMapOf<String, McqSessionState.Active>()
+
+    fun startOrResumeQuiz(categoryId: String, categoryName: String) {
+        val current = _sessionState.value
+        if (current is McqSessionState.Active && current.categoryId == categoryId) {
+            return
+        }
+        val cached = activeSessions[categoryId]
+        if (cached != null && cached.questions.isNotEmpty()) {
+            _sessionState.value = cached
+            return
+        }
+        startQuiz(categoryId, categoryName)
+    }
+
     fun startQuiz(categoryId: String, categoryName: String) {
+        activeSessions.remove(categoryId)
         viewModelScope.launch {
             _sessionState.value = McqSessionState.Loading
             val questions = if (categoryId == "all" || categoryId.isBlank()) {
@@ -129,7 +145,7 @@ class McqPracticeViewModel(
             if (sortedQuestions.isEmpty()) {
                 _sessionState.value = McqSessionState.Empty
             } else {
-                _sessionState.value = McqSessionState.Active(
+                val newActive = McqSessionState.Active(
                     categoryId = categoryId,
                     categoryName = categoryName,
                     questions = sortedQuestions,
@@ -141,6 +157,8 @@ class McqPracticeViewModel(
                     results = emptyList(),
                     questionStartTimeMs = System.currentTimeMillis()
                 )
+                activeSessions[categoryId] = newActive
+                _sessionState.value = newActive
             }
         }
     }
@@ -148,7 +166,9 @@ class McqPracticeViewModel(
     fun selectOption(optionIndex: Int) {
         _sessionState.update { current ->
             if (current is McqSessionState.Active && !current.isSubmitted) {
-                current.copy(selectedOptionIndex = optionIndex)
+                val updated = current.copy(selectedOptionIndex = optionIndex)
+                activeSessions[updated.categoryId] = updated
+                updated
             } else {
                 current
             }
@@ -180,12 +200,14 @@ class McqPracticeViewModel(
                 )
             }
 
-            _sessionState.value = current.copy(
+            val updated = current.copy(
                 isSubmitted = true,
                 isCorrect = isCorrect,
                 explanationVisible = true,
                 results = updatedResults
             )
+            activeSessions[current.categoryId] = updated
+            _sessionState.value = updated
         }
     }
 
@@ -196,7 +218,7 @@ class McqPracticeViewModel(
                 // Finish session
                 finishQuiz(current)
             } else {
-                _sessionState.value = current.copy(
+                val updated = current.copy(
                     currentIndex = current.currentIndex + 1,
                     selectedOptionIndex = null,
                     isSubmitted = false,
@@ -204,6 +226,8 @@ class McqPracticeViewModel(
                     explanationVisible = false,
                     questionStartTimeMs = System.currentTimeMillis()
                 )
+                activeSessions[current.categoryId] = updated
+                _sessionState.value = updated
             }
         }
     }
@@ -213,6 +237,8 @@ class McqPracticeViewModel(
         val correct = activeState.results.count { it.isCorrect }
         val incorrect = total - correct
         val percentage = if (total > 0) ((correct.toFloat() / total) * 100).toInt() else 0
+
+        activeSessions.remove(activeState.categoryId)
 
         val summary = QuizSummary(
             totalQuestions = total,
@@ -247,6 +273,7 @@ class McqPracticeViewModel(
             val correct = current.results.count { it.isCorrect }
             val percentage = if (total > 0) ((correct.toFloat() / total) * 100).toInt() else 0
 
+            activeSessions.remove(current.categoryId)
             viewModelScope.launch {
                 repository.recordQuizSession(
                     categoryId = current.categoryId,
@@ -258,6 +285,7 @@ class McqPracticeViewModel(
                 onReturn()
             }
         } else if (current is McqSessionState.Finished) {
+            activeSessions.remove(current.categoryId)
             repository.setLastAttemptedConcept(current.categoryId)
             onReturn()
         } else {
@@ -265,16 +293,21 @@ class McqPracticeViewModel(
         }
     }
 
-    fun restartQuiz() {
+    fun restartQuiz(targetCategoryId: String? = null) {
         val current = _sessionState.value
-        when (current) {
-            is McqSessionState.Finished -> {
-                startQuiz(current.categoryId, current.categoryName)
-            }
-            is McqSessionState.Active -> {
-                startQuiz(current.categoryId, current.categoryName)
-            }
-            else -> {}
+        val catId = targetCategoryId ?: when (current) {
+            is McqSessionState.Finished -> current.categoryId
+            is McqSessionState.Active -> current.categoryId
+            else -> null
+        }
+        val catName = when (current) {
+            is McqSessionState.Finished -> current.categoryName
+            is McqSessionState.Active -> current.categoryName
+            else -> "Practice"
+        }
+        if (catId != null) {
+            activeSessions.remove(catId)
+            startQuiz(catId, catName)
         }
     }
 }

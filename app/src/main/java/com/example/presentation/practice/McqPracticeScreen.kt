@@ -101,6 +101,7 @@ fun McqPracticeScreen(
                     onSubmitAnswer = { viewModel.submitAnswer() },
                     onNextQuestion = { viewModel.nextQuestion() },
                     onFinishAndReturn = { viewModel.finishAndReturn(onNavigateBack) },
+                    onRestartQuiz = { viewModel.restartQuiz() },
                     onNavigateBack = onNavigateBack
                 )
             }
@@ -164,6 +165,7 @@ private fun ActiveMcqView(
     onSubmitAnswer: () -> Unit,
     onNextQuestion: () -> Unit,
     onFinishAndReturn: () -> Unit = {},
+    onRestartQuiz: () -> Unit = {},
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -211,14 +213,33 @@ private fun ActiveMcqView(
                 )
             }
 
-            StatusBadge(
-                text = question.difficulty,
-                color = when (question.difficulty.lowercase()) {
-                    "advanced" -> DangerRed
-                    "intermediate" -> MaterialTheme.colorScheme.primary
-                    else -> SuccessGreen
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                IconButton(
+                    onClick = onRestartQuiz,
+                    modifier = Modifier
+                        .size(36.dp)
+                        .testTag("mcq_restart_button")
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Refresh,
+                        contentDescription = "Restart Quiz",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(20.dp)
+                    )
                 }
-            )
+
+                StatusBadge(
+                    text = question.difficulty,
+                    color = when (question.difficulty.lowercase()) {
+                        "advanced" -> DangerRed
+                        "intermediate" -> MaterialTheme.colorScheme.primary
+                        else -> SuccessGreen
+                    }
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(10.dp))
