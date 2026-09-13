@@ -201,3 +201,30 @@ data class TrainingTopic(
     val completedCount: Int = 0,
     val totalCount: Int = 0
 )
+
+enum class InterviewScreenMode {
+    INTERACTIVE,
+    VIDEO_MOCK
+}
+
+data class VideoMockInterview(
+    val id: String,
+    val topicId: String,
+    val title: String,
+    val channelName: String,
+    val youtubeVideoId: String,
+    val duration: String,
+    val difficulty: String,
+    val description: String,
+    val keyTakeaways: List<String>,
+    val relatedTrackId: String
+)
+
+data class VideoMockTopic(
+    val id: String,
+    val name: String,
+    val icon: String,
+    val videoCount: Int,
+    val relatedTrackId: String
+)
+

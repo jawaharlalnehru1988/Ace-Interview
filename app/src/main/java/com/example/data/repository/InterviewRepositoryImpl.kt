@@ -812,4 +812,13 @@ class InterviewRepositoryImpl(
             )
         }
     }
+
+    override fun getVideoMockTopics(): Flow<List<com.example.domain.model.VideoMockTopic>> = flow {
+        emit(com.example.data.local.interview.VideoMockCatalog.getTopics())
+    }
+
+    override fun getVideoMocksForTopic(topicId: String): Flow<List<com.example.domain.model.VideoMockInterview>> = flow {
+        emit(com.example.data.local.interview.VideoMockCatalog.getVideosForTopic(topicId))
+    }
 }
+

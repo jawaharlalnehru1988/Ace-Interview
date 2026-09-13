@@ -6,12 +6,16 @@ import androidx.lifecycle.viewModelScope
 import com.example.domain.model.DsaProblem
 import com.example.domain.model.DsaScreenMode
 import com.example.domain.model.DsaTopic
+import com.example.domain.model.InterviewScreenMode
 import com.example.domain.model.InterviewTrack
 import com.example.domain.model.TechnicalCategory
 import com.example.domain.model.TrainingDrill
 import com.example.domain.model.TrainingTopic
 import com.example.domain.model.UserDashboard
 import com.example.domain.model.UserProfile
+import com.example.domain.model.VideoMockInterview
+import com.example.domain.model.VideoMockTopic
+import com.example.data.local.interview.VideoMockCatalog
 import com.example.domain.repository.InterviewRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -243,30 +247,72 @@ sealed interface InterviewUiState {
     data class Success(
         val tracks: List<InterviewTrack>,
         val selectedTrackId: String? = null,
-        val filterRole: String = "All"
+        val filterRole: String = "All",
+        val screenMode: InterviewScreenMode = InterviewScreenMode.INTERACTIVE,
+        val videoTopics: List<VideoMockTopic> = emptyList(),
+        val selectedVideoTopicId: String = "java",
+        val videoMocks: List<VideoMockInterview> = emptyList(),
+        val selectedVideo: VideoMockInterview? = null,
+        val currentVideoIndex: Int = 0
     ) : InterviewUiState
 }
+
+private data class VideoStateBundle(
+    val topics: List<VideoMockTopic>,
+    val topicId: String,
+    val videos: List<VideoMockInterview>,
+    val currentVideo: VideoMockInterview?,
+    val currentIndex: Int
+)
 
 class InterviewViewModel(
     private val repository: InterviewRepository
 ) : ViewModel() {
     private val _filterRole = MutableStateFlow("All")
     private val _selectedTrackId = MutableStateFlow<String?>(null)
+    private val _screenMode = MutableStateFlow(InterviewScreenMode.INTERACTIVE)
+    private val _selectedVideoTopicId = MutableStateFlow("java")
+    private val _selectedVideoId = MutableStateFlow<String?>(null)
+
+    private val videoMocksFlow = _selectedVideoTopicId.flatMapLatest { topicId ->
+        repository.getVideoMocksForTopic(topicId)
+    }
 
     val uiState: StateFlow<InterviewUiState> = combine(
-        repository.getInterviewTracks(),
-        _filterRole,
-        _selectedTrackId
-    ) { tracks, filter, selectedId ->
-        val filtered = if (filter == "All") {
-            tracks
-        } else {
-            tracks.filter { it.roleLevel.contains(filter, ignoreCase = true) }
+        combine(
+            repository.getInterviewTracks(),
+            _filterRole,
+            _selectedTrackId,
+            _screenMode
+        ) { tracks, filter, selectedId, mode ->
+            val filtered = if (filter == "All") {
+                tracks
+            } else {
+                tracks.filter { it.roleLevel.contains(filter, ignoreCase = true) }
+            }
+            Triple(filtered, selectedId, mode)
+        },
+        combine(
+            repository.getVideoMockTopics(),
+            _selectedVideoTopicId,
+            videoMocksFlow,
+            _selectedVideoId
+        ) { topics, topicId, videos, videoId ->
+            val currentVideo = videos.firstOrNull { it.id == videoId } ?: videos.firstOrNull()
+            val currentIndex = if (currentVideo != null) videos.indexOf(currentVideo).coerceAtLeast(0) else 0
+            VideoStateBundle(topics, topicId, videos, currentVideo, currentIndex)
         }
+    ) { trackData, videoBundle ->
         InterviewUiState.Success(
-            tracks = filtered,
-            selectedTrackId = selectedId,
-            filterRole = filter
+            tracks = trackData.first,
+            selectedTrackId = trackData.second,
+            filterRole = _filterRole.value,
+            screenMode = trackData.third,
+            videoTopics = videoBundle.topics,
+            selectedVideoTopicId = videoBundle.topicId,
+            videoMocks = videoBundle.videos,
+            selectedVideo = videoBundle.currentVideo,
+            currentVideoIndex = videoBundle.currentIndex
         )
     }.stateIn(
         scope = viewModelScope,
@@ -281,6 +327,42 @@ class InterviewViewModel(
     fun selectTrack(trackId: String?) {
         _selectedTrackId.update { current ->
             if (current == trackId) null else trackId
+        }
+    }
+
+    fun setScreenMode(mode: InterviewScreenMode) {
+        _screenMode.value = mode
+    }
+
+    fun selectVideoTopic(topicId: String) {
+        _selectedVideoTopicId.value = topicId
+        val videos = VideoMockCatalog.getVideosForTopic(topicId)
+        _selectedVideoId.value = videos.firstOrNull()?.id
+    }
+
+    fun selectVideo(video: VideoMockInterview) {
+        _selectedVideoId.value = video.id
+    }
+
+    fun selectVideoById(videoId: String) {
+        _selectedVideoId.value = videoId
+    }
+
+    fun playNextVideo() {
+        val topicId = _selectedVideoTopicId.value
+        val currentId = _selectedVideoId.value ?: ""
+        val next = VideoMockCatalog.getNextVideo(currentId, topicId)
+        if (next != null) {
+            _selectedVideoId.value = next.id
+        }
+    }
+
+    fun playPreviousVideo() {
+        val topicId = _selectedVideoTopicId.value
+        val currentId = _selectedVideoId.value ?: ""
+        val prev = VideoMockCatalog.getPreviousVideo(currentId, topicId)
+        if (prev != null) {
+            _selectedVideoId.value = prev.id
         }
     }
 }

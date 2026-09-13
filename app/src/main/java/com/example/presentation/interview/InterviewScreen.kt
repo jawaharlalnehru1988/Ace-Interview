@@ -18,21 +18,16 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.BusinessCenter
-import androidx.compose.material.icons.filled.CheckCircleOutline
 import androidx.compose.material.icons.filled.Engineering
-import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Schedule
-import androidx.compose.material.icons.filled.VideoCameraFront
+import androidx.compose.material.icons.filled.SmartDisplay
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
@@ -43,19 +38,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.domain.model.InterviewScreenMode
 import com.example.domain.model.InterviewTrack
+import com.example.domain.model.VideoMockInterview
+import com.example.domain.model.VideoMockTopic
 import com.example.presentation.common.LoadingState
 import com.example.presentation.common.ScreenHeader
 import com.example.presentation.common.StatusBadge
 import com.example.presentation.viewmodel.InterviewUiState
 import com.example.presentation.viewmodel.InterviewViewModel
-import kotlinx.coroutines.launch
 
 @Composable
 fun InterviewScreen(
@@ -65,7 +61,6 @@ fun InterviewScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
 
     Box(modifier = modifier.fillMaxSize()) {
         when (val current = state) {
@@ -73,15 +68,34 @@ fun InterviewScreen(
                 LoadingState(modifier = Modifier.fillMaxSize())
             }
             is InterviewUiState.Success -> {
-                InterviewContent(
-                    tracks = current.tracks,
-                    activeFilter = current.filterRole,
-                    onFilterSelected = { viewModel.setFilter(it) },
-                    onTrackClick = { track ->
-                        viewModel.selectTrack(track.id)
-                        onStartSession(track.id, track.title)
-                    }
-                )
+                if (current.screenMode == InterviewScreenMode.VIDEO_MOCK) {
+                    VideoMockContent(
+                        screenMode = current.screenMode,
+                        onSelectMode = { viewModel.setScreenMode(it) },
+                        topics = current.videoTopics,
+                        selectedTopicId = current.selectedVideoTopicId,
+                        videoMocks = current.videoMocks,
+                        selectedVideo = current.selectedVideo,
+                        currentIndex = current.currentVideoIndex,
+                        onSelectTopic = { viewModel.selectVideoTopic(it) },
+                        onSelectVideo = { viewModel.selectVideo(it) },
+                        onPlayNext = { viewModel.playNextVideo() },
+                        onPlayPrevious = { viewModel.playPreviousVideo() },
+                        onStartSession = onStartSession
+                    )
+                } else {
+                    InterviewContent(
+                        screenMode = current.screenMode,
+                        onSelectMode = { viewModel.setScreenMode(it) },
+                        tracks = current.tracks,
+                        activeFilter = current.filterRole,
+                        onFilterSelected = { viewModel.setFilter(it) },
+                        onTrackClick = { track ->
+                            viewModel.selectTrack(track.id)
+                            onStartSession(track.id, track.title)
+                        }
+                    )
+                }
             }
         }
 
@@ -94,8 +108,13 @@ fun InterviewScreen(
     }
 }
 
+/**
+ * Interactive Mock Sessions View.
+ */
 @Composable
 fun InterviewContent(
+    screenMode: InterviewScreenMode,
+    onSelectMode: (InterviewScreenMode) -> Unit,
     tracks: List<InterviewTrack>,
     activeFilter: String,
     onFilterSelected: (String) -> Unit,
@@ -113,9 +132,16 @@ fun InterviewContent(
     ) {
         item {
             Spacer(modifier = Modifier.height(8.dp))
+            InterviewModeSwitcher(
+                selectedMode = screenMode,
+                onSelectMode = onSelectMode
+            )
+        }
+
+        item {
             ScreenHeader(
                 title = "Mock Interviews",
-                subtitle = "8 Specialized tracks replicating real-world technical loops"
+                subtitle = "${tracks.size} Specialized tracks replicating real-world technical loops"
             )
         }
 
@@ -178,6 +204,150 @@ fun InterviewContent(
             InterviewTrackCard(
                 track = track,
                 onStart = { onTrackClick(track) }
+            )
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(24.dp))
+        }
+    }
+}
+
+/**
+ * Curated In-App Video Mock Interviews View with YouTube Player.
+ */
+@Composable
+fun VideoMockContent(
+    screenMode: InterviewScreenMode,
+    onSelectMode: (InterviewScreenMode) -> Unit,
+    topics: List<VideoMockTopic>,
+    selectedTopicId: String,
+    videoMocks: List<VideoMockInterview>,
+    selectedVideo: VideoMockInterview?,
+    currentIndex: Int,
+    onSelectTopic: (String) -> Unit,
+    onSelectVideo: (VideoMockInterview) -> Unit,
+    onPlayNext: () -> Unit,
+    onPlayPrevious: () -> Unit,
+    onStartSession: (trackId: String, trackTitle: String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val activeTopic = topics.firstOrNull { it.id.equals(selectedTopicId, ignoreCase = true) }
+
+    LazyColumn(
+        modifier = modifier
+            .fillMaxSize()
+            .testTag("video_mock_screen_content")
+            .padding(horizontal = 20.dp),
+        verticalArrangement = Arrangement.spacedBy(14.dp)
+    ) {
+        item {
+            Spacer(modifier = Modifier.height(8.dp))
+            InterviewModeSwitcher(
+                selectedMode = screenMode,
+                onSelectMode = onSelectMode
+            )
+        }
+
+        item {
+            ScreenHeader(
+                title = "Video Mock Interviews",
+                subtitle = "Curated real-world technical loops with in-app YouTube player and autoplay"
+            )
+        }
+
+        // Educational Hero Banner
+        item {
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.45f),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.secondary.copy(alpha = 0.3f))
+            ) {
+                Row(
+                    modifier = Modifier.padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.SmartDisplay,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.secondary,
+                        modifier = Modifier.size(32.dp)
+                    )
+                    Spacer(modifier = Modifier.width(14.dp))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "Watch & Learn, Then Attempt",
+                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.onSecondaryContainer
+                        )
+                        Text(
+                            text = "Listen to clear English mock interviews by industry leaders to master articulation and system architecture. Next video in series plays automatically.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.85f)
+                        )
+                    }
+                }
+            }
+        }
+
+        // Horizontal Topic Selector Chips
+        item {
+            VideoMockTopicSelector(
+                topics = topics,
+                selectedTopicId = selectedTopicId,
+                onSelectTopic = onSelectTopic
+            )
+        }
+
+        // Main Player Section
+        if (selectedVideo != null) {
+            item {
+                VideoMockPlayerSection(
+                    video = selectedVideo,
+                    currentIndex = currentIndex,
+                    totalCountInTopic = videoMocks.size,
+                    onVideoEnded = onPlayNext,
+                    onPlayNext = onPlayNext,
+                    onPlayPrevious = onPlayPrevious,
+                    onAttemptMockSession = { trackId, title ->
+                        onStartSession(trackId, title)
+                    }
+                )
+            }
+        }
+
+        // Playlist Section Header
+        item {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "${activeTopic?.name ?: "Topic"} Series Playlist",
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = "${videoMocks.size} Videos",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
+
+        // Playlist items for the selected topic
+        items(videoMocks.size, key = { index -> videoMocks[index].id }) { index ->
+            val video = videoMocks[index]
+            val isPlaying = video.id == selectedVideo?.id
+            VideoMockPlaylistItem(
+                video = video,
+                index = index,
+                isPlaying = isPlaying,
+                onSelect = { onSelectVideo(video) }
             )
         }
 

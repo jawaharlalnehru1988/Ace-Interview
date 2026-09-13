@@ -1,5 +1,6 @@
 package com.example.presentation.common
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -25,10 +26,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -38,6 +46,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ui.theme.SuccessGreen
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 object JavaCodeHighlighter {
 
@@ -295,9 +305,29 @@ fun DsaCodeBlock(
     code: String,
     modifier: Modifier = Modifier,
     language: String = "Java",
-    isCopied: Boolean = false,
-    onCopy: () -> Unit
+    isCopied: Boolean? = null,
+    onCopy: (() -> Unit)? = null
 ) {
+    val clipboardManager = LocalClipboardManager.current
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    var internalCopied by remember(code) { mutableStateOf(false) }
+    val effectiveIsCopied = isCopied ?: internalCopied
+
+    val handleCopy = {
+        clipboardManager.setText(AnnotatedString(code))
+        internalCopied = true
+        if (onCopy != null) {
+            onCopy()
+        } else {
+            Toast.makeText(context, "Code copied to clipboard!", Toast.LENGTH_SHORT).show()
+        }
+        coroutineScope.launch {
+            delay(2000)
+            internalCopied = false
+        }
+    }
+
     val highlightedCode = remember(code, language) {
         if (language.equals("JavaScript", ignoreCase = true) || language.equals("js", ignoreCase = true)) {
             JsCodeHighlighter.highlight(code)
@@ -380,12 +410,14 @@ fun DsaCodeBlock(
                 // Copy Code Action Button
                 Surface(
                     shape = RoundedCornerShape(7.dp),
-                    color = if (isCopied) SuccessGreen.copy(alpha = 0.16f) else Color(0xFF242A36),
+                    color = if (effectiveIsCopied) SuccessGreen.copy(alpha = 0.16f) else Color(0xFF242A36),
                     border = BorderStroke(
                         0.5.dp,
-                        if (isCopied) SuccessGreen else Color(0xFF383F4F)
+                        if (effectiveIsCopied) SuccessGreen else Color(0xFF383F4F)
                     ),
-                    modifier = Modifier.clickable { onCopy() }
+                    modifier = Modifier
+                        .testTag("copy_code_button")
+                        .clickable { handleCopy() }
                 ) {
                     Row(
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
@@ -393,18 +425,18 @@ fun DsaCodeBlock(
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Icon(
-                            imageVector = if (isCopied) Icons.Filled.Check else Icons.Filled.ContentCopy,
+                            imageVector = if (effectiveIsCopied) Icons.Filled.Check else Icons.Filled.ContentCopy,
                             contentDescription = "Copy Solution Code",
-                            tint = if (isCopied) SuccessGreen else Color(0xFFD6DEEB),
+                            tint = if (effectiveIsCopied) SuccessGreen else Color(0xFFD6DEEB),
                             modifier = Modifier.size(12.dp)
                         )
                         Text(
-                            text = if (isCopied) "Copied" else "Copy",
+                            text = if (effectiveIsCopied) "Copied" else "Copy",
                             style = MaterialTheme.typography.labelSmall.copy(
                                 fontWeight = FontWeight.SemiBold,
                                 fontSize = 11.sp
                             ),
-                            color = if (isCopied) SuccessGreen else Color(0xFFD6DEEB)
+                            color = if (effectiveIsCopied) SuccessGreen else Color(0xFFD6DEEB)
                         )
                     }
                 }
@@ -502,9 +534,7 @@ fun RichCodePromptView(
 
                 DsaCodeBlock(
                     code = code,
-                    language = if (detectedLang.contains("js", ignoreCase = true)) "JavaScript" else "Java",
-                    isCopied = false,
-                    onCopy = {}
+                    language = if (detectedLang.contains("js", ignoreCase = true)) "JavaScript" else "Java"
                 )
 
                 lastIndex = match.range.last + 1

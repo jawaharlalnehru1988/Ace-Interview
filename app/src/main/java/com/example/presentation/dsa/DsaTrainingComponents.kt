@@ -733,9 +733,7 @@ fun TrainingDrillDetailView(
                 Spacer(modifier = Modifier.height(6.dp))
                 DsaCodeBlock(
                     code = drill.codePattern,
-                    language = "Java",
-                    isCopied = false,
-                    onCopy = {}
+                    language = "Java"
                 )
             }
         }

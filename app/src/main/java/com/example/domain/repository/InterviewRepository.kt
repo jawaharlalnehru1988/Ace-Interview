@@ -56,4 +56,9 @@ interface InterviewRepository {
     fun getFunctionalProblems(trackId: String): Flow<List<com.example.domain.model.FunctionalProblem>>
     fun getFunctionalTracks(): Flow<List<com.example.domain.model.FunctionalTrack>>
     suspend fun toggleFunctionalProblemSolved(problemId: String)
+
+    // Curated Video Mock Interviews
+    fun getVideoMockTopics(): Flow<List<com.example.domain.model.VideoMockTopic>>
+    fun getVideoMocksForTopic(topicId: String): Flow<List<com.example.domain.model.VideoMockInterview>>
 }
+
