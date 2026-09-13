@@ -3,6 +3,7 @@ package com.example.presentation.interview
 import android.annotation.SuppressLint
 import android.os.Handler
 import android.os.Looper
+import android.view.View
 import android.webkit.JavascriptInterface
 import android.webkit.WebChromeClient
 import android.webkit.WebSettings
@@ -40,9 +41,8 @@ class YouTubeBridge(
 }
 
 /**
- * Robust in-app YouTube Player using Android WebView and the official YouTube IFrame API.
- * Plays videos within the app with zero native library dependencies.
- * Automatically signals when the video ends so the playlist can auto-advance.
+ * Robust in-app YouTube Player using Android WebView with hardware acceleration,
+ * official IFrame API, and automated series progression.
  */
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
@@ -56,6 +56,9 @@ fun YouTubePlayerView(
 
     val webView = remember {
         WebView(context).apply {
+            // Hardware acceleration is strictly required for WebView video decoding/rendering on Android
+            setLayerType(View.LAYER_TYPE_HARDWARE, null)
+
             settings.apply {
                 javaScriptEnabled = true
                 domStorageEnabled = true
@@ -63,6 +66,7 @@ fun YouTubePlayerView(
                 allowFileAccess = false
                 allowContentAccess = false
                 cacheMode = WebSettings.LOAD_DEFAULT
+                mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
             }
             webChromeClient = WebChromeClient()
             webViewClient = object : WebViewClient() {
@@ -92,7 +96,7 @@ fun YouTubePlayerView(
             "https://www.youtube.com",
             htmlContent,
             "text/html",
-            "utf-8",
+            "UTF-8",
             null
         )
     }
@@ -119,10 +123,8 @@ private fun buildYouTubeHtml(videoId: String): String {
         <head>
           <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
           <style>
-            * { box-sizing: border-box; }
+            * { margin: 0; padding: 0; box-sizing: border-box; }
             html, body {
-              margin: 0;
-              padding: 0;
               width: 100%;
               height: 100%;
               background-color: #000000;
@@ -136,15 +138,11 @@ private fun buildYouTubeHtml(videoId: String): String {
               height: 100%;
             }
           </style>
+          <script src="https://www.youtube.com/iframe_api"></script>
         </head>
         <body>
           <div id="player"></div>
           <script>
-            var tag = document.createElement('script');
-            tag.src = "https://www.youtube.com/iframe_api";
-            var firstScriptTag = document.getElementsByTagName('script')[0];
-            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
             var player;
             function onYouTubeIframeAPIReady() {
               player = new YT.Player('player', {
@@ -154,12 +152,10 @@ private fun buildYouTubeHtml(videoId: String): String {
                 playerVars: {
                   'autoplay': 1,
                   'playsinline': 1,
+                  'enablejsapi': 1,
+                  'fs': 1,
                   'rel': 0,
                   'modestbranding': 1,
-                  'controls': 1,
-                  'fs': 1,
-                  'iv_load_policy': 3,
-                  'enablejsapi': 1,
                   'origin': 'https://www.youtube.com'
                 },
                 events: {
@@ -170,9 +166,7 @@ private fun buildYouTubeHtml(videoId: String): String {
             }
 
             function onPlayerReady(event) {
-              try {
-                event.target.playVideo();
-              } catch (e) {}
+              event.target.playVideo();
             }
 
             function onPlayerStateChange(event) {
