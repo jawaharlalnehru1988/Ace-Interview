@@ -1,184 +1,137 @@
 package com.example.presentation.interview
 
-import android.annotation.SuppressLint
-import android.os.Handler
-import android.os.Looper
-import android.view.View
-import android.webkit.JavascriptInterface
-import android.webkit.WebChromeClient
-import android.webkit.WebSettings
-import android.webkit.WebView
-import android.webkit.WebViewClient
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
+import android.util.Log
+import android.view.ViewGroup
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.options.IFramePlayerOptions
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
 
-class YouTubeBridge(
-    private val onVideoEndedCallback: () -> Unit
-) {
-    private val mainHandler = Handler(Looper.getMainLooper())
-
-    @JavascriptInterface
-    fun onVideoEnded() {
-        mainHandler.post {
-            onVideoEndedCallback()
-        }
-    }
-}
+private const val TAG = "YouTubePlayerView"
 
 /**
- * Robust in-app YouTube Player using Android WebView with hardware acceleration,
- * official IFrame API, and automated series progression.
+ * Native in-app YouTube Player using com.pierfrancescosoffritti.androidyoutubeplayer.
+ * Handles lifecycle, cueing/loading, auto-advance, and clean error reporting.
  */
-@SuppressLint("SetJavaScriptEnabled")
 @Composable
 fun YouTubePlayerView(
     videoId: String,
     onVideoEnded: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    autoPlay: Boolean = false
 ) {
-    val context = LocalContext.current
-    val bridge = remember(onVideoEnded) { YouTubeBridge(onVideoEnded) }
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val cleanVideoId = remember(videoId) { videoId.trim() }
+    val currentVideoId = rememberUpdatedState(cleanVideoId)
+    val currentOnVideoEnded = rememberUpdatedState(onVideoEnded)
 
-    val webView = remember {
-        WebView(context).apply {
-            // Hardware acceleration is strictly required for WebView video decoding/rendering on Android
-            setLayerType(View.LAYER_TYPE_HARDWARE, null)
+    var youTubePlayerRef by remember { mutableStateOf<YouTubePlayer?>(null) }
+    var loadedVideoId by remember { mutableStateOf<String?>(cleanVideoId) }
+    var playerViewRef by remember { mutableStateOf<YouTubePlayerView?>(null) }
 
-            settings.apply {
-                javaScriptEnabled = true
-                domStorageEnabled = true
-                mediaPlaybackRequiresUserGesture = false
-                allowFileAccess = false
-                allowContentAccess = false
-                cacheMode = WebSettings.LOAD_DEFAULT
-                mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+    // When videoId changes, cue/load the new video on the active player instance
+    LaunchedEffect(cleanVideoId, youTubePlayerRef) {
+        val player = youTubePlayerRef
+        if (player != null && cleanVideoId.isNotBlank() && loadedVideoId != cleanVideoId) {
+            Log.d(TAG, "Switching active player to video: $cleanVideoId (autoPlay=$autoPlay)")
+            loadedVideoId = cleanVideoId
+            if (autoPlay) {
+                player.loadVideo(cleanVideoId, 0f)
+            } else {
+                player.cueVideo(cleanVideoId, 0f)
             }
-            webChromeClient = WebChromeClient()
-            webViewClient = object : WebViewClient() {
-                override fun onPageFinished(view: WebView?, url: String?) {
-                    super.onPageFinished(view, url)
+        }
+    }
+
+    DisposableEffect(lifecycleOwner) {
+        onDispose {
+            playerViewRef?.let { view ->
+                try {
+                    lifecycleOwner.lifecycle.removeObserver(view)
+                    view.release()
+                    Log.d(TAG, "Player released cleanly")
+                } catch (e: Exception) {
+                    Log.w(TAG, "Error releasing player", e)
                 }
             }
-            setBackgroundColor(android.graphics.Color.BLACK)
-            addJavascriptInterface(bridge, "AndroidBridge")
         }
     }
 
-    DisposableEffect(Unit) {
-        onDispose {
-            try {
-                webView.loadUrl("about:blank")
-                webView.onPause()
-                webView.destroy()
-            } catch (_: Exception) {}
-        }
-    }
-
-    // Load or switch video when videoId changes
-    LaunchedEffect(videoId) {
-        val htmlContent = buildYouTubeHtml(videoId)
-        webView.loadDataWithBaseURL(
-            "https://www.youtube.com",
-            htmlContent,
-            "text/html",
-            "UTF-8",
-            null
-        )
-    }
-
-    Box(
+    AndroidView(
         modifier = modifier
             .fillMaxWidth()
-            .aspectRatio(16f / 9f)
             .clip(RoundedCornerShape(16.dp))
-            .background(Color.Black)
-            .testTag("youtube_player_box")
-    ) {
-        AndroidView(
-            factory = { webView },
-            modifier = Modifier.fillMaxSize()
-        )
-    }
+            .testTag("youtube_player_box"),
+        factory = { context ->
+            YouTubePlayerView(context).apply {
+                playerViewRef = this
+                enableAutomaticInitialization = false
+                layoutParams = ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                )
+                lifecycleOwner.lifecycle.addObserver(this)
+
+                val options = IFramePlayerOptions.Builder()
+                    .controls(1)
+                    .fullscreen(1)
+                    .rel(0)
+                    .origin("https://ace-interview.app")
+                    .build()
+
+                initialize(
+                    object : AbstractYouTubePlayerListener() {
+                        override fun onReady(youTubePlayer: YouTubePlayer) {
+                            Log.i(TAG, "YouTubePlayer onReady for video: ${currentVideoId.value}")
+                            youTubePlayerRef = youTubePlayer
+                            if (autoPlay) {
+                                youTubePlayer.play()
+                            }
+                        }
+
+                        override fun onStateChange(
+                            youTubePlayer: YouTubePlayer,
+                            state: PlayerConstants.PlayerState
+                        ) {
+                            Log.d(TAG, "Player state changed: $state")
+                            if (state == PlayerConstants.PlayerState.ENDED) {
+                                currentOnVideoEnded.value()
+                            }
+                        }
+
+                        override fun onError(
+                            youTubePlayer: YouTubePlayer,
+                            error: PlayerConstants.PlayerError
+                        ) {
+                            Log.e(TAG, "YouTubePlayer onError: $error for video ${currentVideoId.value}")
+                        }
+                    },
+                    handleNetworkEvents = true,
+                    playerOptions = options,
+                    videoId = cleanVideoId
+                )
+            }
+        },
+        update = {
+            // Handled via LaunchedEffect
+        }
+    )
 }
 
-private fun buildYouTubeHtml(videoId: String): String {
-    return """
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-          <style>
-            * { margin: 0; padding: 0; box-sizing: border-box; }
-            html, body {
-              width: 100%;
-              height: 100%;
-              background-color: #000000;
-              overflow: hidden;
-            }
-            #player {
-              position: absolute;
-              top: 0;
-              left: 0;
-              width: 100%;
-              height: 100%;
-            }
-          </style>
-          <script src="https://www.youtube.com/iframe_api"></script>
-        </head>
-        <body>
-          <div id="player"></div>
-          <script>
-            var player;
-            function onYouTubeIframeAPIReady() {
-              player = new YT.Player('player', {
-                height: '100%',
-                width: '100%',
-                videoId: '$videoId',
-                playerVars: {
-                  'autoplay': 1,
-                  'playsinline': 1,
-                  'enablejsapi': 1,
-                  'fs': 1,
-                  'rel': 0,
-                  'modestbranding': 1,
-                  'origin': 'https://www.youtube.com'
-                },
-                events: {
-                  'onReady': onPlayerReady,
-                  'onStateChange': onPlayerStateChange
-                }
-              });
-            }
-
-            function onPlayerReady(event) {
-              event.target.playVideo();
-            }
-
-            function onPlayerStateChange(event) {
-              // YT.PlayerState.ENDED is 0
-              if (event.data === 0) {
-                if (window.AndroidBridge && window.AndroidBridge.onVideoEnded) {
-                  window.AndroidBridge.onVideoEnded();
-                }
-              }
-            }
-          </script>
-        </body>
-        </html>
-    """.trimIndent()
-}

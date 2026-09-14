@@ -251,6 +251,7 @@ sealed interface InterviewUiState {
         val screenMode: InterviewScreenMode = InterviewScreenMode.INTERACTIVE,
         val videoTopics: List<VideoMockTopic> = emptyList(),
         val selectedVideoTopicId: String = "java",
+        val activeClassroomTopicId: String? = null,
         val videoMocks: List<VideoMockInterview> = emptyList(),
         val selectedVideo: VideoMockInterview? = null,
         val currentVideoIndex: Int = 0
@@ -260,11 +261,13 @@ sealed interface InterviewUiState {
 private data class VideoStateBundle(
     val topics: List<VideoMockTopic>,
     val topicId: String,
+    val classroomTopicId: String?,
     val videos: List<VideoMockInterview>,
     val currentVideo: VideoMockInterview?,
     val currentIndex: Int
 )
 
+@OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
 class InterviewViewModel(
     private val repository: InterviewRepository
 ) : ViewModel() {
@@ -272,6 +275,7 @@ class InterviewViewModel(
     private val _selectedTrackId = MutableStateFlow<String?>(null)
     private val _screenMode = MutableStateFlow(InterviewScreenMode.INTERACTIVE)
     private val _selectedVideoTopicId = MutableStateFlow("java")
+    private val _activeClassroomTopicId = MutableStateFlow<String?>(null)
     private val _selectedVideoId = MutableStateFlow<String?>(null)
 
     private val videoMocksFlow = _selectedVideoTopicId.flatMapLatest { topicId ->
@@ -295,12 +299,13 @@ class InterviewViewModel(
         combine(
             repository.getVideoMockTopics(),
             _selectedVideoTopicId,
+            _activeClassroomTopicId,
             videoMocksFlow,
             _selectedVideoId
-        ) { topics, topicId, videos, videoId ->
+        ) { topics, topicId, classroomTopicId, videos, videoId ->
             val currentVideo = videos.firstOrNull { it.id == videoId } ?: videos.firstOrNull()
             val currentIndex = if (currentVideo != null) videos.indexOf(currentVideo).coerceAtLeast(0) else 0
-            VideoStateBundle(topics, topicId, videos, currentVideo, currentIndex)
+            VideoStateBundle(topics, topicId, classroomTopicId, videos, currentVideo, currentIndex)
         }
     ) { trackData, videoBundle ->
         InterviewUiState.Success(
@@ -310,6 +315,7 @@ class InterviewViewModel(
             screenMode = trackData.third,
             videoTopics = videoBundle.topics,
             selectedVideoTopicId = videoBundle.topicId,
+            activeClassroomTopicId = videoBundle.classroomTopicId,
             videoMocks = videoBundle.videos,
             selectedVideo = videoBundle.currentVideo,
             currentVideoIndex = videoBundle.currentIndex
@@ -332,6 +338,17 @@ class InterviewViewModel(
 
     fun setScreenMode(mode: InterviewScreenMode) {
         _screenMode.value = mode
+    }
+
+    fun openTopicClassroom(topicId: String) {
+        _selectedVideoTopicId.value = topicId
+        val videos = VideoMockCatalog.getVideosForTopic(topicId)
+        _selectedVideoId.value = videos.firstOrNull()?.id
+        _activeClassroomTopicId.value = topicId
+    }
+
+    fun closeTopicClassroom() {
+        _activeClassroomTopicId.value = null
     }
 
     fun selectVideoTopic(topicId: String) {

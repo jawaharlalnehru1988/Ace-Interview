@@ -10,94 +10,105 @@ object VideoMockCatalog {
             name = "Java",
             icon = "☕",
             videoCount = 10,
-            relatedTrackId = "java_interview"
+            relatedTrackId = "java_interview",
+            description = "Core JVM internals, multi-threading, concurrency, memory partitions & modern Java features."
         ),
         VideoMockTopic(
             id = "spring_boot",
             name = "Spring Boot",
             icon = "🍃",
             videoCount = 10,
-            relatedTrackId = "spring_boot_interview"
+            relatedTrackId = "spring_boot_interview",
+            description = "IoC containers, Spring Security 6, transactional boundaries, JPA performance & REST."
         ),
         VideoMockTopic(
             id = "microservices",
             name = "Microservices",
             icon = "🌐",
             videoCount = 10,
-            relatedTrackId = "microservices_interview"
+            relatedTrackId = "microservices_interview",
+            description = "Saga distributed transactions, service discovery, API gateways, resilience & event streaming."
         ),
         VideoMockTopic(
             id = "full_stack",
             name = "Full Stack",
             icon = "⚡",
             videoCount = 10,
-            relatedTrackId = "full_stack_interview"
+            relatedTrackId = "full_stack_interview",
+            description = "End-to-end web architectures, reactive client state, RESTful contracts & full-stack loops."
         ),
         VideoMockTopic(
             id = "hld",
             name = "HLD",
             icon = "🏛️",
             videoCount = 10,
-            relatedTrackId = "hld_interview"
+            relatedTrackId = "hld_interview",
+            description = "High-level distributed systems: rate limiters, caching layers, sharding & fault-tolerant clusters."
         ),
         VideoMockTopic(
             id = "lld",
             name = "LLD",
             icon = "🧩",
             videoCount = 10,
-            relatedTrackId = "lld_interview"
+            relatedTrackId = "lld_interview",
+            description = "Low-level object-oriented design, SOLID principles, design patterns & clean domain models."
         ),
         VideoMockTopic(
             id = "system_design",
             name = "System Design",
             icon = "📐",
             videoCount = 10,
-            relatedTrackId = "system_design_interview"
+            relatedTrackId = "system_design_interview",
+            description = "Scalability trade-offs, consensus algorithms, database partitioning & microservice decoupling."
         ),
         VideoMockTopic(
             id = "devops",
             name = "DevOps",
-            icon = "♾️",
+            icon = "🚀",
             videoCount = 10,
-            relatedTrackId = "devops_interview"
+            relatedTrackId = "devops_interview",
+            description = "CI/CD automation pipelines, Docker containerization, Kubernetes clusters & cloud infrastructure."
         ),
         VideoMockTopic(
             id = "sql",
             name = "SQL & Database",
             icon = "🗄️",
             videoCount = 10,
-            relatedTrackId = "sql_interview"
+            relatedTrackId = "sql_interview",
+            description = "Query optimization, indexing strategies (B-Tree/Hash), ACID transactions, isolation & sharding."
         ),
         VideoMockTopic(
             id = "angular",
             name = "Angular",
             icon = "🅰️",
             videoCount = 10,
-            relatedTrackId = "angular_interview"
+            relatedTrackId = "angular_interview",
+            description = "Component lifecycles, RxJS reactive streams, dependency injection, routing & Angular signals."
         ),
         VideoMockTopic(
             id = "security",
             name = "Security",
             icon = "🛡️",
             videoCount = 10,
-            relatedTrackId = "security_interview"
+            relatedTrackId = "security_interview",
+            description = "OAuth 2.0, OpenID Connect, JWT signing, OWASP Top 10 defenses & encryption protocols."
         ),
     )
 
-    // --- 1. Java Mock Interviews (10 real verified videos) ---
+    // --- Java Mock Interviews (10 real verified long-form videos) ---
     private val javaVideos = listOf(
         VideoMockInterview(
             id = "vm_java_01",
             topicId = "java",
-            title = "??Java Developer Interview #shorts #simplilearn",
-            channelName = "Simplilearn",
-            youtubeVideoId = "FwNZ4D-wscs",
-            duration = "42 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering Java concepts, architectural trade-offs, and live candidate evaluation with Simplilearn.",
+            title = "Intro",
+            channelName = "GenZ Career",
+            youtubeVideoId = "abPtff4wg8k",
+            duration = "1:34:48 min",
+            difficulty = "Mid-Level",
+            description = "Real-world technical mock interview covering Java concepts, architectural trade-offs, and live candidate evaluation with GenZ Career.",
             keyTakeaways = listOf(
-                "Core JVM memory partitions (Eden, Survivor, Tenured, Metaspace) and heap garbage collection",
-                "Thread synchronization, volatile semantics, happens-before consistency, and CAS operations",
+                "Core JVM memory partitions (Eden, Survivor, Tenured, Metaspace) and GC algorithms (G1, ZGC)",
+                "Thread synchronization, volatile memory barriers, happens-before consistency, and CAS operations",
                 "Collections internals: HashMap treeification threshold and thread-safe ConcurrentHashMap patterns"
             ),
             relatedTrackId = "java_interview"
@@ -105,63 +116,63 @@ object VideoMockCatalog {
         VideoMockInterview(
             id = "vm_java_02",
             topicId = "java",
-            title = "Don�t Go to Your Java Interview Without Watching This!",
-            channelName = "Supersourcing",
-            youtubeVideoId = "AT0fq2q0570",
-            duration = "42 min",
+            title = "Introduction",
+            channelName = "Code Decode",
+            youtubeVideoId = "xMlcsFLk-CU",
+            duration = "1:08:15 min",
             difficulty = "Senior",
-            description = "Real-world technical mock interview covering Java concepts, architectural trade-offs, and live candidate evaluation with Supersourcing.",
+            description = "Real-world technical mock interview covering Java concepts, architectural trade-offs, and live candidate evaluation with Code Decode.",
             keyTakeaways = listOf(
-                "Thread synchronization, volatile semantics, happens-before consistency, and CAS operations",
+                "Thread synchronization, volatile memory barriers, happens-before consistency, and CAS operations",
                 "Collections internals: HashMap treeification threshold and thread-safe ConcurrentHashMap patterns",
-                "Modern Java features: Virtual Threads, sealed classes, pattern matching, and functional streams"
+                "Modern Java features: Virtual Threads (Project Loom), sealed classes, and functional stream pipelines"
             ),
             relatedTrackId = "java_interview"
         ),
         VideoMockInterview(
             id = "vm_java_03",
             topicId = "java",
-            title = "What Is Interface In Java? | Java Interview Question | Kunal Sir",
-            channelName = "CJC EdTech by Kunal Sir",
-            youtubeVideoId = "t2BTaO9lVzg",
-            duration = "42 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering Java concepts, architectural trade-offs, and live candidate evaluation with CJC EdTech by Kunal Sir.",
+            title = "Project Architecture",
+            channelName = "Code Decode",
+            youtubeVideoId = "tI0pXHvG7gs",
+            duration = "20:26 min",
+            difficulty = "Lead",
+            description = "Real-world technical mock interview covering Java concepts, architectural trade-offs, and live candidate evaluation with Code Decode.",
             keyTakeaways = listOf(
                 "Collections internals: HashMap treeification threshold and thread-safe ConcurrentHashMap patterns",
-                "Modern Java features: Virtual Threads, sealed classes, pattern matching, and functional streams",
-                "Core JVM memory partitions (Eden, Survivor, Tenured, Metaspace) and heap garbage collection"
+                "Modern Java features: Virtual Threads (Project Loom), sealed classes, and functional stream pipelines",
+                "Core JVM memory partitions (Eden, Survivor, Tenured, Metaspace) and GC algorithms (G1, ZGC)"
             ),
             relatedTrackId = "java_interview"
         ),
         VideoMockInterview(
             id = "vm_java_04",
             topicId = "java",
-            title = "How Much Time It Takes To Crack A Java Interview? | Java Interview Tips",
-            channelName = "TAP ACADEMY",
-            youtubeVideoId = "iFm74m-FaDU",
-            duration = "42 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering Java concepts, architectural trade-offs, and live candidate evaluation with TAP ACADEMY.",
+            title = "Introduction to Java Interview Questions",
+            channelName = "Magneq Software",
+            youtubeVideoId = "EwLllH9-vk0",
+            duration = "2:50:56 min",
+            difficulty = "Architect",
+            description = "Real-world technical mock interview covering Java concepts, architectural trade-offs, and live candidate evaluation with Magneq Software.",
             keyTakeaways = listOf(
-                "Modern Java features: Virtual Threads, sealed classes, pattern matching, and functional streams",
-                "Core JVM memory partitions (Eden, Survivor, Tenured, Metaspace) and heap garbage collection",
-                "Thread synchronization, volatile semantics, happens-before consistency, and CAS operations"
+                "Modern Java features: Virtual Threads (Project Loom), sealed classes, and functional stream pipelines",
+                "Core JVM memory partitions (Eden, Survivor, Tenured, Metaspace) and GC algorithms (G1, ZGC)",
+                "Thread synchronization, volatile memory barriers, happens-before consistency, and CAS operations"
             ),
             relatedTrackId = "java_interview"
         ),
         VideoMockInterview(
             id = "vm_java_05",
             topicId = "java",
-            title = "Core Java Interview Questions!",
-            channelName = "Kiran Academy - Java By Kiran",
-            youtubeVideoId = "KrBCxXpbtnA",
-            duration = "42 min",
+            title = "Intro",
+            channelName = "Java Guides",
+            youtubeVideoId = "yq-XFhUalx4",
+            duration = "21:26 min",
             difficulty = "Senior",
-            description = "Real-world technical mock interview covering Java concepts, architectural trade-offs, and live candidate evaluation with Kiran Academy - Java By Kiran.",
+            description = "Real-world technical mock interview covering Java concepts, architectural trade-offs, and live candidate evaluation with Java Guides.",
             keyTakeaways = listOf(
-                "Core JVM memory partitions (Eden, Survivor, Tenured, Metaspace) and heap garbage collection",
-                "Thread synchronization, volatile semantics, happens-before consistency, and CAS operations",
+                "Core JVM memory partitions (Eden, Survivor, Tenured, Metaspace) and GC algorithms (G1, ZGC)",
+                "Thread synchronization, volatile memory barriers, happens-before consistency, and CAS operations",
                 "Collections internals: HashMap treeification threshold and thread-safe ConcurrentHashMap patterns"
             ),
             relatedTrackId = "java_interview"
@@ -169,63 +180,63 @@ object VideoMockCatalog {
         VideoMockInterview(
             id = "vm_java_06",
             topicId = "java",
-            title = "Fresher Mock Interview CORE JAVA | Technical Round | CORE JAVA Interview | @magneqsoftware6896",
-            channelName = "Magneq Software",
-            youtubeVideoId = "c2tOBH3mUIg",
-            duration = "42 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering Java concepts, architectural trade-offs, and live candidate evaluation with Magneq Software.",
+            title = "Java Interview Roadmap",
+            channelName = "Kiran Academy - Java By Kiran",
+            youtubeVideoId = "6IyLJMbvZ3Q",
+            duration = "10:42 min",
+            difficulty = "Mid-Level",
+            description = "Real-world technical mock interview covering Java concepts, architectural trade-offs, and live candidate evaluation with Kiran Academy - Java By Kiran.",
             keyTakeaways = listOf(
-                "Thread synchronization, volatile semantics, happens-before consistency, and CAS operations",
+                "Thread synchronization, volatile memory barriers, happens-before consistency, and CAS operations",
                 "Collections internals: HashMap treeification threshold and thread-safe ConcurrentHashMap patterns",
-                "Modern Java features: Virtual Threads, sealed classes, pattern matching, and functional streams"
+                "Modern Java features: Virtual Threads (Project Loom), sealed classes, and functional stream pipelines"
             ),
             relatedTrackId = "java_interview"
         ),
         VideoMockInterview(
             id = "vm_java_07",
             topicId = "java",
-            title = "Frequently Asked Core Java Interview Quetsions | Beginner to Advanced Level Questions | in ?????",
-            channelName = "UNIQ Technologies",
-            youtubeVideoId = "bF6gLekjU4E",
-            duration = "42 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering Java concepts, architectural trade-offs, and live candidate evaluation with UNIQ Technologies.",
+            title = "Java Mock Interview for Freshers",
+            channelName = "SP Global Solution",
+            youtubeVideoId = "X_YmJu2oaUI",
+            duration = "15:22 min",
+            difficulty = "Staff",
+            description = "Real-world technical mock interview covering Java concepts, architectural trade-offs, and live candidate evaluation with SP Global Solution.",
             keyTakeaways = listOf(
                 "Collections internals: HashMap treeification threshold and thread-safe ConcurrentHashMap patterns",
-                "Modern Java features: Virtual Threads, sealed classes, pattern matching, and functional streams",
-                "Core JVM memory partitions (Eden, Survivor, Tenured, Metaspace) and heap garbage collection"
+                "Modern Java features: Virtual Threads (Project Loom), sealed classes, and functional stream pipelines",
+                "Core JVM memory partitions (Eden, Survivor, Tenured, Metaspace) and GC algorithms (G1, ZGC)"
             ),
             relatedTrackId = "java_interview"
         ),
         VideoMockInterview(
             id = "vm_java_08",
             topicId = "java",
-            title = "Mock Interview 5+ year experienced | Spring Boot | Java | Microservice | System Design | Code Decode",
-            channelName = "Code Decode",
-            youtubeVideoId = "xMlcsFLk-CU",
-            duration = "42 min",
+            title = "Introduction",
+            channelName = "CareerRide",
+            youtubeVideoId = "vuJf0jBGAtY",
+            duration = "29:28 min",
             difficulty = "Senior",
-            description = "Real-world technical mock interview covering Java concepts, architectural trade-offs, and live candidate evaluation with Code Decode.",
+            description = "Real-world technical mock interview covering Java concepts, architectural trade-offs, and live candidate evaluation with CareerRide.",
             keyTakeaways = listOf(
-                "Modern Java features: Virtual Threads, sealed classes, pattern matching, and functional streams",
-                "Core JVM memory partitions (Eden, Survivor, Tenured, Metaspace) and heap garbage collection",
-                "Thread synchronization, volatile semantics, happens-before consistency, and CAS operations"
+                "Modern Java features: Virtual Threads (Project Loom), sealed classes, and functional stream pipelines",
+                "Core JVM memory partitions (Eden, Survivor, Tenured, Metaspace) and GC algorithms (G1, ZGC)",
+                "Thread synchronization, volatile memory barriers, happens-before consistency, and CAS operations"
             ),
             relatedTrackId = "java_interview"
         ),
         VideoMockInterview(
             id = "vm_java_09",
             topicId = "java",
-            title = "Java Tech Lead Interview Questions #javainterviewquestions #javainterview",
-            channelName = "TinyCodeFix",
-            youtubeVideoId = "sfLl3pH0NFY",
-            duration = "42 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering Java concepts, architectural trade-offs, and live candidate evaluation with TinyCodeFix.",
+            title = "Introduction",
+            channelName = "Code Decode",
+            youtubeVideoId = "oUdENE7ljjw",
+            duration = "43:39 min",
+            difficulty = "Lead",
+            description = "Real-world technical mock interview covering Java concepts, architectural trade-offs, and live candidate evaluation with Code Decode.",
             keyTakeaways = listOf(
-                "Core JVM memory partitions (Eden, Survivor, Tenured, Metaspace) and heap garbage collection",
-                "Thread synchronization, volatile semantics, happens-before consistency, and CAS operations",
+                "Core JVM memory partitions (Eden, Survivor, Tenured, Metaspace) and GC algorithms (G1, ZGC)",
+                "Thread synchronization, volatile memory barriers, happens-before consistency, and CAS operations",
                 "Collections internals: HashMap treeification threshold and thread-safe ConcurrentHashMap patterns"
             ),
             relatedTrackId = "java_interview"
@@ -233,1572 +244,1556 @@ object VideoMockCatalog {
         VideoMockInterview(
             id = "vm_java_10",
             topicId = "java",
-            title = "JAVA Full Stack | Fresher Mock Interview | Best Software Training Institute in Hyderabad | VCUBE",
-            channelName = "V CUBE Software Solutions",
-            youtubeVideoId = "lXKzWaQK5Ek",
-            duration = "42 min",
+            title = "Why Java 8 Streams are the #1 Interview Filter",
+            channelName = "Java Techie",
+            youtubeVideoId = "1Ps5F1PU72M",
+            duration = "29:07 min",
             difficulty = "Senior",
-            description = "Real-world technical mock interview covering Java concepts, architectural trade-offs, and live candidate evaluation with V CUBE Software Solutions.",
+            description = "Real-world technical mock interview covering Java concepts, architectural trade-offs, and live candidate evaluation with Java Techie.",
             keyTakeaways = listOf(
-                "Thread synchronization, volatile semantics, happens-before consistency, and CAS operations",
+                "Thread synchronization, volatile memory barriers, happens-before consistency, and CAS operations",
                 "Collections internals: HashMap treeification threshold and thread-safe ConcurrentHashMap patterns",
-                "Modern Java features: Virtual Threads, sealed classes, pattern matching, and functional streams"
+                "Modern Java features: Virtual Threads (Project Loom), sealed classes, and functional stream pipelines"
             ),
             relatedTrackId = "java_interview"
         ),
     )
 
-    // --- 2. Spring Boot Mock Interviews (10 real verified videos) ---
+    // --- Spring Boot Mock Interviews (10 real verified long-form videos) ---
     private val springbootVideos = listOf(
         VideoMockInterview(
             id = "vm_spring_boot_01",
             topicId = "spring_boot",
-            title = "Deloitte Java Developer 2nd Round Interview Questions (5 Years Experience) | Spring Boot + DSA",
-            channelName = "Java is Awesome",
-            youtubeVideoId = "8_DGr9tg3u8",
-            duration = "48 min",
-            difficulty = "Mid-to-Senior",
-            description = "Real-world technical mock interview covering Spring Boot concepts, architectural trade-offs, and live candidate evaluation with Java is Awesome.",
+            title = "Introduction",
+            channelName = "Code Decode",
+            youtubeVideoId = "xMlcsFLk-CU",
+            duration = "41:16 min",
+            difficulty = "Mid-Level",
+            description = "Real-world technical mock interview covering Spring Boot concepts, architectural trade-offs, and live candidate evaluation with Code Decode.",
             keyTakeaways = listOf(
-                "Spring IoC container lifecycle, BeanPostProcessor, and circular dependency resolution",
-                "@Transactional boundary rules, rollbackFor exception handling, and REQUIRES_NEW propagation",
-                "Spring Security 6 stateless filter chains, OAuth2, and JWT OncePerRequestFilter"
+                "Spring IoC container lifecycle, Bean instantiation phases, and circular dependency resolution",
+                "Spring Boot auto-configuration mechanism, conditional beans, and starter architecture",
+                "Spring Data JPA dirty checking, N+1 query problem mitigation with entity graphs, and batch inserts"
             ),
             relatedTrackId = "spring_boot_interview"
         ),
         VideoMockInterview(
             id = "vm_spring_boot_02",
             topicId = "spring_boot",
-            title = "??Spring MVC Interview Questions | Spring Boot Vs Spring MVC | Intellipaat #Shorts #SpringMVC",
-            channelName = "Intellipaat",
-            youtubeVideoId = "2l1rs81kucM",
-            duration = "48 min",
-            difficulty = "Mid-to-Senior",
-            description = "Real-world technical mock interview covering Spring Boot concepts, architectural trade-offs, and live candidate evaluation with Intellipaat.",
+            title = "Intro",
+            channelName = "GenZ Career",
+            youtubeVideoId = "abPtff4wg8k",
+            duration = "32:51 min",
+            difficulty = "Senior",
+            description = "Real-world technical mock interview covering Spring Boot concepts, architectural trade-offs, and live candidate evaluation with GenZ Career.",
             keyTakeaways = listOf(
-                "@Transactional boundary rules, rollbackFor exception handling, and REQUIRES_NEW propagation",
-                "Spring Security 6 stateless filter chains, OAuth2, and JWT OncePerRequestFilter",
-                "Hibernate / Spring Data JPA N+1 query diagnostics, JOIN FETCH, and DTO projections"
+                "Spring Boot auto-configuration mechanism, conditional beans, and starter architecture",
+                "Spring Data JPA dirty checking, N+1 query problem mitigation with entity graphs, and batch inserts",
+                "Spring Security filter chain flow, JWT authentication filter, and method-level access controls"
             ),
             relatedTrackId = "spring_boot_interview"
         ),
         VideoMockInterview(
             id = "vm_spring_boot_03",
             topicId = "spring_boot",
-            title = "??Java Developer Interview #shorts #simplilearn",
-            channelName = "Simplilearn",
-            youtubeVideoId = "FwNZ4D-wscs",
-            duration = "48 min",
-            difficulty = "Mid-to-Senior",
-            description = "Real-world technical mock interview covering Spring Boot concepts, architectural trade-offs, and live candidate evaluation with Simplilearn.",
+            title = "Project Architecture",
+            channelName = "GenZ Career",
+            youtubeVideoId = "LKtpM8MdqdA",
+            duration = "38:22 min",
+            difficulty = "Lead",
+            description = "Real-world technical mock interview covering Spring Boot concepts, architectural trade-offs, and live candidate evaluation with GenZ Career.",
             keyTakeaways = listOf(
-                "Spring Security 6 stateless filter chains, OAuth2, and JWT OncePerRequestFilter",
-                "Hibernate / Spring Data JPA N+1 query diagnostics, JOIN FETCH, and DTO projections",
-                "Spring IoC container lifecycle, BeanPostProcessor, and circular dependency resolution"
+                "Spring Data JPA dirty checking, N+1 query problem mitigation with entity graphs, and batch inserts",
+                "Spring Security filter chain flow, JWT authentication filter, and method-level access controls",
+                "Spring IoC container lifecycle, Bean instantiation phases, and circular dependency resolution"
             ),
             relatedTrackId = "spring_boot_interview"
         ),
         VideoMockInterview(
             id = "vm_spring_boot_04",
             topicId = "spring_boot",
-            title = "?? Spring Boot Coding Interview Question | Build REST API to Fetch Last 10 User Activities ??",
-            channelName = "Java Full Stack Interview Questions & Answers",
-            youtubeVideoId = "kFRHVM8gzHA",
-            duration = "48 min",
-            difficulty = "Mid-to-Senior",
-            description = "Real-world technical mock interview covering Spring Boot concepts, architectural trade-offs, and live candidate evaluation with Java Full Stack Interview Questions & Answers.",
+            title = "Intro",
+            channelName = "Code Decode",
+            youtubeVideoId = "EYgIvuenaiY",
+            duration = "18:46 min",
+            difficulty = "Architect",
+            description = "Real-world technical mock interview covering Spring Boot concepts, architectural trade-offs, and live candidate evaluation with Code Decode.",
             keyTakeaways = listOf(
-                "Hibernate / Spring Data JPA N+1 query diagnostics, JOIN FETCH, and DTO projections",
-                "Spring IoC container lifecycle, BeanPostProcessor, and circular dependency resolution",
-                "@Transactional boundary rules, rollbackFor exception handling, and REQUIRES_NEW propagation"
+                "Spring Security filter chain flow, JWT authentication filter, and method-level access controls",
+                "Spring IoC container lifecycle, Bean instantiation phases, and circular dependency resolution",
+                "Spring Boot auto-configuration mechanism, conditional beans, and starter architecture"
             ),
             relatedTrackId = "spring_boot_interview"
         ),
         VideoMockInterview(
             id = "vm_spring_boot_05",
             topicId = "spring_boot",
-            title = "Java Interview Question | Why to Use Spring Boot? | #shorts #kiransir #freshers",
-            channelName = "Kiran Academy - Java By Kiran",
-            youtubeVideoId = "_vuxLQ6zq34",
-            duration = "48 min",
-            difficulty = "Mid-to-Senior",
-            description = "Real-world technical mock interview covering Spring Boot concepts, architectural trade-offs, and live candidate evaluation with Kiran Academy - Java By Kiran.",
+            title = "Intro u0026 Project Discussion",
+            channelName = "JAVA INTERVIEW BUDDY",
+            youtubeVideoId = "LFhQNpKOpcc",
+            duration = "32:59 min",
+            difficulty = "Senior",
+            description = "Real-world technical mock interview covering Spring Boot concepts, architectural trade-offs, and live candidate evaluation with JAVA INTERVIEW BUDDY.",
             keyTakeaways = listOf(
-                "Spring IoC container lifecycle, BeanPostProcessor, and circular dependency resolution",
-                "@Transactional boundary rules, rollbackFor exception handling, and REQUIRES_NEW propagation",
-                "Spring Security 6 stateless filter chains, OAuth2, and JWT OncePerRequestFilter"
+                "Spring IoC container lifecycle, Bean instantiation phases, and circular dependency resolution",
+                "Spring Boot auto-configuration mechanism, conditional beans, and starter architecture",
+                "Spring Data JPA dirty checking, N+1 query problem mitigation with entity graphs, and batch inserts"
             ),
             relatedTrackId = "spring_boot_interview"
         ),
         VideoMockInterview(
             id = "vm_spring_boot_06",
             topicId = "spring_boot",
-            title = "Mock Interview 5+ year experienced | Spring Boot | Java | Microservice | System Design | Code Decode",
-            channelName = "Code Decode",
-            youtubeVideoId = "xMlcsFLk-CU",
-            duration = "48 min",
-            difficulty = "Mid-to-Senior",
-            description = "Real-world technical mock interview covering Spring Boot concepts, architectural trade-offs, and live candidate evaluation with Code Decode.",
+            title = "Intro",
+            channelName = "The Curious Coder",
+            youtubeVideoId = "Dw4NyiDiXDQ",
+            duration = "1:00:50 min",
+            difficulty = "Mid-Level",
+            description = "Real-world technical mock interview covering Spring Boot concepts, architectural trade-offs, and live candidate evaluation with The Curious Coder.",
             keyTakeaways = listOf(
-                "@Transactional boundary rules, rollbackFor exception handling, and REQUIRES_NEW propagation",
-                "Spring Security 6 stateless filter chains, OAuth2, and JWT OncePerRequestFilter",
-                "Hibernate / Spring Data JPA N+1 query diagnostics, JOIN FETCH, and DTO projections"
+                "Spring Boot auto-configuration mechanism, conditional beans, and starter architecture",
+                "Spring Data JPA dirty checking, N+1 query problem mitigation with entity graphs, and batch inserts",
+                "Spring Security filter chain flow, JWT authentication filter, and method-level access controls"
             ),
             relatedTrackId = "spring_boot_interview"
         ),
         VideoMockInterview(
             id = "vm_spring_boot_07",
             topicId = "spring_boot",
-            title = "Java Spring Boot Interview Playlist Introduction",
-            channelName = "The Curious Coder",
-            youtubeVideoId = "6BUOmiezXHo",
-            duration = "48 min",
-            difficulty = "Mid-to-Senior",
-            description = "Real-world technical mock interview covering Spring Boot concepts, architectural trade-offs, and live candidate evaluation with The Curious Coder.",
+            title = "Introduction to Java Interview Questions",
+            channelName = "Intellipaat",
+            youtubeVideoId = "4Ib9amXl4gI",
+            duration = "37:15 min",
+            difficulty = "Staff",
+            description = "Real-world technical mock interview covering Spring Boot concepts, architectural trade-offs, and live candidate evaluation with Intellipaat.",
             keyTakeaways = listOf(
-                "Spring Security 6 stateless filter chains, OAuth2, and JWT OncePerRequestFilter",
-                "Hibernate / Spring Data JPA N+1 query diagnostics, JOIN FETCH, and DTO projections",
-                "Spring IoC container lifecycle, BeanPostProcessor, and circular dependency resolution"
+                "Spring Data JPA dirty checking, N+1 query problem mitigation with entity graphs, and batch inserts",
+                "Spring Security filter chain flow, JWT authentication filter, and method-level access controls",
+                "Spring IoC container lifecycle, Bean instantiation phases, and circular dependency resolution"
             ),
             relatedTrackId = "spring_boot_interview"
         ),
         VideoMockInterview(
             id = "vm_spring_boot_08",
             topicId = "spring_boot",
-            title = "IOC and DI in Java Spring Boot : Java Spring Boot Interview Question 1",
-            channelName = "The Curious Coder",
-            youtubeVideoId = "5UtjUMoXrno",
-            duration = "48 min",
-            difficulty = "Mid-to-Senior",
-            description = "Real-world technical mock interview covering Spring Boot concepts, architectural trade-offs, and live candidate evaluation with The Curious Coder.",
+            title = "Table of Contents",
+            channelName = "Anuj Kumar Sharma",
+            youtubeVideoId = "tHDrxMklmPQ",
+            duration = "1:32:42 min",
+            difficulty = "Senior",
+            description = "Real-world technical mock interview covering Spring Boot concepts, architectural trade-offs, and live candidate evaluation with Anuj Kumar Sharma.",
             keyTakeaways = listOf(
-                "Hibernate / Spring Data JPA N+1 query diagnostics, JOIN FETCH, and DTO projections",
-                "Spring IoC container lifecycle, BeanPostProcessor, and circular dependency resolution",
-                "@Transactional boundary rules, rollbackFor exception handling, and REQUIRES_NEW propagation"
+                "Spring Security filter chain flow, JWT authentication filter, and method-level access controls",
+                "Spring IoC container lifecycle, Bean instantiation phases, and circular dependency resolution",
+                "Spring Boot auto-configuration mechanism, conditional beans, and starter architecture"
             ),
             relatedTrackId = "spring_boot_interview"
         ),
         VideoMockInterview(
             id = "vm_spring_boot_09",
             topicId = "spring_boot",
-            title = "3-7 Years Interview Experience | Java | Spring Boot | Microservices | Maven | SQL",
-            channelName = "Insights Instructor",
-            youtubeVideoId = "I8vcwnn6Qc8",
-            duration = "48 min",
-            difficulty = "Mid-to-Senior",
-            description = "Real-world technical mock interview covering Spring Boot concepts, architectural trade-offs, and live candidate evaluation with Insights Instructor.",
+            title = "Introduction",
+            channelName = "Selenium Express",
+            youtubeVideoId = "9grEmpRfK0Y",
+            duration = "62:55:08 min",
+            difficulty = "Lead",
+            description = "Real-world technical mock interview covering Spring Boot concepts, architectural trade-offs, and live candidate evaluation with Selenium Express.",
             keyTakeaways = listOf(
-                "Spring IoC container lifecycle, BeanPostProcessor, and circular dependency resolution",
-                "@Transactional boundary rules, rollbackFor exception handling, and REQUIRES_NEW propagation",
-                "Spring Security 6 stateless filter chains, OAuth2, and JWT OncePerRequestFilter"
+                "Spring IoC container lifecycle, Bean instantiation phases, and circular dependency resolution",
+                "Spring Boot auto-configuration mechanism, conditional beans, and starter architecture",
+                "Spring Data JPA dirty checking, N+1 query problem mitigation with entity graphs, and batch inserts"
             ),
             relatedTrackId = "spring_boot_interview"
         ),
         VideoMockInterview(
             id = "vm_spring_boot_10",
             topicId = "spring_boot",
-            title = "Spring boot interview questions| |annotation",
-            channelName = "Sridhar TA Technology",
-            youtubeVideoId = "CslDNtfonPw",
-            duration = "48 min",
-            difficulty = "Mid-to-Senior",
-            description = "Real-world technical mock interview covering Spring Boot concepts, architectural trade-offs, and live candidate evaluation with Sridhar TA Technology.",
+            title = "Welcome",
+            channelName = "Telusko",
+            youtubeVideoId = "q6z_UCBM5Ek",
+            duration = "6:06:44 min",
+            difficulty = "Senior",
+            description = "Real-world technical mock interview covering Spring Boot concepts, architectural trade-offs, and live candidate evaluation with Telusko.",
             keyTakeaways = listOf(
-                "@Transactional boundary rules, rollbackFor exception handling, and REQUIRES_NEW propagation",
-                "Spring Security 6 stateless filter chains, OAuth2, and JWT OncePerRequestFilter",
-                "Hibernate / Spring Data JPA N+1 query diagnostics, JOIN FETCH, and DTO projections"
+                "Spring Boot auto-configuration mechanism, conditional beans, and starter architecture",
+                "Spring Data JPA dirty checking, N+1 query problem mitigation with entity graphs, and batch inserts",
+                "Spring Security filter chain flow, JWT authentication filter, and method-level access controls"
             ),
             relatedTrackId = "spring_boot_interview"
         ),
     )
 
-    // --- 3. Microservices Mock Interviews (10 real verified videos) ---
+    // --- Microservices Mock Interviews (10 real verified long-form videos) ---
     private val microservicesVideos = listOf(
         VideoMockInterview(
             id = "vm_microservices_01",
             topicId = "microservices",
-            title = "Microservices Interview Questions 2026 | Top Microservices Interview Questions & Answers | MindMajix",
-            channelName = "MindMajix",
-            youtubeVideoId = "wmawYODmQU0",
-            duration = "50 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering Microservices concepts, architectural trade-offs, and live candidate evaluation with MindMajix.",
+            title = "Introduction",
+            channelName = "GenZ Career",
+            youtubeVideoId = "xH9bB7oluKc",
+            duration = "39:20 min",
+            difficulty = "Mid-Level",
+            description = "Real-world technical mock interview covering Microservices concepts, architectural trade-offs, and live candidate evaluation with GenZ Career.",
             keyTakeaways = listOf(
-                "Saga pattern implementation: Choreography vs Orchestration and compensating transactions",
-                "Event-driven architecture with Apache Kafka partitioning and Transactional Outbox pattern",
-                "Resilience patterns: Sliding window circuit breakers, retry with backoff, and bulkhead isolation"
+                "Distributed data management: Saga pattern (orchestration vs choreography) and outbox pattern",
+                "Service discovery, client-side load balancing, and API Gateway pattern (rate limiting, auth offloading)",
+                "Fault tolerance and resilience: Circuit Breakers (Resilience4j), retries, and exponential backoffs"
             ),
             relatedTrackId = "microservices_interview"
         ),
         VideoMockInterview(
             id = "vm_microservices_02",
             topicId = "microservices",
-            title = "Microservices interview questions (Tricky | Scenario-Based | 2-7 Yrs)",
-            channelName = "GenZ Career",
-            youtubeVideoId = "xH9bB7oluKc",
-            duration = "50 min",
+            title = "Microservices Developer Interview",
+            channelName = "Code Decode",
+            youtubeVideoId = "eNwbZz8PGDc",
+            duration = "18:51 min",
             difficulty = "Senior",
-            description = "Real-world technical mock interview covering Microservices concepts, architectural trade-offs, and live candidate evaluation with GenZ Career.",
+            description = "Real-world technical mock interview covering Microservices concepts, architectural trade-offs, and live candidate evaluation with Code Decode.",
             keyTakeaways = listOf(
-                "Event-driven architecture with Apache Kafka partitioning and Transactional Outbox pattern",
-                "Resilience patterns: Sliding window circuit breakers, retry with backoff, and bulkhead isolation",
-                "Distributed tracing with OpenTelemetry, W3C traceparent headers, and centralized Jaeger logs"
+                "Service discovery, client-side load balancing, and API Gateway pattern (rate limiting, auth offloading)",
+                "Fault tolerance and resilience: Circuit Breakers (Resilience4j), retries, and exponential backoffs",
+                "Event-driven messaging: Kafka consumer groups, offset management, and idempotency guarantees"
             ),
             relatedTrackId = "microservices_interview"
         ),
         VideoMockInterview(
             id = "vm_microservices_03",
             topicId = "microservices",
-            title = "Microservices Interview Questions and Answers for experienced and fresher | Most Asked | Code Decode",
-            channelName = "Code Decode",
-            youtubeVideoId = "9x_6VLk3GtY",
-            duration = "50 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering Microservices concepts, architectural trade-offs, and live candidate evaluation with Code Decode.",
+            title = "Intro",
+            channelName = "theSeniorDev",
+            youtubeVideoId = "AGqbLgEQGaA",
+            duration = "35:34 min",
+            difficulty = "Lead",
+            description = "Real-world technical mock interview covering Microservices concepts, architectural trade-offs, and live candidate evaluation with theSeniorDev.",
             keyTakeaways = listOf(
-                "Resilience patterns: Sliding window circuit breakers, retry with backoff, and bulkhead isolation",
-                "Distributed tracing with OpenTelemetry, W3C traceparent headers, and centralized Jaeger logs",
-                "Saga pattern implementation: Choreography vs Orchestration and compensating transactions"
+                "Fault tolerance and resilience: Circuit Breakers (Resilience4j), retries, and exponential backoffs",
+                "Event-driven messaging: Kafka consumer groups, offset management, and idempotency guarantees",
+                "Distributed data management: Saga pattern (orchestration vs choreography) and outbox pattern"
             ),
             relatedTrackId = "microservices_interview"
         ),
         VideoMockInterview(
             id = "vm_microservices_04",
             topicId = "microservices",
-            title = "Microservices Interview questions and answers for experienced and freshers | Code Decode |  Part-2",
-            channelName = "Code Decode",
-            youtubeVideoId = "oNL5tQ4L9xg",
-            duration = "50 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering Microservices concepts, architectural trade-offs, and live candidate evaluation with Code Decode.",
+            title = "Into",
+            channelName = "Java Guides",
+            youtubeVideoId = "u5ExQ12yNbM",
+            duration = "41:16 min",
+            difficulty = "Architect",
+            description = "Real-world technical mock interview covering Microservices concepts, architectural trade-offs, and live candidate evaluation with Java Guides.",
             keyTakeaways = listOf(
-                "Distributed tracing with OpenTelemetry, W3C traceparent headers, and centralized Jaeger logs",
-                "Saga pattern implementation: Choreography vs Orchestration and compensating transactions",
-                "Event-driven architecture with Apache Kafka partitioning and Transactional Outbox pattern"
+                "Event-driven messaging: Kafka consumer groups, offset management, and idempotency guarantees",
+                "Distributed data management: Saga pattern (orchestration vs choreography) and outbox pattern",
+                "Service discovery, client-side load balancing, and API Gateway pattern (rate limiting, auth offloading)"
             ),
             relatedTrackId = "microservices_interview"
         ),
         VideoMockInterview(
             id = "vm_microservices_05",
             topicId = "microservices",
-            title = "What is Microservices Architecture | Full Stack Developer Interview Questions with Explanation",
-            channelName = "Easy Learning 24x7",
-            youtubeVideoId = "cMgcw7usjKE",
-            duration = "50 min",
+            title = "Intro",
+            channelName = "GenZ Career",
+            youtubeVideoId = "abPtff4wg8k",
+            duration = "1:15:45 min",
             difficulty = "Senior",
-            description = "Real-world technical mock interview covering Microservices concepts, architectural trade-offs, and live candidate evaluation with Easy Learning 24x7.",
+            description = "Real-world technical mock interview covering Microservices concepts, architectural trade-offs, and live candidate evaluation with GenZ Career.",
             keyTakeaways = listOf(
-                "Saga pattern implementation: Choreography vs Orchestration and compensating transactions",
-                "Event-driven architecture with Apache Kafka partitioning and Transactional Outbox pattern",
-                "Resilience patterns: Sliding window circuit breakers, retry with backoff, and bulkhead isolation"
+                "Distributed data management: Saga pattern (orchestration vs choreography) and outbox pattern",
+                "Service discovery, client-side load balancing, and API Gateway pattern (rate limiting, auth offloading)",
+                "Fault tolerance and resilience: Circuit Breakers (Resilience4j), retries, and exponential backoffs"
             ),
             relatedTrackId = "microservices_interview"
         ),
         VideoMockInterview(
             id = "vm_microservices_06",
             topicId = "microservices",
-            title = "Java Mock Interview Series | Question 9 | Security Best Practices in Microservices",
-            channelName = "Rise Academy Career Connect",
-            youtubeVideoId = "UdX-zT-pnOE",
-            duration = "50 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering Microservices concepts, architectural trade-offs, and live candidate evaluation with Rise Academy Career Connect.",
+            title = "Introduction",
+            channelName = "Code Decode",
+            youtubeVideoId = "MNvBi5wxHYc",
+            duration = "47:34 min",
+            difficulty = "Mid-Level",
+            description = "Real-world technical mock interview covering Microservices concepts, architectural trade-offs, and live candidate evaluation with Code Decode.",
             keyTakeaways = listOf(
-                "Event-driven architecture with Apache Kafka partitioning and Transactional Outbox pattern",
-                "Resilience patterns: Sliding window circuit breakers, retry with backoff, and bulkhead isolation",
-                "Distributed tracing with OpenTelemetry, W3C traceparent headers, and centralized Jaeger logs"
+                "Service discovery, client-side load balancing, and API Gateway pattern (rate limiting, auth offloading)",
+                "Fault tolerance and resilience: Circuit Breakers (Resilience4j), retries, and exponential backoffs",
+                "Event-driven messaging: Kafka consumer groups, offset management, and idempotency guarantees"
             ),
             relatedTrackId = "microservices_interview"
         ),
         VideoMockInterview(
             id = "vm_microservices_07",
             topicId = "microservices",
-            title = "Microservices Interview Question ?? How Do Microservices Communicate? | REST vs Kafka",
-            channelName = "Java Full Stack Interview Questions & Answers",
-            youtubeVideoId = "DfUB8x0hL4c",
-            duration = "50 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering Microservices concepts, architectural trade-offs, and live candidate evaluation with Java Full Stack Interview Questions & Answers.",
+            title = "Intro",
+            channelName = "GenZ Career",
+            youtubeVideoId = "XilRv9wJhzc",
+            duration = "38:39 min",
+            difficulty = "Staff",
+            description = "Real-world technical mock interview covering Microservices concepts, architectural trade-offs, and live candidate evaluation with GenZ Career.",
             keyTakeaways = listOf(
-                "Resilience patterns: Sliding window circuit breakers, retry with backoff, and bulkhead isolation",
-                "Distributed tracing with OpenTelemetry, W3C traceparent headers, and centralized Jaeger logs",
-                "Saga pattern implementation: Choreography vs Orchestration and compensating transactions"
+                "Fault tolerance and resilience: Circuit Breakers (Resilience4j), retries, and exponential backoffs",
+                "Event-driven messaging: Kafka consumer groups, offset management, and idempotency guarantees",
+                "Distributed data management: Saga pattern (orchestration vs choreography) and outbox pattern"
             ),
             relatedTrackId = "microservices_interview"
         ),
         VideoMockInterview(
             id = "vm_microservices_08",
             topicId = "microservices",
-            title = "In microservices, how can one microservice communicate with another",
-            channelName = "Code X",
-            youtubeVideoId = "lVPB0o2Ihys",
-            duration = "50 min",
+            title = "Introduction",
+            channelName = "MindMajix",
+            youtubeVideoId = "wmawYODmQU0",
+            duration = "39:20 min",
             difficulty = "Senior",
-            description = "Real-world technical mock interview covering Microservices concepts, architectural trade-offs, and live candidate evaluation with Code X.",
+            description = "Real-world technical mock interview covering Microservices concepts, architectural trade-offs, and live candidate evaluation with MindMajix.",
             keyTakeaways = listOf(
-                "Distributed tracing with OpenTelemetry, W3C traceparent headers, and centralized Jaeger logs",
-                "Saga pattern implementation: Choreography vs Orchestration and compensating transactions",
-                "Event-driven architecture with Apache Kafka partitioning and Transactional Outbox pattern"
+                "Event-driven messaging: Kafka consumer groups, offset management, and idempotency guarantees",
+                "Distributed data management: Saga pattern (orchestration vs choreography) and outbox pattern",
+                "Service discovery, client-side load balancing, and API Gateway pattern (rate limiting, auth offloading)"
             ),
             relatedTrackId = "microservices_interview"
         ),
         VideoMockInterview(
             id = "vm_microservices_09",
             topicId = "microservices",
-            title = "Interview Questions That Exposes Fake Microservices Experience",
-            channelName = "Selenium Express",
-            youtubeVideoId = "-6Hj9GvFLyE",
-            duration = "50 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering Microservices concepts, architectural trade-offs, and live candidate evaluation with Selenium Express.",
+            title = "Introduction",
+            channelName = "Java Guides",
+            youtubeVideoId = "Ii4PJTkORcU",
+            duration = "38:39 min",
+            difficulty = "Lead",
+            description = "Real-world technical mock interview covering Microservices concepts, architectural trade-offs, and live candidate evaluation with Java Guides.",
             keyTakeaways = listOf(
-                "Saga pattern implementation: Choreography vs Orchestration and compensating transactions",
-                "Event-driven architecture with Apache Kafka partitioning and Transactional Outbox pattern",
-                "Resilience patterns: Sliding window circuit breakers, retry with backoff, and bulkhead isolation"
+                "Distributed data management: Saga pattern (orchestration vs choreography) and outbox pattern",
+                "Service discovery, client-side load balancing, and API Gateway pattern (rate limiting, auth offloading)",
+                "Fault tolerance and resilience: Circuit Breakers (Resilience4j), retries, and exponential backoffs"
             ),
             relatedTrackId = "microservices_interview"
         ),
         VideoMockInterview(
             id = "vm_microservices_10",
             topicId = "microservices",
-            title = "Microservices Interview Secrets: What 10 Years Taught Us",
-            channelName = "Selenium Express",
-            youtubeVideoId = "t_yaUzErzAs",
-            duration = "50 min",
+            title = "Intro",
+            channelName = "Mock Interviews",
+            youtubeVideoId = "awLkgVEP3p8",
+            duration = "12:26 min",
             difficulty = "Senior",
-            description = "Real-world technical mock interview covering Microservices concepts, architectural trade-offs, and live candidate evaluation with Selenium Express.",
+            description = "Real-world technical mock interview covering Microservices concepts, architectural trade-offs, and live candidate evaluation with Mock Interviews.",
             keyTakeaways = listOf(
-                "Event-driven architecture with Apache Kafka partitioning and Transactional Outbox pattern",
-                "Resilience patterns: Sliding window circuit breakers, retry with backoff, and bulkhead isolation",
-                "Distributed tracing with OpenTelemetry, W3C traceparent headers, and centralized Jaeger logs"
+                "Service discovery, client-side load balancing, and API Gateway pattern (rate limiting, auth offloading)",
+                "Fault tolerance and resilience: Circuit Breakers (Resilience4j), retries, and exponential backoffs",
+                "Event-driven messaging: Kafka consumer groups, offset management, and idempotency guarantees"
             ),
             relatedTrackId = "microservices_interview"
         ),
     )
 
-    // --- 4. Full Stack Mock Interviews (10 real verified videos) ---
+    // --- Full Stack Mock Interviews (10 real verified long-form videos) ---
     private val fullstackVideos = listOf(
         VideoMockInterview(
             id = "vm_full_stack_01",
             topicId = "full_stack",
-            title = "??????????????'?? ?????????????????? ??????????????????",
-            channelName = "ReactJS Developer Interview Series",
-            youtubeVideoId = "l2f3xVvZGLA",
-            duration = "55 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering Full Stack concepts, architectural trade-offs, and live candidate evaluation with ReactJS Developer Interview Series.",
+            title = "Introduction to Full Stack Developer Interview Questions for Freshers u0026 Experienced",
+            channelName = "Intellipaat",
+            youtubeVideoId = "l5g38haVsJk",
+            duration = "25:26 min",
+            difficulty = "Mid-Level",
+            description = "Real-world technical mock interview covering Full Stack concepts, architectural trade-offs, and live candidate evaluation with Intellipaat.",
             keyTakeaways = listOf(
-                "End-to-end integration: TypeScript frontend models aligned with backend Spring Boot DTO contracts",
-                "Authentication security: HttpOnly SameSite cookies vs JWT, avoiding XSS and CSRF vulnerabilities",
-                "High performance rendering: Virtual scrolling, cursor-based pagination, and bundle code splitting"
+                "End-to-end full stack architecture: frontend state reconciliation and backend RESTful/GraphQL contracts",
+                "Client performance: bundle splitting, optimistic UI updates, and server-side rendering trade-offs",
+                "Securing full stack applications: CORS, CSRF tokens, secure cookies, and input sanitization"
             ),
             relatedTrackId = "full_stack_interview"
         ),
         VideoMockInterview(
             id = "vm_full_stack_02",
             topicId = "full_stack",
-            title = "Top 5 Front-end Developer Interview Questions every fresher should know!",
-            channelName = "LIVEWIRE India",
-            youtubeVideoId = "2ls1QcubWxw",
-            duration = "55 min",
+            title = "SQL Injection Attack",
+            channelName = "ReactJS Developer Interview Series ",
+            youtubeVideoId = "l2f3xVvZGLA",
+            duration = "1:14:29 min",
             difficulty = "Senior",
-            description = "Real-world technical mock interview covering Full Stack concepts, architectural trade-offs, and live candidate evaluation with LIVEWIRE India.",
+            description = "Real-world technical mock interview covering Full Stack concepts, architectural trade-offs, and live candidate evaluation with ReactJS Developer Interview Series .",
             keyTakeaways = listOf(
-                "Authentication security: HttpOnly SameSite cookies vs JWT, avoiding XSS and CSRF vulnerabilities",
-                "High performance rendering: Virtual scrolling, cursor-based pagination, and bundle code splitting",
-                "Real-time communication: WebSockets with STOMP relays, RxJS subject state, and Redis backplanes"
+                "Client performance: bundle splitting, optimistic UI updates, and server-side rendering trade-offs",
+                "Securing full stack applications: CORS, CSRF tokens, secure cookies, and input sanitization",
+                "Database integration and caching strategies: Redis caching layers and relational transactions"
             ),
             relatedTrackId = "full_stack_interview"
         ),
         VideoMockInterview(
             id = "vm_full_stack_03",
             topicId = "full_stack",
-            title = "Full Stack Web Development Technical  Interview Questions  2024 | PrasannaNIT",
-            channelName = "Prasanna Tech AI",
-            youtubeVideoId = "dbyelTJsSG4",
-            duration = "55 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering Full Stack concepts, architectural trade-offs, and live candidate evaluation with Prasanna Tech AI.",
+            title = "Intro",
+            channelName = "UNIQ Technologies",
+            youtubeVideoId = "bF6gLekjU4E",
+            duration = "1:34:48 min",
+            difficulty = "Lead",
+            description = "Real-world technical mock interview covering Full Stack concepts, architectural trade-offs, and live candidate evaluation with UNIQ Technologies.",
             keyTakeaways = listOf(
-                "High performance rendering: Virtual scrolling, cursor-based pagination, and bundle code splitting",
-                "Real-time communication: WebSockets with STOMP relays, RxJS subject state, and Redis backplanes",
-                "End-to-end integration: TypeScript frontend models aligned with backend Spring Boot DTO contracts"
+                "Securing full stack applications: CORS, CSRF tokens, secure cookies, and input sanitization",
+                "Database integration and caching strategies: Redis caching layers and relational transactions",
+                "End-to-end full stack architecture: frontend state reconciliation and backend RESTful/GraphQL contracts"
             ),
             relatedTrackId = "full_stack_interview"
         ),
         VideoMockInterview(
             id = "vm_full_stack_04",
             topicId = "full_stack",
-            title = "Full Stack Developer Interview Questions YOU MUST KNOW ?? | Intellipaat #Shorts #FullStack",
-            channelName = "Intellipaat",
-            youtubeVideoId = "IuAZ35vf_YI",
-            duration = "55 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering Full Stack concepts, architectural trade-offs, and live candidate evaluation with Intellipaat.",
+            title = "SQL Injection Attack",
+            channelName = "Nisha Singla",
+            youtubeVideoId = "hw-c1vUMkRA",
+            duration = "41:16 min",
+            difficulty = "Architect",
+            description = "Real-world technical mock interview covering Full Stack concepts, architectural trade-offs, and live candidate evaluation with Nisha Singla.",
             keyTakeaways = listOf(
-                "Real-time communication: WebSockets with STOMP relays, RxJS subject state, and Redis backplanes",
-                "End-to-end integration: TypeScript frontend models aligned with backend Spring Boot DTO contracts",
-                "Authentication security: HttpOnly SameSite cookies vs JWT, avoiding XSS and CSRF vulnerabilities"
+                "Database integration and caching strategies: Redis caching layers and relational transactions",
+                "End-to-end full stack architecture: frontend state reconciliation and backend RESTful/GraphQL contracts",
+                "Client performance: bundle splitting, optimistic UI updates, and server-side rendering trade-offs"
             ),
             relatedTrackId = "full_stack_interview"
         ),
         VideoMockInterview(
             id = "vm_full_stack_05",
             topicId = "full_stack",
-            title = "Full stack Development Mock Interview",
-            channelName = "GALTech Learning Hub",
-            youtubeVideoId = "f2KFCh0V764",
-            duration = "55 min",
+            title = "Introduction – Frontend Mock Interview Begins",
+            channelName = "GenZ Career",
+            youtubeVideoId = "abPtff4wg8k",
+            duration = "1:14:01 min",
             difficulty = "Senior",
-            description = "Real-world technical mock interview covering Full Stack concepts, architectural trade-offs, and live candidate evaluation with GALTech Learning Hub.",
+            description = "Real-world technical mock interview covering Full Stack concepts, architectural trade-offs, and live candidate evaluation with GenZ Career.",
             keyTakeaways = listOf(
-                "End-to-end integration: TypeScript frontend models aligned with backend Spring Boot DTO contracts",
-                "Authentication security: HttpOnly SameSite cookies vs JWT, avoiding XSS and CSRF vulnerabilities",
-                "High performance rendering: Virtual scrolling, cursor-based pagination, and bundle code splitting"
+                "End-to-end full stack architecture: frontend state reconciliation and backend RESTful/GraphQL contracts",
+                "Client performance: bundle splitting, optimistic UI updates, and server-side rendering trade-offs",
+                "Securing full stack applications: CORS, CSRF tokens, secure cookies, and input sanitization"
             ),
             relatedTrackId = "full_stack_interview"
         ),
         VideoMockInterview(
             id = "vm_full_stack_06",
             topicId = "full_stack",
-            title = "developer interviews in 2026 ?? Comment �app� for the link. #adparakeetai #developer #interview #fyp",
-            channelName = "Auzio",
-            youtubeVideoId = "oxsRVKk5taY",
-            duration = "55 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering Full Stack concepts, architectural trade-offs, and live candidate evaluation with Auzio.",
+            title = "Introduction",
+            channelName = "Code Decode",
+            youtubeVideoId = "X2bPVTRruUM",
+            duration = "59:15 min",
+            difficulty = "Mid-Level",
+            description = "Real-world technical mock interview covering Full Stack concepts, architectural trade-offs, and live candidate evaluation with Code Decode.",
             keyTakeaways = listOf(
-                "Authentication security: HttpOnly SameSite cookies vs JWT, avoiding XSS and CSRF vulnerabilities",
-                "High performance rendering: Virtual scrolling, cursor-based pagination, and bundle code splitting",
-                "Real-time communication: WebSockets with STOMP relays, RxJS subject state, and Redis backplanes"
+                "Client performance: bundle splitting, optimistic UI updates, and server-side rendering trade-offs",
+                "Securing full stack applications: CORS, CSRF tokens, secure cookies, and input sanitization",
+                "Database integration and caching strategies: Redis caching layers and relational transactions"
             ),
             relatedTrackId = "full_stack_interview"
         ),
         VideoMockInterview(
             id = "vm_full_stack_07",
             topicId = "full_stack",
-            title = "FullStack Interview Questions (Junior & Mid)",
-            channelName = "theSeniorDev",
-            youtubeVideoId = "sgckyASEMdI",
-            duration = "55 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering Full Stack concepts, architectural trade-offs, and live candidate evaluation with theSeniorDev.",
+            title = "Intro",
+            channelName = "Code Decode",
+            youtubeVideoId = "PHIQJeKzMCU",
+            duration = "30:07 min",
+            difficulty = "Staff",
+            description = "Real-world technical mock interview covering Full Stack concepts, architectural trade-offs, and live candidate evaluation with Code Decode.",
             keyTakeaways = listOf(
-                "High performance rendering: Virtual scrolling, cursor-based pagination, and bundle code splitting",
-                "Real-time communication: WebSockets with STOMP relays, RxJS subject state, and Redis backplanes",
-                "End-to-end integration: TypeScript frontend models aligned with backend Spring Boot DTO contracts"
+                "Securing full stack applications: CORS, CSRF tokens, secure cookies, and input sanitization",
+                "Database integration and caching strategies: Redis caching layers and relational transactions",
+                "End-to-end full stack architecture: frontend state reconciliation and backend RESTful/GraphQL contracts"
             ),
             relatedTrackId = "full_stack_interview"
         ),
         VideoMockInterview(
             id = "vm_full_stack_08",
             topicId = "full_stack",
-            title = "?? Mock Interview for Full Stack Developers � Ace Your Dream Job! ??",
-            channelName = "10000Coders",
-            youtubeVideoId = "z1UteKjglG8",
-            duration = "55 min",
+            title = "Introduction",
+            channelName = "GenZ Career",
+            youtubeVideoId = "JyS2FnrE91Q",
+            duration = "32:59 min",
             difficulty = "Senior",
-            description = "Real-world technical mock interview covering Full Stack concepts, architectural trade-offs, and live candidate evaluation with 10000Coders.",
+            description = "Real-world technical mock interview covering Full Stack concepts, architectural trade-offs, and live candidate evaluation with GenZ Career.",
             keyTakeaways = listOf(
-                "Real-time communication: WebSockets with STOMP relays, RxJS subject state, and Redis backplanes",
-                "End-to-end integration: TypeScript frontend models aligned with backend Spring Boot DTO contracts",
-                "Authentication security: HttpOnly SameSite cookies vs JWT, avoiding XSS and CSRF vulnerabilities"
+                "Database integration and caching strategies: Redis caching layers and relational transactions",
+                "End-to-end full stack architecture: frontend state reconciliation and backend RESTful/GraphQL contracts",
+                "Client performance: bundle splitting, optimistic UI updates, and server-side rendering trade-offs"
             ),
             relatedTrackId = "full_stack_interview"
         ),
         VideoMockInterview(
             id = "vm_full_stack_09",
             topicId = "full_stack",
-            title = "Mock Interview 5+ year experienced | Spring Boot | Java | Microservice | System Design | Code Decode",
-            channelName = "Code Decode",
-            youtubeVideoId = "xMlcsFLk-CU",
-            duration = "55 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering Full Stack concepts, architectural trade-offs, and live candidate evaluation with Code Decode.",
+            title = "Introduction to Full Stack Developer Interview Questions for Freshers u0026 Experienced",
+            channelName = "GALTech Learning Hub",
+            youtubeVideoId = "f2KFCh0V764",
+            duration = "1:14:29 min",
+            difficulty = "Lead",
+            description = "Real-world technical mock interview covering Full Stack concepts, architectural trade-offs, and live candidate evaluation with GALTech Learning Hub.",
             keyTakeaways = listOf(
-                "End-to-end integration: TypeScript frontend models aligned with backend Spring Boot DTO contracts",
-                "Authentication security: HttpOnly SameSite cookies vs JWT, avoiding XSS and CSRF vulnerabilities",
-                "High performance rendering: Virtual scrolling, cursor-based pagination, and bundle code splitting"
+                "End-to-end full stack architecture: frontend state reconciliation and backend RESTful/GraphQL contracts",
+                "Client performance: bundle splitting, optimistic UI updates, and server-side rendering trade-offs",
+                "Securing full stack applications: CORS, CSRF tokens, secure cookies, and input sanitization"
             ),
             relatedTrackId = "full_stack_interview"
         ),
         VideoMockInterview(
             id = "vm_full_stack_10",
             topicId = "full_stack",
-            title = "Nail Your Interview with this pro tip!  #shorts #interviewtips",
-            channelName = "Error Makes Clever",
-            youtubeVideoId = "eSymSLKy2QE",
-            duration = "55 min",
+            title = "SQL Injection Attack",
+            channelName = "theSeniorDev",
+            youtubeVideoId = "sgckyASEMdI",
+            duration = "13:37 min",
             difficulty = "Senior",
-            description = "Real-world technical mock interview covering Full Stack concepts, architectural trade-offs, and live candidate evaluation with Error Makes Clever.",
+            description = "Real-world technical mock interview covering Full Stack concepts, architectural trade-offs, and live candidate evaluation with theSeniorDev.",
             keyTakeaways = listOf(
-                "Authentication security: HttpOnly SameSite cookies vs JWT, avoiding XSS and CSRF vulnerabilities",
-                "High performance rendering: Virtual scrolling, cursor-based pagination, and bundle code splitting",
-                "Real-time communication: WebSockets with STOMP relays, RxJS subject state, and Redis backplanes"
+                "Client performance: bundle splitting, optimistic UI updates, and server-side rendering trade-offs",
+                "Securing full stack applications: CORS, CSRF tokens, secure cookies, and input sanitization",
+                "Database integration and caching strategies: Redis caching layers and relational transactions"
             ),
             relatedTrackId = "full_stack_interview"
         ),
     )
 
-    // --- 5. HLD Mock Interviews (10 real verified videos) ---
+    // --- HLD Mock Interviews (10 real verified long-form videos) ---
     private val hldVideos = listOf(
         VideoMockInterview(
             id = "vm_hld_01",
             topicId = "hld",
-            title = "System Design Mock Interview: Design TikTok ft. Google TPM",
-            channelName = "Aced (formerly Exponent)",
-            youtubeVideoId = "Z-0g_aJL5Fw",
-            duration = "58 min",
-            difficulty = "Staff",
-            description = "Real-world technical mock interview covering HLD concepts, architectural trade-offs, and live candidate evaluation with Aced (formerly Exponent).",
+            title = "Introduction",
+            channelName = "NextWork",
+            youtubeVideoId = "qtkSifj_vus",
+            duration = "48:39 min",
+            difficulty = "Mid-Level",
+            description = "Real-world technical mock interview covering HLD concepts, architectural trade-offs, and live candidate evaluation with NextWork.",
             keyTakeaways = listOf(
-                "System scale requirements clarification, QPS estimation, and bandwidth capacity planning",
-                "High-level blueprints: Multi-tier load balancing, CDN edge caching, and distributed storage",
-                "Database architectural choices: Read replicas, sharding strategies, and wide-column stores"
+                "Distributed system fundamentals: CAP and PACELC theorems, consistency models, and latency trade-offs",
+                "Scalable database architectures: horizontal sharding, consistent hashing, and read replicas",
+                "Global caching hierarchies: CDN caching, Redis/Memcached look-aside, and cache invalidation"
             ),
             relatedTrackId = "hld_interview"
         ),
         VideoMockInterview(
             id = "vm_hld_02",
             topicId = "hld",
-            title = "How to Answer System Design Interview Questions (Complete Guide)",
-            channelName = "Aced (formerly Exponent)",
-            youtubeVideoId = "L9TfZdODuFQ",
-            duration = "58 min",
-            difficulty = "Staff",
-            description = "Real-world technical mock interview covering HLD concepts, architectural trade-offs, and live candidate evaluation with Aced (formerly Exponent).",
+            title = "Intro",
+            channelName = "Anubhav Sethi",
+            youtubeVideoId = "QBHTbtWSECg",
+            duration = "2:18:46 min",
+            difficulty = "Senior",
+            description = "Real-world technical mock interview covering HLD concepts, architectural trade-offs, and live candidate evaluation with Anubhav Sethi.",
             keyTakeaways = listOf(
-                "High-level blueprints: Multi-tier load balancing, CDN edge caching, and distributed storage",
-                "Database architectural choices: Read replicas, sharding strategies, and wide-column stores",
-                "Trade-offs under high concurrency: Cache stampede mitigation, rate limiting, and zero downtime updates"
+                "Scalable database architectures: horizontal sharding, consistent hashing, and read replicas",
+                "Global caching hierarchies: CDN caching, Redis/Memcached look-aside, and cache invalidation",
+                "High availability and fault tolerance: multi-region active-active deployments and failure domain isolation"
             ),
             relatedTrackId = "hld_interview"
         ),
         VideoMockInterview(
             id = "vm_hld_03",
             topicId = "hld",
-            title = "System Design Mock Interview: Design Leetcode ft. Ex Google Engineer",
-            channelName = "Anubhav Sethi",
-            youtubeVideoId = "QBHTbtWSECg",
-            duration = "58 min",
-            difficulty = "Staff",
-            description = "Real-world technical mock interview covering HLD concepts, architectural trade-offs, and live candidate evaluation with Anubhav Sethi.",
+            title = "The 6-Step Framework",
+            channelName = "Afaque Ahmad",
+            youtubeVideoId = "r58Cf_kc_bY",
+            duration = "26:04 min",
+            difficulty = "Lead",
+            description = "Real-world technical mock interview covering HLD concepts, architectural trade-offs, and live candidate evaluation with Afaque Ahmad.",
             keyTakeaways = listOf(
-                "Database architectural choices: Read replicas, sharding strategies, and wide-column stores",
-                "Trade-offs under high concurrency: Cache stampede mitigation, rate limiting, and zero downtime updates",
-                "System scale requirements clarification, QPS estimation, and bandwidth capacity planning"
+                "Global caching hierarchies: CDN caching, Redis/Memcached look-aside, and cache invalidation",
+                "High availability and fault tolerance: multi-region active-active deployments and failure domain isolation",
+                "Distributed system fundamentals: CAP and PACELC theorems, consistency models, and latency trade-offs"
             ),
             relatedTrackId = "hld_interview"
         ),
         VideoMockInterview(
             id = "vm_hld_04",
             topicId = "hld",
-            title = "Github System Design Interview",
-            channelName = "NextWork",
-            youtubeVideoId = "qtkSifj_vus",
-            duration = "58 min",
-            difficulty = "Staff",
-            description = "Real-world technical mock interview covering HLD concepts, architectural trade-offs, and live candidate evaluation with NextWork.",
+            title = "Intro",
+            channelName = "NeetCode",
+            youtubeVideoId = "jPKTo1iGQiE",
+            duration = "35:02 min",
+            difficulty = "Architect",
+            description = "Real-world technical mock interview covering HLD concepts, architectural trade-offs, and live candidate evaluation with NeetCode.",
             keyTakeaways = listOf(
-                "Trade-offs under high concurrency: Cache stampede mitigation, rate limiting, and zero downtime updates",
-                "System scale requirements clarification, QPS estimation, and bandwidth capacity planning",
-                "High-level blueprints: Multi-tier load balancing, CDN edge caching, and distributed storage"
+                "High availability and fault tolerance: multi-region active-active deployments and failure domain isolation",
+                "Distributed system fundamentals: CAP and PACELC theorems, consistency models, and latency trade-offs",
+                "Scalable database architectures: horizontal sharding, consistent hashing, and read replicas"
             ),
             relatedTrackId = "hld_interview"
         ),
         VideoMockInterview(
             id = "vm_hld_05",
             topicId = "hld",
-            title = "System design interview: Design at a high level",
-            channelName = "Aced (formerly Exponent)",
-            youtubeVideoId = "kUebWKoBmIU",
-            duration = "58 min",
-            difficulty = "Staff",
-            description = "Real-world technical mock interview covering HLD concepts, architectural trade-offs, and live candidate evaluation with Aced (formerly Exponent).",
+            title = "Intro",
+            channelName = "Keerti Purswani",
+            youtubeVideoId = "l3AOubKFB1U",
+            duration = "52:17 min",
+            difficulty = "Senior",
+            description = "Real-world technical mock interview covering HLD concepts, architectural trade-offs, and live candidate evaluation with Keerti Purswani.",
             keyTakeaways = listOf(
-                "System scale requirements clarification, QPS estimation, and bandwidth capacity planning",
-                "High-level blueprints: Multi-tier load balancing, CDN edge caching, and distributed storage",
-                "Database architectural choices: Read replicas, sharding strategies, and wide-column stores"
+                "Distributed system fundamentals: CAP and PACELC theorems, consistency models, and latency trade-offs",
+                "Scalable database architectures: horizontal sharding, consistent hashing, and read replicas",
+                "Global caching hierarchies: CDN caching, Redis/Memcached look-aside, and cache invalidation"
             ),
             relatedTrackId = "hld_interview"
         ),
         VideoMockInterview(
             id = "vm_hld_06",
             topicId = "hld",
-            title = "Last minute tech interview preparation!",
-            channelName = "Swati Jha",
-            youtubeVideoId = "P2xAMQPMvrE",
-            duration = "58 min",
-            difficulty = "Staff",
-            description = "Real-world technical mock interview covering HLD concepts, architectural trade-offs, and live candidate evaluation with Swati Jha.",
+            title = "Introduction",
+            channelName = "Sanket Singh",
+            youtubeVideoId = "7LwLLdWgPq4",
+            duration = "33:11 min",
+            difficulty = "Mid-Level",
+            description = "Real-world technical mock interview covering HLD concepts, architectural trade-offs, and live candidate evaluation with Sanket Singh.",
             keyTakeaways = listOf(
-                "High-level blueprints: Multi-tier load balancing, CDN edge caching, and distributed storage",
-                "Database architectural choices: Read replicas, sharding strategies, and wide-column stores",
-                "Trade-offs under high concurrency: Cache stampede mitigation, rate limiting, and zero downtime updates"
+                "Scalable database architectures: horizontal sharding, consistent hashing, and read replicas",
+                "Global caching hierarchies: CDN caching, Redis/Memcached look-aside, and cache invalidation",
+                "High availability and fault tolerance: multi-region active-active deployments and failure domain isolation"
             ),
             relatedTrackId = "hld_interview"
         ),
         VideoMockInterview(
             id = "vm_hld_07",
             topicId = "hld",
-            title = "10 Imp System Design Topics to prepare before Interview #systemdesign #softwareengineer",
-            channelName = "Concept && Coding - by Shrayansh",
-            youtubeVideoId = "PVBjJQBHdlk",
-            duration = "58 min",
+            title = "Introduction",
+            channelName = "Aced (formerly Exponent)",
+            youtubeVideoId = "Z-0g_aJL5Fw",
+            duration = "53:38 min",
             difficulty = "Staff",
-            description = "Real-world technical mock interview covering HLD concepts, architectural trade-offs, and live candidate evaluation with Concept && Coding - by Shrayansh.",
+            description = "Real-world technical mock interview covering HLD concepts, architectural trade-offs, and live candidate evaluation with Aced (formerly Exponent).",
             keyTakeaways = listOf(
-                "Database architectural choices: Read replicas, sharding strategies, and wide-column stores",
-                "Trade-offs under high concurrency: Cache stampede mitigation, rate limiting, and zero downtime updates",
-                "System scale requirements clarification, QPS estimation, and bandwidth capacity planning"
+                "Global caching hierarchies: CDN caching, Redis/Memcached look-aside, and cache invalidation",
+                "High availability and fault tolerance: multi-region active-active deployments and failure domain isolation",
+                "Distributed system fundamentals: CAP and PACELC theorems, consistency models, and latency trade-offs"
             ),
             relatedTrackId = "hld_interview"
         ),
         VideoMockInterview(
             id = "vm_hld_08",
             topicId = "hld",
-            title = "System Design Interview Tips ? #Shorts #SystemDesign #Interview #SoftwareEngineering",
-            channelName = "Gaurav Sen",
-            youtubeVideoId = "fhVCssGJlR4",
-            duration = "58 min",
-            difficulty = "Staff",
-            description = "Real-world technical mock interview covering HLD concepts, architectural trade-offs, and live candidate evaluation with Gaurav Sen.",
+            title = "Introduction",
+            channelName = "freeCodeCamp.org",
+            youtubeVideoId = "F2FmTdLtb_4",
+            duration = "5:05:49 min",
+            difficulty = "Senior",
+            description = "Real-world technical mock interview covering HLD concepts, architectural trade-offs, and live candidate evaluation with freeCodeCamp.org.",
             keyTakeaways = listOf(
-                "Trade-offs under high concurrency: Cache stampede mitigation, rate limiting, and zero downtime updates",
-                "System scale requirements clarification, QPS estimation, and bandwidth capacity planning",
-                "High-level blueprints: Multi-tier load balancing, CDN edge caching, and distributed storage"
+                "High availability and fault tolerance: multi-region active-active deployments and failure domain isolation",
+                "Distributed system fundamentals: CAP and PACELC theorems, consistency models, and latency trade-offs",
+                "Scalable database architectures: horizontal sharding, consistent hashing, and read replicas"
             ),
             relatedTrackId = "hld_interview"
         ),
         VideoMockInterview(
             id = "vm_hld_09",
             topicId = "hld",
-            title = "Design Youtube - System Design Interview",
-            channelName = "NeetCode",
-            youtubeVideoId = "jPKTo1iGQiE",
-            duration = "58 min",
-            difficulty = "Staff",
-            description = "Real-world technical mock interview covering HLD concepts, architectural trade-offs, and live candidate evaluation with NeetCode.",
+            title = "Introduction",
+            channelName = "Telusko",
+            youtubeVideoId = "Vnm-ycSfJx4",
+            duration = "42:54 min",
+            difficulty = "Lead",
+            description = "Real-world technical mock interview covering HLD concepts, architectural trade-offs, and live candidate evaluation with Telusko.",
             keyTakeaways = listOf(
-                "System scale requirements clarification, QPS estimation, and bandwidth capacity planning",
-                "High-level blueprints: Multi-tier load balancing, CDN edge caching, and distributed storage",
-                "Database architectural choices: Read replicas, sharding strategies, and wide-column stores"
+                "Distributed system fundamentals: CAP and PACELC theorems, consistency models, and latency trade-offs",
+                "Scalable database architectures: horizontal sharding, consistent hashing, and read replicas",
+                "Global caching hierarchies: CDN caching, Redis/Memcached look-aside, and cache invalidation"
             ),
             relatedTrackId = "hld_interview"
         ),
         VideoMockInterview(
             id = "vm_hld_10",
             topicId = "hld",
-            title = "System Design Interview: Design YouTube w/ a Ex-Meta Staff Engineer",
-            channelName = "Hello Interview",
-            youtubeVideoId = "IUrQ5_g3XKs",
-            duration = "58 min",
-            difficulty = "Staff",
-            description = "Real-world technical mock interview covering HLD concepts, architectural trade-offs, and live candidate evaluation with Hello Interview.",
+            title = "Introduction",
+            channelName = "MindMajix",
+            youtubeVideoId = "PTJOECahJTc",
+            duration = "1:31:38 min",
+            difficulty = "Senior",
+            description = "Real-world technical mock interview covering HLD concepts, architectural trade-offs, and live candidate evaluation with MindMajix.",
             keyTakeaways = listOf(
-                "High-level blueprints: Multi-tier load balancing, CDN edge caching, and distributed storage",
-                "Database architectural choices: Read replicas, sharding strategies, and wide-column stores",
-                "Trade-offs under high concurrency: Cache stampede mitigation, rate limiting, and zero downtime updates"
+                "Scalable database architectures: horizontal sharding, consistent hashing, and read replicas",
+                "Global caching hierarchies: CDN caching, Redis/Memcached look-aside, and cache invalidation",
+                "High availability and fault tolerance: multi-region active-active deployments and failure domain isolation"
             ),
             relatedTrackId = "hld_interview"
         ),
     )
 
-    // --- 6. LLD Mock Interviews (10 real verified videos) ---
+    // --- LLD Mock Interviews (10 real verified long-form videos) ---
     private val lldVideos = listOf(
         VideoMockInterview(
             id = "vm_lld_01",
             topicId = "lld",
-            title = "Are you expected to run code in a low level design interview?",
-            channelName = "InterviewReady",
-            youtubeVideoId = "06dP7vLzbQc",
-            duration = "50 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering LLD concepts, architectural trade-offs, and live candidate evaluation with InterviewReady.",
+            title = "Intro",
+            channelName = "Keerti Purswani",
+            youtubeVideoId = "NrAXmQX-XI8",
+            duration = "48:39 min",
+            difficulty = "Mid-Level",
+            description = "Real-world technical mock interview covering LLD concepts, architectural trade-offs, and live candidate evaluation with Keerti Purswani.",
             keyTakeaways = listOf(
-                "Object-oriented modeling adhering to SOLID principles and Clean Architecture boundaries",
-                "GoF design patterns: Strategy, State, Factory, Observer, and Decorator implementations",
-                "Thread safety: Atomic references, read-write locks, and concurrent data structures"
+                "Object-oriented design: SOLID principles applied to real enterprise domain models",
+                "GoF design patterns: Strategy, Factory, Observer, Decorator, and Builder in production codebases",
+                "Concurrency-safe domain design: immutable value objects, locks, and thread-safe states"
             ),
             relatedTrackId = "lld_interview"
         ),
         VideoMockInterview(
             id = "vm_lld_02",
             topicId = "lld",
-            title = "How to Clear Machine Coding Round?",
-            channelName = "SCALER",
-            youtubeVideoId = "7sTNsN-rBPk",
-            duration = "50 min",
+            title = "Intro",
+            channelName = "Anubhav Sethi",
+            youtubeVideoId = "QBHTbtWSECg",
+            duration = "50:56 min",
             difficulty = "Senior",
-            description = "Real-world technical mock interview covering LLD concepts, architectural trade-offs, and live candidate evaluation with SCALER.",
+            description = "Real-world technical mock interview covering LLD concepts, architectural trade-offs, and live candidate evaluation with Anubhav Sethi.",
             keyTakeaways = listOf(
-                "GoF design patterns: Strategy, State, Factory, Observer, and Decorator implementations",
-                "Thread safety: Atomic references, read-write locks, and concurrent data structures",
-                "Extensibility and machine coding: Clean separation of models, controllers, and strategy interfaces"
+                "GoF design patterns: Strategy, Factory, Observer, Decorator, and Builder in production codebases",
+                "Concurrency-safe domain design: immutable value objects, locks, and thread-safe states",
+                "Extensible class hierarchies, interface segregation, and clean architecture boundaries"
             ),
             relatedTrackId = "lld_interview"
         ),
         VideoMockInterview(
             id = "vm_lld_03",
             topicId = "lld",
-            title = "Last minute tech interview preparation!",
-            channelName = "Swati Jha",
-            youtubeVideoId = "P2xAMQPMvrE",
-            duration = "50 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering LLD concepts, architectural trade-offs, and live candidate evaluation with Swati Jha.",
+            title = "Intro",
+            channelName = "Himanshu Singal",
+            youtubeVideoId = "I79tUtVxWmA",
+            duration = "48:24 min",
+            difficulty = "Lead",
+            description = "Real-world technical mock interview covering LLD concepts, architectural trade-offs, and live candidate evaluation with Himanshu Singal.",
             keyTakeaways = listOf(
-                "Thread safety: Atomic references, read-write locks, and concurrent data structures",
-                "Extensibility and machine coding: Clean separation of models, controllers, and strategy interfaces",
-                "Object-oriented modeling adhering to SOLID principles and Clean Architecture boundaries"
+                "Concurrency-safe domain design: immutable value objects, locks, and thread-safe states",
+                "Extensible class hierarchies, interface segregation, and clean architecture boundaries",
+                "Object-oriented design: SOLID principles applied to real enterprise domain models"
             ),
             relatedTrackId = "lld_interview"
         ),
         VideoMockInterview(
             id = "vm_lld_04",
             topicId = "lld",
-            title = "If I was a beginner in LLD, I would do THIS for interviews! To-The-Point Roadmap",
+            title = "Intro",
             channelName = "Keerti Purswani",
-            youtubeVideoId = "NrAXmQX-XI8",
-            duration = "50 min",
-            difficulty = "Senior",
+            youtubeVideoId = "J-4UQ_WpMtc",
+            duration = "59:37 min",
+            difficulty = "Architect",
             description = "Real-world technical mock interview covering LLD concepts, architectural trade-offs, and live candidate evaluation with Keerti Purswani.",
             keyTakeaways = listOf(
-                "Extensibility and machine coding: Clean separation of models, controllers, and strategy interfaces",
-                "Object-oriented modeling adhering to SOLID principles and Clean Architecture boundaries",
-                "GoF design patterns: Strategy, State, Factory, Observer, and Decorator implementations"
+                "Extensible class hierarchies, interface segregation, and clean architecture boundaries",
+                "Object-oriented design: SOLID principles applied to real enterprise domain models",
+                "GoF design patterns: Strategy, Factory, Observer, Decorator, and Builder in production codebases"
             ),
             relatedTrackId = "lld_interview"
         ),
         VideoMockInterview(
             id = "vm_lld_05",
             topicId = "lld",
-            title = "how to fail any low level interview in under 5 seconds",
-            channelName = "Coding Jesus (getcracked.io)",
-            youtubeVideoId = "A2zxzC7Z3aM",
-            duration = "50 min",
+            title = "Introduction",
+            channelName = "Chirag Goel",
+            youtubeVideoId = "pBG3BAsWCug",
+            duration = "1:01:27 min",
             difficulty = "Senior",
-            description = "Real-world technical mock interview covering LLD concepts, architectural trade-offs, and live candidate evaluation with Coding Jesus (getcracked.io).",
+            description = "Real-world technical mock interview covering LLD concepts, architectural trade-offs, and live candidate evaluation with Chirag Goel.",
             keyTakeaways = listOf(
-                "Object-oriented modeling adhering to SOLID principles and Clean Architecture boundaries",
-                "GoF design patterns: Strategy, State, Factory, Observer, and Decorator implementations",
-                "Thread safety: Atomic references, read-write locks, and concurrent data structures"
+                "Object-oriented design: SOLID principles applied to real enterprise domain models",
+                "GoF design patterns: Strategy, Factory, Observer, Decorator, and Builder in production codebases",
+                "Concurrency-safe domain design: immutable value objects, locks, and thread-safe states"
             ),
             relatedTrackId = "lld_interview"
         ),
         VideoMockInterview(
             id = "vm_lld_06",
             topicId = "lld",
-            title = "Design Rate Limiter (LLD) - Token Bucket, Fixed & Sliding Window with Thread Safety",
-            channelName = "Shubh Patel",
-            youtubeVideoId = "7y0KWxaUn-E",
-            duration = "50 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering LLD concepts, architectural trade-offs, and live candidate evaluation with Shubh Patel.",
+            title = "Intro",
+            channelName = "Ashish Pratap Singh",
+            youtubeVideoId = "OhCp6ppX6bg",
+            duration = "37:23 min",
+            difficulty = "Mid-Level",
+            description = "Real-world technical mock interview covering LLD concepts, architectural trade-offs, and live candidate evaluation with Ashish Pratap Singh.",
             keyTakeaways = listOf(
-                "GoF design patterns: Strategy, State, Factory, Observer, and Decorator implementations",
-                "Thread safety: Atomic references, read-write locks, and concurrent data structures",
-                "Extensibility and machine coding: Clean separation of models, controllers, and strategy interfaces"
+                "GoF design patterns: Strategy, Factory, Observer, Decorator, and Builder in production codebases",
+                "Concurrency-safe domain design: immutable value objects, locks, and thread-safe states",
+                "Extensible class hierarchies, interface segregation, and clean architecture boundaries"
             ),
             relatedTrackId = "lld_interview"
         ),
         VideoMockInterview(
             id = "vm_lld_07",
             topicId = "lld",
-            title = "Design Amazon Locker System (LLD) | Package Delivery & Pickup Flow with OTP Verification",
-            channelName = "Shubh Patel",
-            youtubeVideoId = "Lw9X8SaB6iA",
-            duration = "50 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering LLD concepts, architectural trade-offs, and live candidate evaluation with Shubh Patel.",
+            title = "Intro",
+            channelName = "Concept && Coding - by Shrayansh",
+            youtubeVideoId = "MRx40JVmmF4",
+            duration = "59:50 min",
+            difficulty = "Staff",
+            description = "Real-world technical mock interview covering LLD concepts, architectural trade-offs, and live candidate evaluation with Concept && Coding - by Shrayansh.",
             keyTakeaways = listOf(
-                "Thread safety: Atomic references, read-write locks, and concurrent data structures",
-                "Extensibility and machine coding: Clean separation of models, controllers, and strategy interfaces",
-                "Object-oriented modeling adhering to SOLID principles and Clean Architecture boundaries"
+                "Concurrency-safe domain design: immutable value objects, locks, and thread-safe states",
+                "Extensible class hierarchies, interface segregation, and clean architecture boundaries",
+                "Object-oriented design: SOLID principles applied to real enterprise domain models"
             ),
             relatedTrackId = "lld_interview"
         ),
         VideoMockInterview(
             id = "vm_lld_08",
             topicId = "lld",
-            title = "Flipkart Machine Coding Round: FoodKart LLD Solution (Step-by-Step Implementation with UML)",
-            channelName = "Code design by Naman",
-            youtubeVideoId = "ZZzZGqlLzGc",
-            duration = "50 min",
+            title = "Intro",
+            channelName = "Hello Interview",
+            youtubeVideoId = "9UI4ikKP3Ws",
+            duration = "10:18 min",
             difficulty = "Senior",
-            description = "Real-world technical mock interview covering LLD concepts, architectural trade-offs, and live candidate evaluation with Code design by Naman.",
+            description = "Real-world technical mock interview covering LLD concepts, architectural trade-offs, and live candidate evaluation with Hello Interview.",
             keyTakeaways = listOf(
-                "Extensibility and machine coding: Clean separation of models, controllers, and strategy interfaces",
-                "Object-oriented modeling adhering to SOLID principles and Clean Architecture boundaries",
-                "GoF design patterns: Strategy, State, Factory, Observer, and Decorator implementations"
+                "Extensible class hierarchies, interface segregation, and clean architecture boundaries",
+                "Object-oriented design: SOLID principles applied to real enterprise domain models",
+                "GoF design patterns: Strategy, Factory, Observer, Decorator, and Builder in production codebases"
             ),
             relatedTrackId = "lld_interview"
         ),
         VideoMockInterview(
             id = "vm_lld_09",
             topicId = "lld",
-            title = "?? LLD Interview Question | Customer Issue Resolution System (PhonePe)",
-            channelName = "Code design by Naman",
-            youtubeVideoId = "wp7_HlGFERY",
-            duration = "50 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering LLD concepts, architectural trade-offs, and live candidate evaluation with Code design by Naman.",
+            title = "Intro",
+            channelName = "AlgoMonster",
+            youtubeVideoId = "nwioCA5nrYc",
+            duration = "1:01:16 min",
+            difficulty = "Lead",
+            description = "Real-world technical mock interview covering LLD concepts, architectural trade-offs, and live candidate evaluation with AlgoMonster.",
             keyTakeaways = listOf(
-                "Object-oriented modeling adhering to SOLID principles and Clean Architecture boundaries",
-                "GoF design patterns: Strategy, State, Factory, Observer, and Decorator implementations",
-                "Thread safety: Atomic references, read-write locks, and concurrent data structures"
+                "Object-oriented design: SOLID principles applied to real enterprise domain models",
+                "GoF design patterns: Strategy, Factory, Observer, Decorator, and Builder in production codebases",
+                "Concurrency-safe domain design: immutable value objects, locks, and thread-safe states"
             ),
             relatedTrackId = "lld_interview"
         ),
         VideoMockInterview(
             id = "vm_lld_10",
             topicId = "lld",
-            title = "Tab Form Component (Myntra, Zepto) - Frontend Interview Question using React",
-            channelName = "Akshay Saini",
-            youtubeVideoId = "UTky8eipUhA",
-            duration = "50 min",
+            title = "Intro",
+            channelName = "Shubh Patel",
+            youtubeVideoId = "kzfrbkDcYjA",
+            duration = "1:11:28 min",
             difficulty = "Senior",
-            description = "Real-world technical mock interview covering LLD concepts, architectural trade-offs, and live candidate evaluation with Akshay Saini.",
+            description = "Real-world technical mock interview covering LLD concepts, architectural trade-offs, and live candidate evaluation with Shubh Patel.",
             keyTakeaways = listOf(
-                "GoF design patterns: Strategy, State, Factory, Observer, and Decorator implementations",
-                "Thread safety: Atomic references, read-write locks, and concurrent data structures",
-                "Extensibility and machine coding: Clean separation of models, controllers, and strategy interfaces"
+                "GoF design patterns: Strategy, Factory, Observer, Decorator, and Builder in production codebases",
+                "Concurrency-safe domain design: immutable value objects, locks, and thread-safe states",
+                "Extensible class hierarchies, interface segregation, and clean architecture boundaries"
             ),
             relatedTrackId = "lld_interview"
         ),
     )
 
-    // --- 7. System Design Mock Interviews (10 real verified videos) ---
+    // --- System Design Mock Interviews (10 real verified long-form videos) ---
     private val systemdesignVideos = listOf(
         VideoMockInterview(
             id = "vm_system_design_01",
             topicId = "system_design",
-            title = "How to Answer System Design Interview Questions (Complete Guide)",
-            channelName = "Aced (formerly Exponent)",
-            youtubeVideoId = "L9TfZdODuFQ",
-            duration = "52 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering System Design concepts, architectural trade-offs, and live candidate evaluation with Aced (formerly Exponent).",
+            title = "Intro",
+            channelName = "Gaurav Sen",
+            youtubeVideoId = "SqcXvc3ZmRU",
+            duration = "48:39 min",
+            difficulty = "Mid-Level",
+            description = "Real-world technical mock interview covering System Design concepts, architectural trade-offs, and live candidate evaluation with Gaurav Sen.",
             keyTakeaways = listOf(
-                "Fundamental distributed theorems: CAP theorem, PACELC trade-offs, and partition tolerance",
-                "Consistent hashing with virtual nodes to minimize redistribution during cluster topology changes",
-                "Consensus protocols: Raft leader election, quorum log replication, and split-brain prevention"
+                "Designing large-scale systems: URL shortener, distributed message queue, and rate limiters",
+                "Capacity estimations: calculating QPS, storage requirements, network bandwidth, and memory footprints",
+                "Data pipeline architectures: lambda/kappa architectures, stream processing, and event sourcing"
             ),
             relatedTrackId = "system_design_interview"
         ),
         VideoMockInterview(
             id = "vm_system_design_02",
             topicId = "system_design",
-            title = "Design Google Docs | System Design Interview (with Amazon Engineer, ex-Microsoft)",
-            channelName = "Aced (formerly Exponent)",
-            youtubeVideoId = "cL9If4X7aaE",
-            duration = "52 min",
+            title = "Intro",
+            channelName = "Anubhav Sethi",
+            youtubeVideoId = "QBHTbtWSECg",
+            duration = "45:23 min",
             difficulty = "Senior",
-            description = "Real-world technical mock interview covering System Design concepts, architectural trade-offs, and live candidate evaluation with Aced (formerly Exponent).",
+            description = "Real-world technical mock interview covering System Design concepts, architectural trade-offs, and live candidate evaluation with Anubhav Sethi.",
             keyTakeaways = listOf(
-                "Consistent hashing with virtual nodes to minimize redistribution during cluster topology changes",
-                "Consensus protocols: Raft leader election, quorum log replication, and split-brain prevention",
-                "Distributed primitives: Twitter Snowflake 64-bit ID generation and distributed locks"
+                "Capacity estimations: calculating QPS, storage requirements, network bandwidth, and memory footprints",
+                "Data pipeline architectures: lambda/kappa architectures, stream processing, and event sourcing",
+                "Trade-off evaluations: SQL vs NoSQL (Document, Columnar, Key-Value) based on access patterns"
             ),
             relatedTrackId = "system_design_interview"
         ),
         VideoMockInterview(
             id = "vm_system_design_03",
             topicId = "system_design",
-            title = "Design Uber Eats | System Design Interview (with Senior Netflix Engineer, Ex-Microsoft)",
-            channelName = "Aced (formerly Exponent)",
-            youtubeVideoId = "dgawYAH0pO4",
-            duration = "52 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering System Design concepts, architectural trade-offs, and live candidate evaluation with Aced (formerly Exponent).",
+            title = "Introduction",
+            channelName = "sudoCODE",
+            youtubeVideoId = "2BWr0fsDSs0",
+            duration = "37:10 min",
+            difficulty = "Lead",
+            description = "Real-world technical mock interview covering System Design concepts, architectural trade-offs, and live candidate evaluation with sudoCODE.",
             keyTakeaways = listOf(
-                "Consensus protocols: Raft leader election, quorum log replication, and split-brain prevention",
-                "Distributed primitives: Twitter Snowflake 64-bit ID generation and distributed locks",
-                "Fundamental distributed theorems: CAP theorem, PACELC trade-offs, and partition tolerance"
+                "Data pipeline architectures: lambda/kappa architectures, stream processing, and event sourcing",
+                "Trade-off evaluations: SQL vs NoSQL (Document, Columnar, Key-Value) based on access patterns",
+                "Designing large-scale systems: URL shortener, distributed message queue, and rate limiters"
             ),
             relatedTrackId = "system_design_interview"
         ),
         VideoMockInterview(
             id = "vm_system_design_04",
             topicId = "system_design",
-            title = "System Design Primer ??: How to start with distributed systems?",
+            title = "Introduction",
             channelName = "Gaurav Sen",
-            youtubeVideoId = "SqcXvc3ZmRU",
-            duration = "52 min",
-            difficulty = "Senior",
+            youtubeVideoId = "QpLy0_c_RXk",
+            duration = "26:16 min",
+            difficulty = "Architect",
             description = "Real-world technical mock interview covering System Design concepts, architectural trade-offs, and live candidate evaluation with Gaurav Sen.",
             keyTakeaways = listOf(
-                "Distributed primitives: Twitter Snowflake 64-bit ID generation and distributed locks",
-                "Fundamental distributed theorems: CAP theorem, PACELC trade-offs, and partition tolerance",
-                "Consistent hashing with virtual nodes to minimize redistribution during cluster topology changes"
+                "Trade-off evaluations: SQL vs NoSQL (Document, Columnar, Key-Value) based on access patterns",
+                "Designing large-scale systems: URL shortener, distributed message queue, and rate limiters",
+                "Capacity estimations: calculating QPS, storage requirements, network bandwidth, and memory footprints"
             ),
             relatedTrackId = "system_design_interview"
         ),
         VideoMockInterview(
             id = "vm_system_design_05",
             topicId = "system_design",
-            title = "System Design BASICS: Horizontal vs. Vertical Scaling",
-            channelName = "Gaurav Sen",
-            youtubeVideoId = "xpDnVSmNFX0",
-            duration = "52 min",
+            title = "Introduction",
+            channelName = "ByteByteGo",
+            youtubeVideoId = "i7twT3x5yv8",
+            duration = "25:41 min",
             difficulty = "Senior",
-            description = "Real-world technical mock interview covering System Design concepts, architectural trade-offs, and live candidate evaluation with Gaurav Sen.",
+            description = "Real-world technical mock interview covering System Design concepts, architectural trade-offs, and live candidate evaluation with ByteByteGo.",
             keyTakeaways = listOf(
-                "Fundamental distributed theorems: CAP theorem, PACELC trade-offs, and partition tolerance",
-                "Consistent hashing with virtual nodes to minimize redistribution during cluster topology changes",
-                "Consensus protocols: Raft leader election, quorum log replication, and split-brain prevention"
+                "Designing large-scale systems: URL shortener, distributed message queue, and rate limiters",
+                "Capacity estimations: calculating QPS, storage requirements, network bandwidth, and memory footprints",
+                "Data pipeline architectures: lambda/kappa architectures, stream processing, and event sourcing"
             ),
             relatedTrackId = "system_design_interview"
         ),
         VideoMockInterview(
             id = "vm_system_design_06",
             topicId = "system_design",
-            title = "52 FAANG Questions Drill cards Cheatsheets Vault",
-            channelName = "SystemDR - Scalable System Design",
-            youtubeVideoId = "j5Mn_P8d6V8",
-            duration = "52 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering System Design concepts, architectural trade-offs, and live candidate evaluation with SystemDR - Scalable System Design.",
+            title = "Problem Statement",
+            channelName = "Gaurav Sen",
+            youtubeVideoId = "nHh3DnjnPig",
+            duration = "24:29 min",
+            difficulty = "Mid-Level",
+            description = "Real-world technical mock interview covering System Design concepts, architectural trade-offs, and live candidate evaluation with Gaurav Sen.",
             keyTakeaways = listOf(
-                "Consistent hashing with virtual nodes to minimize redistribution during cluster topology changes",
-                "Consensus protocols: Raft leader election, quorum log replication, and split-brain prevention",
-                "Distributed primitives: Twitter Snowflake 64-bit ID generation and distributed locks"
+                "Capacity estimations: calculating QPS, storage requirements, network bandwidth, and memory footprints",
+                "Data pipeline architectures: lambda/kappa architectures, stream processing, and event sourcing",
+                "Trade-off evaluations: SQL vs NoSQL (Document, Columnar, Key-Value) based on access patterns"
             ),
             relatedTrackId = "system_design_interview"
         ),
         VideoMockInterview(
             id = "vm_system_design_07",
             topicId = "system_design",
-            title = "System Design Interview (prep)",
-            channelName = "NextWork",
-            youtubeVideoId = "rTyW2IpINDo",
-            duration = "52 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering System Design concepts, architectural trade-offs, and live candidate evaluation with NextWork.",
+            title = "Introduction",
+            channelName = "Gaurav Sen",
+            youtubeVideoId = "QmX2NPkJTKg",
+            duration = "35:02 min",
+            difficulty = "Staff",
+            description = "Real-world technical mock interview covering System Design concepts, architectural trade-offs, and live candidate evaluation with Gaurav Sen.",
             keyTakeaways = listOf(
-                "Consensus protocols: Raft leader election, quorum log replication, and split-brain prevention",
-                "Distributed primitives: Twitter Snowflake 64-bit ID generation and distributed locks",
-                "Fundamental distributed theorems: CAP theorem, PACELC trade-offs, and partition tolerance"
+                "Data pipeline architectures: lambda/kappa architectures, stream processing, and event sourcing",
+                "Trade-off evaluations: SQL vs NoSQL (Document, Columnar, Key-Value) based on access patterns",
+                "Designing large-scale systems: URL shortener, distributed message queue, and rate limiters"
             ),
             relatedTrackId = "system_design_interview"
         ),
         VideoMockInterview(
             id = "vm_system_design_08",
             topicId = "system_design",
-            title = "How to crack system design interview | Master System Design for FAANG Interviews",
-            channelName = "Rocky Bhatia",
-            youtubeVideoId = "WySMcnNGK60",
-            duration = "52 min",
+            title = "Requirement Setting",
+            channelName = "Keerti Purswani",
+            youtubeVideoId = "l3AOubKFB1U",
+            duration = "53:02 min",
             difficulty = "Senior",
-            description = "Real-world technical mock interview covering System Design concepts, architectural trade-offs, and live candidate evaluation with Rocky Bhatia.",
+            description = "Real-world technical mock interview covering System Design concepts, architectural trade-offs, and live candidate evaluation with Keerti Purswani.",
             keyTakeaways = listOf(
-                "Distributed primitives: Twitter Snowflake 64-bit ID generation and distributed locks",
-                "Fundamental distributed theorems: CAP theorem, PACELC trade-offs, and partition tolerance",
-                "Consistent hashing with virtual nodes to minimize redistribution during cluster topology changes"
+                "Trade-off evaluations: SQL vs NoSQL (Document, Columnar, Key-Value) based on access patterns",
+                "Designing large-scale systems: URL shortener, distributed message queue, and rate limiters",
+                "Capacity estimations: calculating QPS, storage requirements, network bandwidth, and memory footprints"
             ),
             relatedTrackId = "system_design_interview"
         ),
         VideoMockInterview(
             id = "vm_system_design_09",
             topicId = "system_design",
-            title = "Last minute tech interview preparation!",
-            channelName = "Swati Jha",
-            youtubeVideoId = "P2xAMQPMvrE",
-            duration = "52 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering System Design concepts, architectural trade-offs, and live candidate evaluation with Swati Jha.",
+            title = "Intro",
+            channelName = "Hello Interview",
+            youtubeVideoId = "o8nSXW-B7Rw",
+            duration = "48:39 min",
+            difficulty = "Lead",
+            description = "Real-world technical mock interview covering System Design concepts, architectural trade-offs, and live candidate evaluation with Hello Interview.",
             keyTakeaways = listOf(
-                "Fundamental distributed theorems: CAP theorem, PACELC trade-offs, and partition tolerance",
-                "Consistent hashing with virtual nodes to minimize redistribution during cluster topology changes",
-                "Consensus protocols: Raft leader election, quorum log replication, and split-brain prevention"
+                "Designing large-scale systems: URL shortener, distributed message queue, and rate limiters",
+                "Capacity estimations: calculating QPS, storage requirements, network bandwidth, and memory footprints",
+                "Data pipeline architectures: lambda/kappa architectures, stream processing, and event sourcing"
             ),
             relatedTrackId = "system_design_interview"
         ),
         VideoMockInterview(
             id = "vm_system_design_10",
             topicId = "system_design",
-            title = "Verify Assumptions during FAANG Tech interviews",
-            channelName = "Aanchal Chauhan",
-            youtubeVideoId = "TSoKml_FF1I",
-            duration = "52 min",
+            title = "Introduction",
+            channelName = "Aced (formerly Exponent)",
+            youtubeVideoId = "SgWb6tWx3S8",
+            duration = "33:11 min",
             difficulty = "Senior",
-            description = "Real-world technical mock interview covering System Design concepts, architectural trade-offs, and live candidate evaluation with Aanchal Chauhan.",
+            description = "Real-world technical mock interview covering System Design concepts, architectural trade-offs, and live candidate evaluation with Aced (formerly Exponent).",
             keyTakeaways = listOf(
-                "Consistent hashing with virtual nodes to minimize redistribution during cluster topology changes",
-                "Consensus protocols: Raft leader election, quorum log replication, and split-brain prevention",
-                "Distributed primitives: Twitter Snowflake 64-bit ID generation and distributed locks"
+                "Capacity estimations: calculating QPS, storage requirements, network bandwidth, and memory footprints",
+                "Data pipeline architectures: lambda/kappa architectures, stream processing, and event sourcing",
+                "Trade-off evaluations: SQL vs NoSQL (Document, Columnar, Key-Value) based on access patterns"
             ),
             relatedTrackId = "system_design_interview"
         ),
     )
 
-    // --- 8. DevOps Mock Interviews (10 real verified videos) ---
+    // --- DevOps Mock Interviews (10 real verified long-form videos) ---
     private val devopsVideos = listOf(
         VideoMockInterview(
             id = "vm_devops_01",
             topicId = "devops",
-            title = "Fixing Autoscaling Issues - DevOps Engineer Mock #interview #devops #cloud #mentorship #aws #azure",
-            channelName = "DevOps Cloud and AI Labs",
-            youtubeVideoId = "OyGtrtVsjoY",
-            duration = "45 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering DevOps concepts, architectural trade-offs, and live candidate evaluation with DevOps Cloud and AI Labs.",
+            title = "Introduction u0026 Meet the Engineers",
+            channelName = "Azure Learning",
+            youtubeVideoId = "eP-vUikjpWI",
+            duration = "27:59 min",
+            difficulty = "Mid-Level",
+            description = "Real-world technical mock interview covering DevOps concepts, architectural trade-offs, and live candidate evaluation with Azure Learning.",
             keyTakeaways = listOf(
-                "Kubernetes troubleshooting: Diagnosing CrashLoopBackOff, pod OOMKilled, and probe configs",
-                "Docker internals: Linux cgroups resource limits, namespaces isolation, and layer caching",
-                "GitOps declarative continuous delivery using ArgoCD and automated drift reconciliation"
+                "Containerization: multi-stage Docker builds, image slimming, and container security best practices",
+                "Kubernetes orchestration: Deployments, StatefulSets, Services, Ingress, and Horizontal Pod Autoscalers",
+                "CI/CD pipelines: automated testing, GitHub Actions/GitLab CI, and blue-green/canary deployments"
             ),
             relatedTrackId = "devops_interview"
         ),
         VideoMockInterview(
             id = "vm_devops_02",
             topicId = "devops",
-            title = "Kubernetes Interview Question - Pod Anti Affinity",
-            channelName = "TechWorld with Sahana",
-            youtubeVideoId = "WcOUODSszLM",
-            duration = "45 min",
+            title = "Introductions",
+            channelName = "DevOps by Shaik Moulali",
+            youtubeVideoId = "6eQy799by2Y",
+            duration = "40:14 min",
             difficulty = "Senior",
-            description = "Real-world technical mock interview covering DevOps concepts, architectural trade-offs, and live candidate evaluation with TechWorld with Sahana.",
+            description = "Real-world technical mock interview covering DevOps concepts, architectural trade-offs, and live candidate evaluation with DevOps by Shaik Moulali.",
             keyTakeaways = listOf(
-                "Docker internals: Linux cgroups resource limits, namespaces isolation, and layer caching",
-                "GitOps declarative continuous delivery using ArgoCD and automated drift reconciliation",
-                "Production observability: Prometheus PromQL P99 percentiles, Grafana alerts, and SLO tracking"
+                "Kubernetes orchestration: Deployments, StatefulSets, Services, Ingress, and Horizontal Pod Autoscalers",
+                "CI/CD pipelines: automated testing, GitHub Actions/GitLab CI, and blue-green/canary deployments",
+                "Infrastructure as Code (IaC): Terraform state management, drift detection, and modular architecture"
             ),
             relatedTrackId = "devops_interview"
         ),
         VideoMockInterview(
             id = "vm_devops_03",
             topicId = "devops",
-            title = "Fresher Interview #devops #cloudjobs #fresherjobs #devopsengineer #devopsjobs #devopsinterview",
-            channelName = "Saurabh Porwal / AI, clearly explained",
-            youtubeVideoId = "UO_xIsPWCCQ",
-            duration = "45 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering DevOps concepts, architectural trade-offs, and live candidate evaluation with Saurabh Porwal / AI, clearly explained.",
+            title = "Introduction u0026 Meet the Engineers",
+            channelName = "DevOps Cloud and AI Labs",
+            youtubeVideoId = "YrlQzmClVV4",
+            duration = "27:05 min",
+            difficulty = "Lead",
+            description = "Real-world technical mock interview covering DevOps concepts, architectural trade-offs, and live candidate evaluation with DevOps Cloud and AI Labs.",
             keyTakeaways = listOf(
-                "GitOps declarative continuous delivery using ArgoCD and automated drift reconciliation",
-                "Production observability: Prometheus PromQL P99 percentiles, Grafana alerts, and SLO tracking",
-                "Kubernetes troubleshooting: Diagnosing CrashLoopBackOff, pod OOMKilled, and probe configs"
+                "CI/CD pipelines: automated testing, GitHub Actions/GitLab CI, and blue-green/canary deployments",
+                "Infrastructure as Code (IaC): Terraform state management, drift detection, and modular architecture",
+                "Containerization: multi-stage Docker builds, image slimming, and container security best practices"
             ),
             relatedTrackId = "devops_interview"
         ),
         VideoMockInterview(
             id = "vm_devops_04",
             topicId = "devops",
-            title = "Top Kubernetes Interview Q&A for Experienced DevOps",
-            channelName = "CodeWithChandra",
-            youtubeVideoId = "KXN_BQlHUf4",
-            duration = "45 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering DevOps concepts, architectural trade-offs, and live candidate evaluation with CodeWithChandra.",
+            title = "Intro to Kubernetes Course",
+            channelName = "Cloud Champ",
+            youtubeVideoId = "weM2bObz7iI",
+            duration = "19:19 min",
+            difficulty = "Architect",
+            description = "Real-world technical mock interview covering DevOps concepts, architectural trade-offs, and live candidate evaluation with Cloud Champ.",
             keyTakeaways = listOf(
-                "Production observability: Prometheus PromQL P99 percentiles, Grafana alerts, and SLO tracking",
-                "Kubernetes troubleshooting: Diagnosing CrashLoopBackOff, pod OOMKilled, and probe configs",
-                "Docker internals: Linux cgroups resource limits, namespaces isolation, and layer caching"
+                "Infrastructure as Code (IaC): Terraform state management, drift detection, and modular architecture",
+                "Containerization: multi-stage Docker builds, image slimming, and container security best practices",
+                "Kubernetes orchestration: Deployments, StatefulSets, Services, Ingress, and Horizontal Pod Autoscalers"
             ),
             relatedTrackId = "devops_interview"
         ),
         VideoMockInterview(
             id = "vm_devops_05",
             topicId = "devops",
-            title = "Kubernetes Interview Questions | Part 1 | DevOps | DevOpsEngine",
-            channelName = "DevOpsEngine",
-            youtubeVideoId = "3-Nl4GDugDE",
-            duration = "45 min",
+            title = "Introduction",
+            channelName = "DevOps Cloud and AI Labs",
+            youtubeVideoId = "eXe78lkDMz0",
+            duration = "1:17:54 min",
             difficulty = "Senior",
-            description = "Real-world technical mock interview covering DevOps concepts, architectural trade-offs, and live candidate evaluation with DevOpsEngine.",
+            description = "Real-world technical mock interview covering DevOps concepts, architectural trade-offs, and live candidate evaluation with DevOps Cloud and AI Labs.",
             keyTakeaways = listOf(
-                "Kubernetes troubleshooting: Diagnosing CrashLoopBackOff, pod OOMKilled, and probe configs",
-                "Docker internals: Linux cgroups resource limits, namespaces isolation, and layer caching",
-                "GitOps declarative continuous delivery using ArgoCD and automated drift reconciliation"
+                "Containerization: multi-stage Docker builds, image slimming, and container security best practices",
+                "Kubernetes orchestration: Deployments, StatefulSets, Services, Ingress, and Horizontal Pod Autoscalers",
+                "CI/CD pipelines: automated testing, GitHub Actions/GitLab CI, and blue-green/canary deployments"
             ),
             relatedTrackId = "devops_interview"
         ),
         VideoMockInterview(
             id = "vm_devops_06",
             topicId = "devops",
-            title = "Site Reliability Engineer (SRE) Interview Questions 2026 | SRE Interview Questions and Answers",
-            channelName = "MindMajix",
-            youtubeVideoId = "nHlL_v4wCrM",
-            duration = "45 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering DevOps concepts, architectural trade-offs, and live candidate evaluation with MindMajix.",
+            title = "Introduction u0026 Meet the Engineers",
+            channelName = "Tech with Ajit",
+            youtubeVideoId = "y2Xogl5V3aA",
+            duration = "35:14 min",
+            difficulty = "Mid-Level",
+            description = "Real-world technical mock interview covering DevOps concepts, architectural trade-offs, and live candidate evaluation with Tech with Ajit.",
             keyTakeaways = listOf(
-                "Docker internals: Linux cgroups resource limits, namespaces isolation, and layer caching",
-                "GitOps declarative continuous delivery using ArgoCD and automated drift reconciliation",
-                "Production observability: Prometheus PromQL P99 percentiles, Grafana alerts, and SLO tracking"
+                "Kubernetes orchestration: Deployments, StatefulSets, Services, Ingress, and Horizontal Pod Autoscalers",
+                "CI/CD pipelines: automated testing, GitHub Actions/GitLab CI, and blue-green/canary deployments",
+                "Infrastructure as Code (IaC): Terraform state management, drift detection, and modular architecture"
             ),
             relatedTrackId = "devops_interview"
         ),
         VideoMockInterview(
             id = "vm_devops_07",
             topicId = "devops",
-            title = "DevOps/SRE Mock Interview helped him gain real time experience|How do you upgrade kubernetes cluster",
-            channelName = "Praveen Singampalli",
-            youtubeVideoId = "QYHKFnJK74w",
-            duration = "45 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering DevOps concepts, architectural trade-offs, and live candidate evaluation with Praveen Singampalli.",
+            title = "Introduction u0026 Meet the Engineers",
+            channelName = "DevOps Cloud and AI Labs",
+            youtubeVideoId = "gJsrzfY-YzY",
+            duration = "31:16 min",
+            difficulty = "Staff",
+            description = "Real-world technical mock interview covering DevOps concepts, architectural trade-offs, and live candidate evaluation with DevOps Cloud and AI Labs.",
             keyTakeaways = listOf(
-                "GitOps declarative continuous delivery using ArgoCD and automated drift reconciliation",
-                "Production observability: Prometheus PromQL P99 percentiles, Grafana alerts, and SLO tracking",
-                "Kubernetes troubleshooting: Diagnosing CrashLoopBackOff, pod OOMKilled, and probe configs"
+                "CI/CD pipelines: automated testing, GitHub Actions/GitLab CI, and blue-green/canary deployments",
+                "Infrastructure as Code (IaC): Terraform state management, drift detection, and modular architecture",
+                "Containerization: multi-stage Docker builds, image slimming, and container security best practices"
             ),
             relatedTrackId = "devops_interview"
         ),
         VideoMockInterview(
             id = "vm_devops_08",
             topicId = "devops",
-            title = "Kubernetes Interview Questions 2026 | Kubernetes (K8s) Interview Questions and Answers | MindMajix",
-            channelName = "MindMajix",
-            youtubeVideoId = "WRDf3aKH3X0",
-            duration = "45 min",
+            title = "Intro",
+            channelName = "Praveen Singampalli",
+            youtubeVideoId = "QYHKFnJK74w",
+            duration = "19:19 min",
             difficulty = "Senior",
-            description = "Real-world technical mock interview covering DevOps concepts, architectural trade-offs, and live candidate evaluation with MindMajix.",
+            description = "Real-world technical mock interview covering DevOps concepts, architectural trade-offs, and live candidate evaluation with Praveen Singampalli.",
             keyTakeaways = listOf(
-                "Production observability: Prometheus PromQL P99 percentiles, Grafana alerts, and SLO tracking",
-                "Kubernetes troubleshooting: Diagnosing CrashLoopBackOff, pod OOMKilled, and probe configs",
-                "Docker internals: Linux cgroups resource limits, namespaces isolation, and layer caching"
+                "Infrastructure as Code (IaC): Terraform state management, drift detection, and modular architecture",
+                "Containerization: multi-stage Docker builds, image slimming, and container security best practices",
+                "Kubernetes orchestration: Deployments, StatefulSets, Services, Ingress, and Horizontal Pod Autoscalers"
             ),
             relatedTrackId = "devops_interview"
         ),
         VideoMockInterview(
             id = "vm_devops_09",
             topicId = "devops",
-            title = "5 topics to pass DevOps Interview",
+            title = "Intro and Course Overview",
             channelName = "DevOps Cloud and AI Labs",
-            youtubeVideoId = "qlzVv8yZjK0",
-            duration = "45 min",
-            difficulty = "Senior",
+            youtubeVideoId = "La52MP0-ydM",
+            duration = "41:35 min",
+            difficulty = "Lead",
             description = "Real-world technical mock interview covering DevOps concepts, architectural trade-offs, and live candidate evaluation with DevOps Cloud and AI Labs.",
             keyTakeaways = listOf(
-                "Kubernetes troubleshooting: Diagnosing CrashLoopBackOff, pod OOMKilled, and probe configs",
-                "Docker internals: Linux cgroups resource limits, namespaces isolation, and layer caching",
-                "GitOps declarative continuous delivery using ArgoCD and automated drift reconciliation"
+                "Containerization: multi-stage Docker builds, image slimming, and container security best practices",
+                "Kubernetes orchestration: Deployments, StatefulSets, Services, Ingress, and Horizontal Pod Autoscalers",
+                "CI/CD pipelines: automated testing, GitHub Actions/GitLab CI, and blue-green/canary deployments"
             ),
             relatedTrackId = "devops_interview"
         ),
         VideoMockInterview(
             id = "vm_devops_10",
             topicId = "devops",
-            title = "Kubernetes Interview Questions and Answers | What is Self Healing in Kubernetes | #kubernetes",
-            channelName = "DevOps Molvi",
-            youtubeVideoId = "UM5p-Ol5rxw",
-            duration = "45 min",
+            title = "Introduction u0026 Meet the Engineers",
+            channelName = "Tech with Ajit",
+            youtubeVideoId = "mg1ZqahIpVw",
+            duration = "52:40 min",
             difficulty = "Senior",
-            description = "Real-world technical mock interview covering DevOps concepts, architectural trade-offs, and live candidate evaluation with DevOps Molvi.",
+            description = "Real-world technical mock interview covering DevOps concepts, architectural trade-offs, and live candidate evaluation with Tech with Ajit.",
             keyTakeaways = listOf(
-                "Docker internals: Linux cgroups resource limits, namespaces isolation, and layer caching",
-                "GitOps declarative continuous delivery using ArgoCD and automated drift reconciliation",
-                "Production observability: Prometheus PromQL P99 percentiles, Grafana alerts, and SLO tracking"
+                "Kubernetes orchestration: Deployments, StatefulSets, Services, Ingress, and Horizontal Pod Autoscalers",
+                "CI/CD pipelines: automated testing, GitHub Actions/GitLab CI, and blue-green/canary deployments",
+                "Infrastructure as Code (IaC): Terraform state management, drift detection, and modular architecture"
             ),
             relatedTrackId = "devops_interview"
         ),
     )
 
-    // --- 9. SQL & Database Mock Interviews (10 real verified videos) ---
+    // --- SQL & Database Mock Interviews (10 real verified long-form videos) ---
     private val sqlVideos = listOf(
         VideoMockInterview(
             id = "vm_sql_01",
             topicId = "sql",
-            title = "28.SQL Performance Tuning Interview Questions And Answers|Clustered and non clustered index in SQL",
-            channelName = "Pandey Guruji",
-            youtubeVideoId = "5qzQakofAoY",
-            duration = "44 min",
-            difficulty = "Mid-to-Senior",
-            description = "Real-world technical mock interview covering SQL & Database concepts, architectural trade-offs, and live candidate evaluation with Pandey Guruji.",
+            title = "Introduction to SQL Interview Questions And Answers",
+            channelName = "Lotus IT Hub training institute",
+            youtubeVideoId = "KCOWdPSAzjc",
+            duration = "13:38 min",
+            difficulty = "Mid-Level",
+            description = "Real-world technical mock interview covering SQL & Database concepts, architectural trade-offs, and live candidate evaluation with Lotus IT Hub training institute.",
             keyTakeaways = listOf(
-                "Query execution optimization: Analyzing EXPLAIN plans, index scans vs sequential scans",
-                "Index architecture: B-Tree leaf structures, covering indexes, and composite index ordering",
-                "ACID transaction isolation: MVCC readers-don't-block-writers, phantom reads, and locking modes"
+                "Advanced SQL querying: window functions (ROW_NUMBER, DENSE_RANK), recursive CTEs, and pivots",
+                "Database indexing: B-Tree vs Hash indexes, composite index column ordering, and covering indexes",
+                "ACID guarantees, transaction isolation levels (Dirty Read, Non-Repeatable Read, Phantom Read), and MVCC"
             ),
             relatedTrackId = "sql_interview"
         ),
         VideoMockInterview(
             id = "vm_sql_02",
             topicId = "sql",
-            title = "38.How to increase the Performance of SQL Queries|optimize SQL Queries|how to speed up SQL Query",
-            channelName = "Pandey Guruji",
-            youtubeVideoId = "_jM4BDlfZ1Q",
-            duration = "44 min",
-            difficulty = "Mid-to-Senior",
-            description = "Real-world technical mock interview covering SQL & Database concepts, architectural trade-offs, and live candidate evaluation with Pandey Guruji.",
+            title = "Introduction",
+            channelName = "Magneq Software",
+            youtubeVideoId = "GWn3QbeSceg",
+            duration = "3:03:59 min",
+            difficulty = "Senior",
+            description = "Real-world technical mock interview covering SQL & Database concepts, architectural trade-offs, and live candidate evaluation with Magneq Software.",
             keyTakeaways = listOf(
-                "Index architecture: B-Tree leaf structures, covering indexes, and composite index ordering",
-                "ACID transaction isolation: MVCC readers-don't-block-writers, phantom reads, and locking modes",
-                "Analytical queries: Window functions (ROW_NUMBER, DENSE_RANK, LAG, LEAD) and partitioning"
+                "Database indexing: B-Tree vs Hash indexes, composite index column ordering, and covering indexes",
+                "ACID guarantees, transaction isolation levels (Dirty Read, Non-Repeatable Read, Phantom Read), and MVCC",
+                "Query optimization: analyzing EXPLAIN plans, removing full table scans, and optimizing JOIN algorithms"
             ),
             relatedTrackId = "sql_interview"
         ),
         VideoMockInterview(
             id = "vm_sql_03",
             topicId = "sql",
-            title = "Performance Tuning In MS SQL Server | Real Time MS SQL DBA Issues Part1",
-            channelName = "MS SQL DBA Tech Support",
-            youtubeVideoId = "gHDQQJK6lVQ",
-            duration = "44 min",
-            difficulty = "Mid-to-Senior",
-            description = "Real-world technical mock interview covering SQL & Database concepts, architectural trade-offs, and live candidate evaluation with MS SQL DBA Tech Support.",
+            title = "Introduction to SQL Interview Questions And Answers",
+            channelName = "Solved Pages",
+            youtubeVideoId = "OGMOIaXMX6Y",
+            duration = "14:50 min",
+            difficulty = "Lead",
+            description = "Real-world technical mock interview covering SQL & Database concepts, architectural trade-offs, and live candidate evaluation with Solved Pages.",
             keyTakeaways = listOf(
-                "ACID transaction isolation: MVCC readers-don't-block-writers, phantom reads, and locking modes",
-                "Analytical queries: Window functions (ROW_NUMBER, DENSE_RANK, LAG, LEAD) and partitioning",
-                "Query execution optimization: Analyzing EXPLAIN plans, index scans vs sequential scans"
+                "ACID guarantees, transaction isolation levels (Dirty Read, Non-Repeatable Read, Phantom Read), and MVCC",
+                "Query optimization: analyzing EXPLAIN plans, removing full table scans, and optimizing JOIN algorithms",
+                "Advanced SQL querying: window functions (ROW_NUMBER, DENSE_RANK), recursive CTEs, and pivots"
             ),
             relatedTrackId = "sql_interview"
         ),
         VideoMockInterview(
             id = "vm_sql_04",
             topicId = "sql",
-            title = "SQL Complex Queries , Query Optimization and Interview Questions SQLServer 2016",
-            channelName = "techsapphire",
-            youtubeVideoId = "-t-8-xoLyv4",
-            duration = "44 min",
-            difficulty = "Mid-to-Senior",
-            description = "Real-world technical mock interview covering SQL & Database concepts, architectural trade-offs, and live candidate evaluation with techsapphire.",
+            title = "Intro",
+            channelName = "Lotus IT Hub training institute",
+            youtubeVideoId = "WF_-8S4mSpU",
+            duration = "15:41 min",
+            difficulty = "Architect",
+            description = "Real-world technical mock interview covering SQL & Database concepts, architectural trade-offs, and live candidate evaluation with Lotus IT Hub training institute.",
             keyTakeaways = listOf(
-                "Analytical queries: Window functions (ROW_NUMBER, DENSE_RANK, LAG, LEAD) and partitioning",
-                "Query execution optimization: Analyzing EXPLAIN plans, index scans vs sequential scans",
-                "Index architecture: B-Tree leaf structures, covering indexes, and composite index ordering"
+                "Query optimization: analyzing EXPLAIN plans, removing full table scans, and optimizing JOIN algorithms",
+                "Advanced SQL querying: window functions (ROW_NUMBER, DENSE_RANK), recursive CTEs, and pivots",
+                "Database indexing: B-Tree vs Hash indexes, composite index column ordering, and covering indexes"
             ),
             relatedTrackId = "sql_interview"
         ),
         VideoMockInterview(
             id = "vm_sql_05",
             topicId = "sql",
-            title = "Quick SQL Server Performance Analysis using performance dashboard",
-            channelName = "techsapphire",
-            youtubeVideoId = "mGUR5Sw6T8Y",
-            duration = "44 min",
-            difficulty = "Mid-to-Senior",
-            description = "Real-world technical mock interview covering SQL & Database concepts, architectural trade-offs, and live candidate evaluation with techsapphire.",
+            title = "Intro",
+            channelName = "Design Strong",
+            youtubeVideoId = "zHEEKq6GJq0",
+            duration = "51:20 min",
+            difficulty = "Senior",
+            description = "Real-world technical mock interview covering SQL & Database concepts, architectural trade-offs, and live candidate evaluation with Design Strong.",
             keyTakeaways = listOf(
-                "Query execution optimization: Analyzing EXPLAIN plans, index scans vs sequential scans",
-                "Index architecture: B-Tree leaf structures, covering indexes, and composite index ordering",
-                "ACID transaction isolation: MVCC readers-don't-block-writers, phantom reads, and locking modes"
+                "Advanced SQL querying: window functions (ROW_NUMBER, DENSE_RANK), recursive CTEs, and pivots",
+                "Database indexing: B-Tree vs Hash indexes, composite index column ordering, and covering indexes",
+                "ACID guarantees, transaction isolation levels (Dirty Read, Non-Repeatable Read, Phantom Read), and MVCC"
             ),
             relatedTrackId = "sql_interview"
         ),
         VideoMockInterview(
             id = "vm_sql_06",
             topicId = "sql",
-            title = "SQL Query Optimization and performance tuning tips | SQL Tutorial for Beginners | SQL Interview tips",
-            channelName = "The Engineer's Desk",
-            youtubeVideoId = "xuxgxdbCPnY",
-            duration = "44 min",
-            difficulty = "Mid-to-Senior",
-            description = "Real-world technical mock interview covering SQL & Database concepts, architectural trade-offs, and live candidate evaluation with The Engineer's Desk.",
+            title = "Introduction",
+            channelName = "Questpond",
+            youtubeVideoId = "SEdAF8mSKS4",
+            duration = "51:10 min",
+            difficulty = "Mid-Level",
+            description = "Real-world technical mock interview covering SQL & Database concepts, architectural trade-offs, and live candidate evaluation with Questpond.",
             keyTakeaways = listOf(
-                "Index architecture: B-Tree leaf structures, covering indexes, and composite index ordering",
-                "ACID transaction isolation: MVCC readers-don't-block-writers, phantom reads, and locking modes",
-                "Analytical queries: Window functions (ROW_NUMBER, DENSE_RANK, LAG, LEAD) and partitioning"
+                "Database indexing: B-Tree vs Hash indexes, composite index column ordering, and covering indexes",
+                "ACID guarantees, transaction isolation levels (Dirty Read, Non-Repeatable Read, Phantom Read), and MVCC",
+                "Query optimization: analyzing EXPLAIN plans, removing full table scans, and optimizing JOIN algorithms"
             ),
             relatedTrackId = "sql_interview"
         ),
         VideoMockInterview(
             id = "vm_sql_07",
             topicId = "sql",
-            title = "SQL Server Performance tuning and query optimization interview questions| Performance tuning SQL",
-            channelName = "DBA Doctor",
-            youtubeVideoId = "CvgNMwzg2F8",
-            duration = "44 min",
-            difficulty = "Mid-to-Senior",
-            description = "Real-world technical mock interview covering SQL & Database concepts, architectural trade-offs, and live candidate evaluation with DBA Doctor.",
+            title = "Introduction to DBMS Interview Questions",
+            channelName = "Intellipaat",
+            youtubeVideoId = "jNbStxNKyCg",
+            duration = "16:45 min",
+            difficulty = "Staff",
+            description = "Real-world technical mock interview covering SQL & Database concepts, architectural trade-offs, and live candidate evaluation with Intellipaat.",
             keyTakeaways = listOf(
-                "ACID transaction isolation: MVCC readers-don't-block-writers, phantom reads, and locking modes",
-                "Analytical queries: Window functions (ROW_NUMBER, DENSE_RANK, LAG, LEAD) and partitioning",
-                "Query execution optimization: Analyzing EXPLAIN plans, index scans vs sequential scans"
+                "ACID guarantees, transaction isolation levels (Dirty Read, Non-Repeatable Read, Phantom Read), and MVCC",
+                "Query optimization: analyzing EXPLAIN plans, removing full table scans, and optimizing JOIN algorithms",
+                "Advanced SQL querying: window functions (ROW_NUMBER, DENSE_RANK), recursive CTEs, and pivots"
             ),
             relatedTrackId = "sql_interview"
         ),
         VideoMockInterview(
             id = "vm_sql_08",
             topicId = "sql",
-            title = "SQL Performance Tuning | SQL Performance Tuning in SQL Server | SQL Performance Tuning Tutorial",
-            channelName = "Questpond",
-            youtubeVideoId = "8cdu9MINAFA",
-            duration = "44 min",
-            difficulty = "Mid-to-Senior",
-            description = "Real-world technical mock interview covering SQL & Database concepts, architectural trade-offs, and live candidate evaluation with Questpond.",
+            title = "Introduction to SQL for Analyzing Orders and Revenue",
+            channelName = "Ankit Bansal",
+            youtubeVideoId = "qyAgWL066Vo",
+            duration = "24:29 min",
+            difficulty = "Senior",
+            description = "Real-world technical mock interview covering SQL & Database concepts, architectural trade-offs, and live candidate evaluation with Ankit Bansal.",
             keyTakeaways = listOf(
-                "Analytical queries: Window functions (ROW_NUMBER, DENSE_RANK, LAG, LEAD) and partitioning",
-                "Query execution optimization: Analyzing EXPLAIN plans, index scans vs sequential scans",
-                "Index architecture: B-Tree leaf structures, covering indexes, and composite index ordering"
+                "Query optimization: analyzing EXPLAIN plans, removing full table scans, and optimizing JOIN algorithms",
+                "Advanced SQL querying: window functions (ROW_NUMBER, DENSE_RANK), recursive CTEs, and pivots",
+                "Database indexing: B-Tree vs Hash indexes, composite index column ordering, and covering indexes"
             ),
             relatedTrackId = "sql_interview"
         ),
         VideoMockInterview(
             id = "vm_sql_09",
             topicId = "sql",
-            title = "Fresher Mock Interview SQL | Technical Round | SQL Interview for Fresher | HR Interview",
-            channelName = "Lotus IT Hub training institute",
-            youtubeVideoId = "WF_-8S4mSpU",
-            duration = "44 min",
-            difficulty = "Mid-to-Senior",
-            description = "Real-world technical mock interview covering SQL & Database concepts, architectural trade-offs, and live candidate evaluation with Lotus IT Hub training institute.",
+            title = "Introduction to SQL Interview Questions And Answers",
+            channelName = "Intellipaat",
+            youtubeVideoId = "oX5Y26O5dBE",
+            duration = "24:55 min",
+            difficulty = "Lead",
+            description = "Real-world technical mock interview covering SQL & Database concepts, architectural trade-offs, and live candidate evaluation with Intellipaat.",
             keyTakeaways = listOf(
-                "Query execution optimization: Analyzing EXPLAIN plans, index scans vs sequential scans",
-                "Index architecture: B-Tree leaf structures, covering indexes, and composite index ordering",
-                "ACID transaction isolation: MVCC readers-don't-block-writers, phantom reads, and locking modes"
+                "Advanced SQL querying: window functions (ROW_NUMBER, DENSE_RANK), recursive CTEs, and pivots",
+                "Database indexing: B-Tree vs Hash indexes, composite index column ordering, and covering indexes",
+                "ACID guarantees, transaction isolation levels (Dirty Read, Non-Repeatable Read, Phantom Read), and MVCC"
             ),
             relatedTrackId = "sql_interview"
         ),
         VideoMockInterview(
             id = "vm_sql_10",
             topicId = "sql",
-            title = "SQL Performance Tuning Interview Questions",
-            channelName = "AI Code with Haritha",
-            youtubeVideoId = "1jV649NO23o",
-            duration = "44 min",
-            difficulty = "Mid-to-Senior",
-            description = "Real-world technical mock interview covering SQL & Database concepts, architectural trade-offs, and live candidate evaluation with AI Code with Haritha.",
+            title = "Why SQL is important for interviews",
+            channelName = "Chandoo",
+            youtubeVideoId = "Lb3vfuew7Gk",
+            duration = "14:50 min",
+            difficulty = "Senior",
+            description = "Real-world technical mock interview covering SQL & Database concepts, architectural trade-offs, and live candidate evaluation with Chandoo.",
             keyTakeaways = listOf(
-                "Index architecture: B-Tree leaf structures, covering indexes, and composite index ordering",
-                "ACID transaction isolation: MVCC readers-don't-block-writers, phantom reads, and locking modes",
-                "Analytical queries: Window functions (ROW_NUMBER, DENSE_RANK, LAG, LEAD) and partitioning"
+                "Database indexing: B-Tree vs Hash indexes, composite index column ordering, and covering indexes",
+                "ACID guarantees, transaction isolation levels (Dirty Read, Non-Repeatable Read, Phantom Read), and MVCC",
+                "Query optimization: analyzing EXPLAIN plans, removing full table scans, and optimizing JOIN algorithms"
             ),
             relatedTrackId = "sql_interview"
         ),
     )
 
-    // --- 10. Angular Mock Interviews (10 real verified videos) ---
+    // --- Angular Mock Interviews (10 real verified long-form videos) ---
     private val angularVideos = listOf(
         VideoMockInterview(
             id = "vm_angular_01",
             topicId = "angular",
-            title = "Top 5 Angular Interview Questions & Answers | Angular Basics for Freshers (2025 Guide)",
-            channelName = "CodeWithIndu",
-            youtubeVideoId = "3h3Jqv3mfHc",
-            duration = "46 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering Angular concepts, architectural trade-offs, and live candidate evaluation with CodeWithIndu.",
+            title = "Intro",
+            channelName = "LEARNING PARTNER",
+            youtubeVideoId = "aES0z3m0r1A",
+            duration = "45:28 min",
+            difficulty = "Mid-Level",
+            description = "Real-world technical mock interview covering Angular concepts, architectural trade-offs, and live candidate evaluation with LEARNING PARTNER.",
             keyTakeaways = listOf(
-                "Modern Angular Signals: Push-Pull reactivity, computed values, effects, and glitch-free evaluation",
-                "Change detection: Zoneless execution, OnPush strategy, and eliminating Zone.js overhead",
-                "Dependency injection: Hierarchical injectors, EnvironmentInjector vs ElementInjector, and inject()"
+                "Angular reactive architecture: Signals, computed values, effects, and modern zoneless change detection",
+                "RxJS operator mastery: switchMap, mergeMap, concatMap, forkJoin, and subject memory leak prevention",
+                "Dependency injection hierarchical injector tree: root, platform, and component-level providers"
             ),
             relatedTrackId = "angular_interview"
         ),
         VideoMockInterview(
             id = "vm_angular_02",
             topicId = "angular",
-            title = "10 Most asked Angular Interview Questions",
-            channelName = "Questpond",
-            youtubeVideoId = "MxyWKdoRH08",
-            duration = "46 min",
+            title = "Intro u0026 What to Expect JavaScript u0026 Core Concepts",
+            channelName = "LEARNING PARTNER",
+            youtubeVideoId = "MSjcG2PxZoE",
+            duration = "40:24 min",
             difficulty = "Senior",
-            description = "Real-world technical mock interview covering Angular concepts, architectural trade-offs, and live candidate evaluation with Questpond.",
+            description = "Real-world technical mock interview covering Angular concepts, architectural trade-offs, and live candidate evaluation with LEARNING PARTNER.",
             keyTakeaways = listOf(
-                "Change detection: Zoneless execution, OnPush strategy, and eliminating Zone.js overhead",
-                "Dependency injection: Hierarchical injectors, EnvironmentInjector vs ElementInjector, and inject()",
-                "RxJS state pipelines: Flattening operators (switchMap, concatMap) and takeUntilDestroyed lifecycle"
+                "RxJS operator mastery: switchMap, mergeMap, concatMap, forkJoin, and subject memory leak prevention",
+                "Dependency injection hierarchical injector tree: root, platform, and component-level providers",
+                "Modular architecture: standalone components, lazy-loaded routing, and functional route guards"
             ),
             relatedTrackId = "angular_interview"
         ),
         VideoMockInterview(
             id = "vm_angular_03",
             topicId = "angular",
-            title = "Angular Interview Questions and answers 2024 (Angular 17)",
-            channelName = "Tech Stack",
-            youtubeVideoId = "ESXu9kMxPV8",
-            duration = "46 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering Angular concepts, architectural trade-offs, and live candidate evaluation with Tech Stack.",
+            title = "Intro",
+            channelName = "Scholar Strategy by Nistha Tripathi",
+            youtubeVideoId = "ZOc6VMhzoio",
+            duration = "27:21 min",
+            difficulty = "Lead",
+            description = "Real-world technical mock interview covering Angular concepts, architectural trade-offs, and live candidate evaluation with Scholar Strategy by Nistha Tripathi.",
             keyTakeaways = listOf(
-                "Dependency injection: Hierarchical injectors, EnvironmentInjector vs ElementInjector, and inject()",
-                "RxJS state pipelines: Flattening operators (switchMap, concatMap) and takeUntilDestroyed lifecycle",
-                "Modern Angular Signals: Push-Pull reactivity, computed values, effects, and glitch-free evaluation"
+                "Dependency injection hierarchical injector tree: root, platform, and component-level providers",
+                "Modular architecture: standalone components, lazy-loaded routing, and functional route guards",
+                "Angular reactive architecture: Signals, computed values, effects, and modern zoneless change detection"
             ),
             relatedTrackId = "angular_interview"
         ),
         VideoMockInterview(
             id = "vm_angular_04",
             topicId = "angular",
-            title = "Ace Your Interviews: Top Free Mock Interview Websites",
-            channelName = "Vaibhav Tyagi",
-            youtubeVideoId = "QmsmScpkfos",
-            duration = "46 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering Angular concepts, architectural trade-offs, and live candidate evaluation with Vaibhav Tyagi.",
+            title = "Connection issues",
+            channelName = "LEARNING PARTNER",
+            youtubeVideoId = "UFzgLrNfAPE",
+            duration = "1:14:01 min",
+            difficulty = "Architect",
+            description = "Real-world technical mock interview covering Angular concepts, architectural trade-offs, and live candidate evaluation with LEARNING PARTNER.",
             keyTakeaways = listOf(
-                "RxJS state pipelines: Flattening operators (switchMap, concatMap) and takeUntilDestroyed lifecycle",
-                "Modern Angular Signals: Push-Pull reactivity, computed values, effects, and glitch-free evaluation",
-                "Change detection: Zoneless execution, OnPush strategy, and eliminating Zone.js overhead"
+                "Modular architecture: standalone components, lazy-loaded routing, and functional route guards",
+                "Angular reactive architecture: Signals, computed values, effects, and modern zoneless change detection",
+                "RxJS operator mastery: switchMap, mergeMap, concatMap, forkJoin, and subject memory leak prevention"
             ),
             relatedTrackId = "angular_interview"
         ),
         VideoMockInterview(
             id = "vm_angular_05",
             topicId = "angular",
-            title = "Common Asked Angular Interview Questions",
-            channelName = "Interview Preparation",
-            youtubeVideoId = "dS1KtQIQcwc",
-            duration = "46 min",
+            title = "Intro",
+            channelName = "LEARNING PARTNER",
+            youtubeVideoId = "ORtwaGrX-d0",
+            duration = "45:28 min",
             difficulty = "Senior",
-            description = "Real-world technical mock interview covering Angular concepts, architectural trade-offs, and live candidate evaluation with Interview Preparation.",
+            description = "Real-world technical mock interview covering Angular concepts, architectural trade-offs, and live candidate evaluation with LEARNING PARTNER.",
             keyTakeaways = listOf(
-                "Modern Angular Signals: Push-Pull reactivity, computed values, effects, and glitch-free evaluation",
-                "Change detection: Zoneless execution, OnPush strategy, and eliminating Zone.js overhead",
-                "Dependency injection: Hierarchical injectors, EnvironmentInjector vs ElementInjector, and inject()"
+                "Angular reactive architecture: Signals, computed values, effects, and modern zoneless change detection",
+                "RxJS operator mastery: switchMap, mergeMap, concatMap, forkJoin, and subject memory leak prevention",
+                "Dependency injection hierarchical injector tree: root, platform, and component-level providers"
             ),
             relatedTrackId = "angular_interview"
         ),
         VideoMockInterview(
             id = "vm_angular_06",
             topicId = "angular",
-            title = "Angular Mock Interview 2026 | Live Mock Interview & Feedback",
-            channelName = "Frontend to AI",
-            youtubeVideoId = "yBcVp7UqSE0",
-            duration = "46 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering Angular concepts, architectural trade-offs, and live candidate evaluation with Frontend to AI.",
+            title = "Introduction to Angular Js Interview",
+            channelName = "MindMajix",
+            youtubeVideoId = "lIMzdWuSh00",
+            duration = "31:40 min",
+            difficulty = "Mid-Level",
+            description = "Real-world technical mock interview covering Angular concepts, architectural trade-offs, and live candidate evaluation with MindMajix.",
             keyTakeaways = listOf(
-                "Change detection: Zoneless execution, OnPush strategy, and eliminating Zone.js overhead",
-                "Dependency injection: Hierarchical injectors, EnvironmentInjector vs ElementInjector, and inject()",
-                "RxJS state pipelines: Flattening operators (switchMap, concatMap) and takeUntilDestroyed lifecycle"
+                "RxJS operator mastery: switchMap, mergeMap, concatMap, forkJoin, and subject memory leak prevention",
+                "Dependency injection hierarchical injector tree: root, platform, and component-level providers",
+                "Modular architecture: standalone components, lazy-loaded routing, and functional route guards"
             ),
             relatedTrackId = "angular_interview"
         ),
         VideoMockInterview(
             id = "vm_angular_07",
             topicId = "angular",
-            title = "Angular Interview Discussion & Interview preparation for 7+ Years Experience @uidevguide",
-            channelName = "Ui Dev Guide",
-            youtubeVideoId = "amNjEdDqAxg",
-            duration = "46 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering Angular concepts, architectural trade-offs, and live candidate evaluation with Ui Dev Guide.",
+            title = "Introduction to angular",
+            channelName = "CodeWithIndu",
+            youtubeVideoId = "3h3Jqv3mfHc",
+            duration = "48:21 min",
+            difficulty = "Staff",
+            description = "Real-world technical mock interview covering Angular concepts, architectural trade-offs, and live candidate evaluation with CodeWithIndu.",
             keyTakeaways = listOf(
-                "Dependency injection: Hierarchical injectors, EnvironmentInjector vs ElementInjector, and inject()",
-                "RxJS state pipelines: Flattening operators (switchMap, concatMap) and takeUntilDestroyed lifecycle",
-                "Modern Angular Signals: Push-Pull reactivity, computed values, effects, and glitch-free evaluation"
+                "Dependency injection hierarchical injector tree: root, platform, and component-level providers",
+                "Modular architecture: standalone components, lazy-loaded routing, and functional route guards",
+                "Angular reactive architecture: Signals, computed values, effects, and modern zoneless change detection"
             ),
             relatedTrackId = "angular_interview"
         ),
         VideoMockInterview(
             id = "vm_angular_08",
             topicId = "angular",
-            title = "Angular Interview Preparation | Mock Interview With Feedback for 4+ Years Experience @uidevguide",
-            channelName = "Ui Dev Guide",
-            youtubeVideoId = "eSd1-0-ShDs",
-            duration = "46 min",
+            title = "Introduction to angular",
+            channelName = "Interview Happy",
+            youtubeVideoId = "MqFOtZAUoPg",
+            duration = "28:56 min",
             difficulty = "Senior",
-            description = "Real-world technical mock interview covering Angular concepts, architectural trade-offs, and live candidate evaluation with Ui Dev Guide.",
+            description = "Real-world technical mock interview covering Angular concepts, architectural trade-offs, and live candidate evaluation with Interview Happy.",
             keyTakeaways = listOf(
-                "RxJS state pipelines: Flattening operators (switchMap, concatMap) and takeUntilDestroyed lifecycle",
-                "Modern Angular Signals: Push-Pull reactivity, computed values, effects, and glitch-free evaluation",
-                "Change detection: Zoneless execution, OnPush strategy, and eliminating Zone.js overhead"
+                "Modular architecture: standalone components, lazy-loaded routing, and functional route guards",
+                "Angular reactive architecture: Signals, computed values, effects, and modern zoneless change detection",
+                "RxJS operator mastery: switchMap, mergeMap, concatMap, forkJoin, and subject memory leak prevention"
             ),
             relatedTrackId = "angular_interview"
         ),
         VideoMockInterview(
             id = "vm_angular_09",
             topicId = "angular",
-            title = "Senior Angular Developer Interview (theory)",
-            channelName = "WeCoded",
-            youtubeVideoId = "pLy2hm7_70o",
-            duration = "46 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering Angular concepts, architectural trade-offs, and live candidate evaluation with WeCoded.",
+            title = "Angular overview",
+            channelName = "CraftedScripts",
+            youtubeVideoId = "WpUSKCB0o6o",
+            duration = "46:41 min",
+            difficulty = "Lead",
+            description = "Real-world technical mock interview covering Angular concepts, architectural trade-offs, and live candidate evaluation with CraftedScripts.",
             keyTakeaways = listOf(
-                "Modern Angular Signals: Push-Pull reactivity, computed values, effects, and glitch-free evaluation",
-                "Change detection: Zoneless execution, OnPush strategy, and eliminating Zone.js overhead",
-                "Dependency injection: Hierarchical injectors, EnvironmentInjector vs ElementInjector, and inject()"
+                "Angular reactive architecture: Signals, computed values, effects, and modern zoneless change detection",
+                "RxJS operator mastery: switchMap, mergeMap, concatMap, forkJoin, and subject memory leak prevention",
+                "Dependency injection hierarchical injector tree: root, platform, and component-level providers"
             ),
             relatedTrackId = "angular_interview"
         ),
         VideoMockInterview(
             id = "vm_angular_10",
             topicId = "angular",
-            title = "Top 5 Front-end Developer Interview Questions every fresher should know!",
-            channelName = "LIVEWIRE India",
-            youtubeVideoId = "2ls1QcubWxw",
-            duration = "46 min",
+            title = "Introduction",
+            channelName = "Questpond",
+            youtubeVideoId = "-jeoyDJDsSM",
+            duration = "14:06 min",
             difficulty = "Senior",
-            description = "Real-world technical mock interview covering Angular concepts, architectural trade-offs, and live candidate evaluation with LIVEWIRE India.",
+            description = "Real-world technical mock interview covering Angular concepts, architectural trade-offs, and live candidate evaluation with Questpond.",
             keyTakeaways = listOf(
-                "Change detection: Zoneless execution, OnPush strategy, and eliminating Zone.js overhead",
-                "Dependency injection: Hierarchical injectors, EnvironmentInjector vs ElementInjector, and inject()",
-                "RxJS state pipelines: Flattening operators (switchMap, concatMap) and takeUntilDestroyed lifecycle"
+                "RxJS operator mastery: switchMap, mergeMap, concatMap, forkJoin, and subject memory leak prevention",
+                "Dependency injection hierarchical injector tree: root, platform, and component-level providers",
+                "Modular architecture: standalone components, lazy-loaded routing, and functional route guards"
             ),
             relatedTrackId = "angular_interview"
         ),
     )
 
-    // --- 11. Security Mock Interviews (10 real verified videos) ---
+    // --- Security Mock Interviews (10 real verified long-form videos) ---
     private val securityVideos = listOf(
         VideoMockInterview(
             id = "vm_security_01",
             topicId = "security",
-            title = "Top Cybersecurity Interview Questions: Most Commonly Asked Questions & Answers #shorts #simplilearn",
-            channelName = "Simplilearn",
-            youtubeVideoId = "Rl1cRMY27SI",
-            duration = "48 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering Security concepts, architectural trade-offs, and live candidate evaluation with Simplilearn.",
+            title = "Introduction",
+            channelName = "Prabh Nair",
+            youtubeVideoId = "HDCZiOCy_ww",
+            duration = "1:19:49 min",
+            difficulty = "Mid-Level",
+            description = "Real-world technical mock interview covering Security concepts, architectural trade-offs, and live candidate evaluation with Prabh Nair.",
             keyTakeaways = listOf(
-                "OWASP Top 10 vulnerabilities: Broken Access Control (IDOR), SQL injection, SSRF, and defenses",
                 "Modern authentication: OAuth 2.0 Authorization Code with PKCE and OIDC token lifecycles",
-                "JWT security: Alg none mitigation, asymmetric RS256 signing, and short-lived token rotation"
+                "JWT security: Alg none mitigation, asymmetric RS256 signing, and short-lived token rotation",
+                "Enterprise AppSec: Zero Trust architecture, mutual TLS (mTLS), and strict Content Security Policy"
             ),
             relatedTrackId = "security_interview"
         ),
         VideoMockInterview(
             id = "vm_security_02",
             topicId = "security",
-            title = "Cyber Security Interview Questions and Answers",
-            channelName = "Knowledge Topper",
-            youtubeVideoId = "6OvNNJQJixU",
-            duration = "48 min",
+            title = "Q1 - What is the difference between encryption and hashing?",
+            channelName = "CRAW SECURITY ",
+            youtubeVideoId = "k5Z_7HBIJY8",
+            duration = "17:06 min",
             difficulty = "Senior",
-            description = "Real-world technical mock interview covering Security concepts, architectural trade-offs, and live candidate evaluation with Knowledge Topper.",
+            description = "Real-world technical mock interview covering Security concepts, architectural trade-offs, and live candidate evaluation with CRAW SECURITY .",
             keyTakeaways = listOf(
-                "Modern authentication: OAuth 2.0 Authorization Code with PKCE and OIDC token lifecycles",
                 "JWT security: Alg none mitigation, asymmetric RS256 signing, and short-lived token rotation",
-                "Enterprise AppSec: Zero Trust architecture, mutual TLS (mTLS), and strict Content Security Policy"
+                "Enterprise AppSec: Zero Trust architecture, mutual TLS (mTLS), and strict Content Security Policy",
+                "OWASP Top 10 vulnerabilities: Broken Access Control (IDOR), SQL injection, SSRF, and defenses"
             ),
             relatedTrackId = "security_interview"
         ),
         VideoMockInterview(
             id = "vm_security_03",
             topicId = "security",
-            title = "Why Candidates Failed in CyberSecurity Interviews",
-            channelName = "Prabh Nair",
-            youtubeVideoId = "HDCZiOCy_ww",
-            duration = "48 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering Security concepts, architectural trade-offs, and live candidate evaluation with Prabh Nair.",
+            title = "Introduction",
+            channelName = "Aced (formerly Exponent)",
+            youtubeVideoId = "IZKfZNVhItg",
+            duration = "22:47 min",
+            difficulty = "Lead",
+            description = "Real-world technical mock interview covering Security concepts, architectural trade-offs, and live candidate evaluation with Aced (formerly Exponent).",
             keyTakeaways = listOf(
-                "JWT security: Alg none mitigation, asymmetric RS256 signing, and short-lived token rotation",
                 "Enterprise AppSec: Zero Trust architecture, mutual TLS (mTLS), and strict Content Security Policy",
-                "OWASP Top 10 vulnerabilities: Broken Access Control (IDOR), SQL injection, SSRF, and defenses"
+                "OWASP Top 10 vulnerabilities: Broken Access Control (IDOR), SQL injection, SSRF, and defenses",
+                "Modern authentication: OAuth 2.0 Authorization Code with PKCE and OIDC token lifecycles"
             ),
             relatedTrackId = "security_interview"
         ),
         VideoMockInterview(
             id = "vm_security_04",
             topicId = "security",
-            title = "MOCK INTERVIEW | CYBER SECURITY | Cyber Security Interview Questions",
-            channelName = "CC Cyber Campus",
-            youtubeVideoId = "swQjtCyedGc",
-            duration = "48 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering Security concepts, architectural trade-offs, and live candidate evaluation with CC Cyber Campus.",
-            keyTakeaways = listOf(
-                "Enterprise AppSec: Zero Trust architecture, mutual TLS (mTLS), and strict Content Security Policy",
-                "OWASP Top 10 vulnerabilities: Broken Access Control (IDOR), SQL injection, SSRF, and defenses",
-                "Modern authentication: OAuth 2.0 Authorization Code with PKCE and OIDC token lifecycles"
-            ),
-            relatedTrackId = "security_interview"
-        ),
-        VideoMockInterview(
-            id = "vm_security_05",
-            topicId = "security",
-            title = "Fresher Interview #devops #cloudjobs #fresherjobs #devopsengineer #devopsjobs #devopsinterview",
-            channelName = "Saurabh Porwal / AI, clearly explained",
-            youtubeVideoId = "UO_xIsPWCCQ",
-            duration = "48 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering Security concepts, architectural trade-offs, and live candidate evaluation with Saurabh Porwal / AI, clearly explained.",
+            title = "Introduction",
+            channelName = "NETWORKERS HOME",
+            youtubeVideoId = "THEFxq9j-p8",
+            duration = "50:32 min",
+            difficulty = "Architect",
+            description = "Real-world technical mock interview covering Security concepts, architectural trade-offs, and live candidate evaluation with NETWORKERS HOME.",
             keyTakeaways = listOf(
                 "OWASP Top 10 vulnerabilities: Broken Access Control (IDOR), SQL injection, SSRF, and defenses",
                 "Modern authentication: OAuth 2.0 Authorization Code with PKCE and OIDC token lifecycles",
@@ -1807,14 +1802,14 @@ object VideoMockCatalog {
             relatedTrackId = "security_interview"
         ),
         VideoMockInterview(
-            id = "vm_security_06",
+            id = "vm_security_05",
             topicId = "security",
-            title = "Cyber Security Interview Questions and Answers | Encoding, Encryption, and Hashing | Threat vs Risk",
-            channelName = "Josh Madakor",
-            youtubeVideoId = "IlaM1GoRXR0",
-            duration = "48 min",
+            title = "Introduction",
+            channelName = "Ace Interviews",
+            youtubeVideoId = "uPn3ggi3KoU",
+            duration = "1:19:49 min",
             difficulty = "Senior",
-            description = "Real-world technical mock interview covering Security concepts, architectural trade-offs, and live candidate evaluation with Josh Madakor.",
+            description = "Real-world technical mock interview covering Security concepts, architectural trade-offs, and live candidate evaluation with Ace Interviews.",
             keyTakeaways = listOf(
                 "Modern authentication: OAuth 2.0 Authorization Code with PKCE and OIDC token lifecycles",
                 "JWT security: Alg none mitigation, asymmetric RS256 signing, and short-lived token rotation",
@@ -1823,14 +1818,14 @@ object VideoMockCatalog {
             relatedTrackId = "security_interview"
         ),
         VideoMockInterview(
-            id = "vm_security_07",
+            id = "vm_security_06",
             topicId = "security",
-            title = "Cyber Security Interview Questions and Answers | HTTPS vs SSL vs TLS, Encryption & Compression",
-            channelName = "Josh Madakor",
-            youtubeVideoId = "eB1XwhGuBBk",
-            duration = "48 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering Security concepts, architectural trade-offs, and live candidate evaluation with Josh Madakor.",
+            title = "Introduction",
+            channelName = "Aced (formerly Exponent)",
+            youtubeVideoId = "DheC3-J4iH0",
+            duration = "31:32 min",
+            difficulty = "Mid-Level",
+            description = "Real-world technical mock interview covering Security concepts, architectural trade-offs, and live candidate evaluation with Aced (formerly Exponent).",
             keyTakeaways = listOf(
                 "JWT security: Alg none mitigation, asymmetric RS256 signing, and short-lived token rotation",
                 "Enterprise AppSec: Zero Trust architecture, mutual TLS (mTLS), and strict Content Security Policy",
@@ -1839,14 +1834,14 @@ object VideoMockCatalog {
             relatedTrackId = "security_interview"
         ),
         VideoMockInterview(
-            id = "vm_security_08",
+            id = "vm_security_07",
             topicId = "security",
-            title = "Application Security Interview Questions And Answers | Part 1 | App Sec | AppSec | Cyber Security",
-            channelName = "CyberPlatter",
-            youtubeVideoId = "HrQL7BARODA",
-            duration = "48 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering Security concepts, architectural trade-offs, and live candidate evaluation with CyberPlatter.",
+            title = "Introduction",
+            channelName = "Cybervie Cybersecurity Academy ",
+            youtubeVideoId = "XQC_t7uplBo",
+            duration = "43:24 min",
+            difficulty = "Staff",
+            description = "Real-world technical mock interview covering Security concepts, architectural trade-offs, and live candidate evaluation with Cybervie Cybersecurity Academy .",
             keyTakeaways = listOf(
                 "Enterprise AppSec: Zero Trust architecture, mutual TLS (mTLS), and strict Content Security Policy",
                 "OWASP Top 10 vulnerabilities: Broken Access Control (IDOR), SQL injection, SSRF, and defenses",
@@ -1855,14 +1850,14 @@ object VideoMockCatalog {
             relatedTrackId = "security_interview"
         ),
         VideoMockInterview(
-            id = "vm_security_09",
+            id = "vm_security_08",
             topicId = "security",
-            title = "Top 30 Cyber Security Interview Questions & Answers 2025 | Cyber Security Job Interview| Intellipaat",
-            channelName = "Intellipaat",
-            youtubeVideoId = "v0el2gamx0Q",
-            duration = "48 min",
+            title = "Intro",
+            channelName = "Rajneesh Gupta",
+            youtubeVideoId = "HHtQVSGnYgg",
+            duration = "50:32 min",
             difficulty = "Senior",
-            description = "Real-world technical mock interview covering Security concepts, architectural trade-offs, and live candidate evaluation with Intellipaat.",
+            description = "Real-world technical mock interview covering Security concepts, architectural trade-offs, and live candidate evaluation with Rajneesh Gupta.",
             keyTakeaways = listOf(
                 "OWASP Top 10 vulnerabilities: Broken Access Control (IDOR), SQL injection, SSRF, and defenses",
                 "Modern authentication: OAuth 2.0 Authorization Code with PKCE and OIDC token lifecycles",
@@ -1871,18 +1866,34 @@ object VideoMockCatalog {
             relatedTrackId = "security_interview"
         ),
         VideoMockInterview(
-            id = "vm_security_10",
+            id = "vm_security_09",
             topicId = "security",
-            title = "Preparing for a cybersecurity interview?",
-            channelName = "Prabh Nair",
-            youtubeVideoId = "p24JMh5vHd8",
-            duration = "48 min",
-            difficulty = "Senior",
-            description = "Real-world technical mock interview covering Security concepts, architectural trade-offs, and live candidate evaluation with Prabh Nair.",
+            title = "Introduction",
+            channelName = "Rajneesh Gupta",
+            youtubeVideoId = "kqnl30Q0pKQ",
+            duration = "56:25 min",
+            difficulty = "Lead",
+            description = "Real-world technical mock interview covering Security concepts, architectural trade-offs, and live candidate evaluation with Rajneesh Gupta.",
             keyTakeaways = listOf(
                 "Modern authentication: OAuth 2.0 Authorization Code with PKCE and OIDC token lifecycles",
                 "JWT security: Alg none mitigation, asymmetric RS256 signing, and short-lived token rotation",
                 "Enterprise AppSec: Zero Trust architecture, mutual TLS (mTLS), and strict Content Security Policy"
+            ),
+            relatedTrackId = "security_interview"
+        ),
+        VideoMockInterview(
+            id = "vm_security_10",
+            topicId = "security",
+            title = "Intro",
+            channelName = "Cloud Security Podcast",
+            youtubeVideoId = "iBLuGN8_uOU",
+            duration = "1:14:29 min",
+            difficulty = "Senior",
+            description = "Real-world technical mock interview covering Security concepts, architectural trade-offs, and live candidate evaluation with Cloud Security Podcast.",
+            keyTakeaways = listOf(
+                "JWT security: Alg none mitigation, asymmetric RS256 signing, and short-lived token rotation",
+                "Enterprise AppSec: Zero Trust architecture, mutual TLS (mTLS), and strict Content Security Policy",
+                "OWASP Top 10 vulnerabilities: Broken Access Control (IDOR), SQL injection, SSRF, and defenses"
             ),
             relatedTrackId = "security_interview"
         ),
@@ -1904,10 +1915,8 @@ object VideoMockCatalog {
     fun getTopics(): List<VideoMockTopic> = topicsList
 
     fun getVideosForTopic(topicId: String): List<VideoMockInterview> {
-        return allVideosList.filter { it.topicId.equals(topicId, ignoreCase = true) }
+        return allVideosList.filter { it.topicId == topicId }
     }
-
-    fun getAllVideos(): List<VideoMockInterview> = allVideosList
 
     fun getVideoById(id: String): VideoMockInterview? {
         return allVideosList.firstOrNull { it.id == id }
@@ -1915,23 +1924,25 @@ object VideoMockCatalog {
 
     fun getNextVideo(currentId: String, topicId: String): VideoMockInterview? {
         val topicVideos = getVideosForTopic(topicId)
-        if (topicVideos.isEmpty()) return null
         val currentIndex = topicVideos.indexOfFirst { it.id == currentId }
-        return if (currentIndex != -1 && currentIndex < topicVideos.lastIndex) {
+        return if (currentIndex != -1 && currentIndex + 1 < topicVideos.size) {
             topicVideos[currentIndex + 1]
         } else if (topicVideos.isNotEmpty()) {
-            topicVideos[0]
-        } else null
+            topicVideos.first()
+        } else {
+            null
+        }
     }
 
     fun getPreviousVideo(currentId: String, topicId: String): VideoMockInterview? {
         val topicVideos = getVideosForTopic(topicId)
-        if (topicVideos.isEmpty()) return null
         val currentIndex = topicVideos.indexOfFirst { it.id == currentId }
         return if (currentIndex > 0) {
             topicVideos[currentIndex - 1]
         } else if (topicVideos.isNotEmpty()) {
             topicVideos.last()
-        } else null
+        } else {
+            null
+        }
     }
 }

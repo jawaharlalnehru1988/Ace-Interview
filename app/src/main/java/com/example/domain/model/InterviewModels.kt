@@ -225,6 +225,7 @@ data class VideoMockTopic(
     val name: String,
     val icon: String,
     val videoCount: Int,
-    val relatedTrackId: String
+    val relatedTrackId: String,
+    val description: String = ""
 )
 

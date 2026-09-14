@@ -1,5 +1,6 @@
 package com.example.presentation.interview
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -74,9 +75,12 @@ fun InterviewScreen(
                         onSelectMode = { viewModel.setScreenMode(it) },
                         topics = current.videoTopics,
                         selectedTopicId = current.selectedVideoTopicId,
+                        activeClassroomTopicId = current.activeClassroomTopicId,
                         videoMocks = current.videoMocks,
                         selectedVideo = current.selectedVideo,
                         currentIndex = current.currentVideoIndex,
+                        onOpenTopicClassroom = { viewModel.openTopicClassroom(it) },
+                        onCloseTopicClassroom = { viewModel.closeTopicClassroom() },
                         onSelectTopic = { viewModel.selectVideoTopic(it) },
                         onSelectVideo = { viewModel.selectVideo(it) },
                         onPlayNext = { viewModel.playNextVideo() },
@@ -214,7 +218,7 @@ fun InterviewContent(
 }
 
 /**
- * Curated In-App Video Mock Interviews View with YouTube Player.
+ * Curated In-App Video Mock Interviews with Topic Hub and Dedicated Topic Classrooms (Option B).
  */
 @Composable
 fun VideoMockContent(
@@ -222,9 +226,12 @@ fun VideoMockContent(
     onSelectMode: (InterviewScreenMode) -> Unit,
     topics: List<VideoMockTopic>,
     selectedTopicId: String,
+    activeClassroomTopicId: String?,
     videoMocks: List<VideoMockInterview>,
     selectedVideo: VideoMockInterview?,
     currentIndex: Int,
+    onOpenTopicClassroom: (String) -> Unit,
+    onCloseTopicClassroom: () -> Unit,
     onSelectTopic: (String) -> Unit,
     onSelectVideo: (VideoMockInterview) -> Unit,
     onPlayNext: () -> Unit,
@@ -232,127 +239,177 @@ fun VideoMockContent(
     onStartSession: (trackId: String, trackTitle: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // Intercept back button to smoothly return to Topic Hub when inside a dedicated classroom
+    BackHandler(enabled = activeClassroomTopicId != null) {
+        onCloseTopicClassroom()
+    }
+
     val activeTopic = topics.firstOrNull { it.id.equals(selectedTopicId, ignoreCase = true) }
+        ?: topics.firstOrNull()
 
-    LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .testTag("video_mock_screen_content")
-            .padding(horizontal = 20.dp),
-        verticalArrangement = Arrangement.spacedBy(14.dp)
-    ) {
-        item {
-            Spacer(modifier = Modifier.height(8.dp))
-            InterviewModeSwitcher(
-                selectedMode = screenMode,
-                onSelectMode = onSelectMode
-            )
-        }
+    if (activeClassroomTopicId == null || activeTopic == null) {
+        // --- Option B: 11-Topic Hub ---
+        LazyColumn(
+            modifier = modifier
+                .fillMaxSize()
+                .testTag("video_mock_hub_content")
+                .padding(horizontal = 20.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp)
+        ) {
+            item {
+                Spacer(modifier = Modifier.height(8.dp))
+                InterviewModeSwitcher(
+                    selectedMode = screenMode,
+                    onSelectMode = onSelectMode
+                )
+            }
 
-        item {
-            ScreenHeader(
-                title = "Video Mock Interviews",
-                subtitle = "Curated real-world technical loops with in-app YouTube player and autoplay"
-            )
-        }
+            item {
+                ScreenHeader(
+                    title = "Video Mock Technical Curriculum",
+                    subtitle = "Curated real-world technical loops with in-app native player and auto-progression"
+                )
+            }
 
-        // Educational Hero Banner
-        item {
-            Surface(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.45f),
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.secondary.copy(alpha = 0.3f))
-            ) {
-                Row(
-                    modifier = Modifier.padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
+            // Educational Hero Banner
+            item {
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                    color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.45f),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.secondary.copy(alpha = 0.3f))
                 ) {
-                    Icon(
-                        imageVector = Icons.Filled.SmartDisplay,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.secondary,
-                        modifier = Modifier.size(32.dp)
-                    )
-                    Spacer(modifier = Modifier.width(14.dp))
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = "Watch & Learn, Then Attempt",
-                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                            color = MaterialTheme.colorScheme.onSecondaryContainer
+                    Row(
+                        modifier = Modifier.padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.SmartDisplay,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.secondary,
+                            modifier = Modifier.size(32.dp)
                         )
-                        Text(
-                            text = "Listen to clear English mock interviews by industry leaders to master articulation and system architecture. Next video in series plays automatically.",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.85f)
-                        )
+                        Spacer(modifier = Modifier.width(14.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = "Watch & Learn, Then Attempt",
+                                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                                color = MaterialTheme.colorScheme.onSecondaryContainer
+                            )
+                            Text(
+                                text = "Listen to clear English mock interviews by industry leaders to master articulation and system architecture. Select any topic below to open its dedicated video classroom.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.85f)
+                            )
+                        }
                     }
                 }
             }
-        }
 
-        // Horizontal Topic Selector Chips
-        item {
-            VideoMockTopicSelector(
-                topics = topics,
-                selectedTopicId = selectedTopicId,
-                onSelectTopic = onSelectTopic
-            )
-        }
-
-        // Main Player Section
-        if (selectedVideo != null) {
             item {
-                VideoMockPlayerSection(
-                    video = selectedVideo,
-                    currentIndex = currentIndex,
-                    totalCountInTopic = videoMocks.size,
-                    onVideoEnded = onPlayNext,
-                    onPlayNext = onPlayNext,
-                    onPlayPrevious = onPlayPrevious,
-                    onAttemptMockSession = { trackId, title ->
-                        onStartSession(trackId, title)
-                    }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 4.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Technical Domains",
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        text = "${topics.size} Topics • 110 Videos",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+
+            // 11 Dedicated Topic Cards
+            items(topics, key = { it.id }) { topic ->
+                VideoMockTopicCard(
+                    topic = topic,
+                    onSelectTopic = { onOpenTopicClassroom(topic.id) }
                 )
             }
-        }
 
-        // Playlist Section Header
-        item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "${activeTopic?.name ?: "Topic"} Series Playlist",
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Text(
-                    text = "${videoMocks.size} Videos",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.primary
-                )
+            item {
+                Spacer(modifier = Modifier.height(24.dp))
             }
         }
+    } else {
+        // --- Option B: Dedicated Topic Classroom ---
+        LazyColumn(
+            modifier = modifier
+                .fillMaxSize()
+                .testTag("topic_classroom_content_${activeTopic.id}")
+                .padding(horizontal = 20.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp)
+        ) {
+            item {
+                Spacer(modifier = Modifier.height(8.dp))
+                TopicClassroomTopBar(
+                    topic = activeTopic,
+                    onBack = onCloseTopicClassroom
+                )
+            }
 
-        // Playlist items for the selected topic
-        items(videoMocks.size, key = { index -> videoMocks[index].id }) { index ->
-            val video = videoMocks[index]
-            val isPlaying = video.id == selectedVideo?.id
-            VideoMockPlaylistItem(
-                video = video,
-                index = index,
-                isPlaying = isPlaying,
-                onSelect = { onSelectVideo(video) }
-            )
-        }
+            // Main Video Player Section (Native Android-YouTube-Player)
+            if (selectedVideo != null) {
+                item {
+                    VideoMockPlayerSection(
+                        video = selectedVideo,
+                        currentIndex = currentIndex,
+                        totalCountInTopic = videoMocks.size,
+                        onVideoEnded = onPlayNext,
+                        onPlayNext = onPlayNext,
+                        onPlayPrevious = onPlayPrevious,
+                        onAttemptMockSession = { trackId, title ->
+                            onStartSession(trackId, title)
+                        }
+                    )
+                }
+            }
 
-        item {
-            Spacer(modifier = Modifier.height(24.dp))
+            // Series Playlist Header
+            item {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "${activeTopic.name} Curriculum Playlist",
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        text = "${videoMocks.size} Videos",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+
+            // 10 Topic Videos in the Playlist
+            items(videoMocks.size, key = { index -> videoMocks[index].id }) { index ->
+                val video = videoMocks[index]
+                val isPlaying = video.id == selectedVideo?.id
+                VideoMockPlaylistItem(
+                    video = video,
+                    index = index,
+                    isPlaying = isPlaying,
+                    onSelect = { onSelectVideo(video) }
+                )
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(24.dp))
+            }
         }
     }
 }
